@@ -10,44 +10,56 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
   <style>
     :root {
-      --bg:       #0d1117;
-      --bg2:      #161b22;
-      --bg3:      #1c2330;
-      --border:   #30363d;
-      --text:     #e6edf3;
-      --muted:    #8b949e;
-      --accent:   #388bfd;
-      --up:       #3fb950;
-      --down:     #f85149;
-      --gold:     #d29922;
+      --bg:     #0d1117;
+      --bg2:    #161b22;
+      --bg3:    #1c2330;
+      --border: #30363d;
+      --text:   #e6edf3;
+      --muted:  #8b949e;
+      --accent: #388bfd;
+      --up:     #3fb950;
+      --down:   #f85149;
+      --gold:   #d29922;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Sarabun', 'Noto Sans Thai', sans-serif; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Sarabun', sans-serif; }
 
     /* ── Header ── */
     #header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 20px; background: var(--bg2);
-      border-bottom: 1px solid var(--border); height: 52px; flex-shrink: 0;
+      padding: 8px 16px; background: var(--bg2);
+      border-bottom: 1px solid var(--border); height: 52px; flex-shrink: 0; gap: 10px;
     }
-    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .logo-badge {
       background: linear-gradient(135deg, #1a56db, #0e9f6e);
       color: #fff; font-weight: 700; font-size: 13px;
       padding: 4px 10px; border-radius: 6px; letter-spacing: 1px;
     }
-    .logo-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .logo-title { font-size: 15px; font-weight: 600; }
     .logo-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
-    .header-right { display: flex; align-items: center; gap: 14px; }
-    #last-update  { font-size: 12px; color: var(--muted); }
+    .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+    #last-update  { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    /* ── Toggle Mode Button ── */
+    .mode-toggle {
+      display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0;
+    }
+    .mode-btn {
+      padding: 4px 10px; background: transparent; color: var(--muted);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      border: none; font-family: inherit; transition: all .15s; white-space: nowrap;
+    }
+    .mode-btn.active { background: var(--accent); color: #fff; }
+    .mode-btn:hover:not(.active) { background: var(--bg3); color: var(--text); }
 
     /* ── Range Buttons ── */
-    .range-bar { display: flex; gap: 4px; }
+    .range-bar { display: flex; gap: 3px; flex-shrink: 0; }
     .range-btn {
-      padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border);
-      background: transparent; color: var(--muted); font-size: 12px;
-      cursor: pointer; transition: all .15s; font-family: inherit;
+      padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); font-size: 11px;
+      cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap;
     }
     .range-btn:hover { background: var(--bg3); color: var(--text); }
     .range-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
@@ -57,41 +69,38 @@
 
     /* ── Sidebar ── */
     #sidebar {
-      width: 210px; flex-shrink: 0; background: var(--bg2);
+      width: 200px; flex-shrink: 0; background: var(--bg2);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column; overflow: hidden;
     }
     .sidebar-header {
-      padding: 10px 14px 6px; font-size: 11px; font-weight: 700;
+      padding: 8px 12px 6px; font-size: 10px; font-weight: 700;
       color: var(--muted); letter-spacing: .8px; text-transform: uppercase;
       border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-    #plan-list { flex: 1; overflow-y: auto; padding: 6px 0; }
-    #plan-list::-webkit-scrollbar { width: 4px; }
+    #plan-list { flex: 1; overflow-y: auto; padding: 4px 0; }
+    #plan-list::-webkit-scrollbar { width: 3px; }
     #plan-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
     .plan-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 7px 14px; cursor: pointer; transition: background .12s;
-      user-select: none; position: relative;
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; cursor: pointer; transition: background .12s;
+      user-select: none;
     }
     .plan-item:hover { background: var(--bg3); }
-    .plan-item.hidden { opacity: .35; }
+    .plan-item.hidden { opacity: .3; }
 
-    .plan-dot {
-      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-      box-shadow: 0 0 0 2px rgba(255,255,255,.08);
-    }
+    .plan-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .plan-info { flex: 1; min-width: 0; }
-    .plan-name { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .plan-nav  { font-size: 11px; color: var(--muted); margin-top: 1px; }
-    .plan-chg  { font-size: 10.5px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+    .plan-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .plan-nav  { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+    .plan-chg  { font-size: 10px; font-weight: 600; padding: 1px 4px; border-radius: 3px; flex-shrink: 0; }
     .plan-chg.up   { background: rgba(63,185,80,.15); color: var(--up); }
     .plan-chg.down { background: rgba(248,81,73,.15);  color: var(--down); }
     .plan-chg.flat { background: rgba(139,148,158,.1); color: var(--muted); }
 
     .sidebar-footer {
-      border-top: 1px solid var(--border); padding: 8px 14px;
+      border-top: 1px solid var(--border); padding: 8px 12px;
       display: flex; gap: 6px; flex-shrink: 0;
     }
     .sb-btn {
@@ -106,33 +115,50 @@
 
     /* ── Stats Bar ── */
     #stats-bar {
-      display: flex; gap: 0; border-bottom: 1px solid var(--border);
-      background: var(--bg2); flex-shrink: 0; overflow-x: auto;
+      display: flex; border-bottom: 1px solid var(--border);
+      background: var(--bg2); flex-shrink: 0;
+      overflow-x: auto; position: relative;
     }
-    #stats-bar::-webkit-scrollbar { height: 3px; }
+    #stats-bar::-webkit-scrollbar { height: 2px; }
     #stats-bar::-webkit-scrollbar-thumb { background: var(--border); }
-    #stats-bar .stat-card:first-child { display: none; }
+
+    /* fade right edge */
+    #stats-bar::after {
+      content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 32px;
+      background: linear-gradient(to right, transparent, var(--bg2));
+      pointer-events: none;
+    }
 
     .stat-card {
-      padding: 8px 18px; border-right: 1px solid var(--border);
-      min-width: 120px; flex-shrink: 0;
+      padding: 7px 14px; border-right: 1px solid var(--border);
+      min-width: 110px; flex-shrink: 0;
     }
-    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
-    .stat-val   { font-size: 15px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
-    .stat-sub   { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .stat-card:first-child { display: none; }
+    .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+    .stat-val   { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .stat-sub   { font-size: 9px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Normalize banner ── */
+    #normalize-banner {
+      display: none; align-items: center; justify-content: center; gap: 8px;
+      padding: 4px 12px; background: rgba(56,139,253,.12);
+      border-bottom: 1px solid rgba(56,139,253,.3);
+      font-size: 11px; color: var(--accent); flex-shrink: 0;
+    }
+    #normalize-banner.show { display: flex; }
 
     /* ── Main Chart ── */
-    #main-chart { flex: 1; padding: 8px 8px 0; min-height: 0; }
+    #main-chart { flex: 1; padding: 6px 6px 0; min-height: 0; overflow: hidden; }
+    #main-chart .apexcharts-canvas { overflow: hidden !important; }
 
     /* ── Tooltip Override ── */
-    .apexcharts-tooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; }
-    .apexcharts-tooltip-title { background: var(--bg2) !important; border-bottom: 1px solid var(--border) !important; color: var(--text) !important; font-size: 12px !important; }
-    .apexcharts-tooltip-series-group { padding: 4px 8px !important; }
-    .apexcharts-tooltip-text { color: var(--text) !important; font-size: 12px !important; }
+    .apexcharts-tooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; max-height: 280px; overflow-y: auto; }
+    .apexcharts-tooltip-title { background: var(--bg2) !important; border-bottom: 1px solid var(--border) !important; color: var(--text) !important; font-size: 11px !important; padding: 4px 8px !important; }
+    .apexcharts-tooltip-series-group { padding: 2px 8px !important; }
+    .apexcharts-tooltip-text { color: var(--text) !important; font-size: 11px !important; }
     .apexcharts-xaxistooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; color: var(--muted) !important; }
     .apexcharts-menu { background: var(--bg2) !important; border: 1px solid var(--border) !important; color: var(--text) !important; }
     .apexcharts-menu-item:hover { background: var(--bg3) !important; }
-    .apexcharts-gridline { stroke: var(--border) !important; }
 
     /* ── Loading ── */
     #loader {
@@ -163,17 +189,15 @@
 </head>
 <body>
 
-<!-- Loading overlay -->
 <div id="loader">
   <div class="spinner"></div>
   <div class="load-text">กำลังโหลดข้อมูล NAV...</div>
 </div>
 
-<!-- Error overlay -->
 <div id="error-msg">
   <div class="error-box">
     <div class="error-title">⚠️ ไม่สามารถโหลดข้อมูลได้</div>
-    <div class="error-body" id="error-text">กรุณาตรวจสอบชื่อ Sheet และลองใหม่อีกครั้ง</div>
+    <div class="error-body" id="error-text">กรุณาตรวจสอบการตั้งค่า</div>
   </div>
 </div>
 
@@ -188,10 +212,17 @@
   </div>
   <div class="header-right">
     <div id="last-update">กำลังโหลด...</div>
+
+    <!-- ✅ ปุ่ม Toggle NAV / % -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-nav" onclick="setMode('nav')">NAV จริง</button>
+      <button class="mode-btn" id="btn-pct" onclick="setMode('pct')">% เปลี่ยนแปลง</button>
+    </div>
+
     <div class="range-bar">
-      <button class="range-btn" onclick="setRange(1,'M',this)">1เดือน</button>
-      <button class="range-btn" onclick="setRange(3,'M',this)">3เดือน</button>
-      <button class="range-btn" onclick="setRange(6,'M',this)">6เดือน</button>
+      <button class="range-btn" onclick="setRange(1,'M',this)">1ด.</button>
+      <button class="range-btn" onclick="setRange(3,'M',this)">3ด.</button>
+      <button class="range-btn" onclick="setRange(6,'M',this)">6ด.</button>
       <button class="range-btn" onclick="setRange(1,'Y',this)">1ปี</button>
       <button class="range-btn" onclick="setRange(3,'Y',this)">3ปี</button>
       <button class="range-btn" onclick="setRange(5,'Y',this)">5ปี</button>
@@ -202,8 +233,6 @@
 
 <!-- Main Layout -->
 <div id="layout">
-
-  <!-- Sidebar -->
   <div id="sidebar">
     <div class="sidebar-header">แผนการลงทุน</div>
     <div id="plan-list"></div>
@@ -213,9 +242,7 @@
     </div>
   </div>
 
-  <!-- Chart Area -->
   <div id="chart-wrap">
-
     <!-- Stats bar -->
     <div id="stats-bar">
       <div class="stat-card">
@@ -228,7 +255,7 @@
         <div class="stat-val" id="s-end">—</div>
         <div class="stat-sub">วันทำการล่าสุด</div>
       </div>
-      <div class="stat-card" id="s-highlight-card">
+      <div class="stat-card">
         <div class="stat-label" id="s-plan-label">—</div>
         <div class="stat-val" id="s-plan-nav">—</div>
         <div class="stat-sub" id="s-plan-chg">—</div>
@@ -240,18 +267,18 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">ดีสุดวันนี้</div>
-        <div class="stat-val" id="s-best-name" style="font-size:13px">—</div>
+        <div class="stat-val" id="s-best-name" style="font-size:12px">—</div>
         <div class="stat-sub" id="s-best-chg">—</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">แย่สุดวันนี้</div>
-        <div class="stat-val" id="s-worst-name" style="font-size:13px">—</div>
+        <div class="stat-val" id="s-worst-name" style="font-size:12px">—</div>
         <div class="stat-sub" id="s-worst-chg">—</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">YTD (ต้นปี)</div>
         <div class="stat-val" id="s-ytd">—</div>
-        <div class="stat-sub" id="s-ytd-sub">แผนหลัก</div>
+        <div class="stat-sub" id="s-ytd-sub">—</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">High / Low (ช่วงนี้)</div>
@@ -260,15 +287,18 @@
       </div>
     </div>
 
-    <!-- Chart -->
-    <div id="main-chart"></div>
+    <!-- Normalize banner -->
+    <div id="normalize-banner">
+      📊 โหมด % เปลี่ยนแปลง — ทุกแผนเริ่มต้นที่ 0% จากวันแรกในช่วงที่เลือก
+    </div>
 
+    <div id="main-chart"></div>
   </div>
 </div>
 
 <script>
 // ─────────────────────────────────────────
-// *** แก้ URL ตรงนี้ให้ตรงกับ GAS Web App ของคุณ ***
+// *** แก้ URL ตรงนี้ ***
 // ─────────────────────────────────────────
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxCFKb8rubtldDl_p8LC47fPXKLSuskAMtV5PiIfVRz7J8D3xy1XboikkUDnh82V_FW/exec?action=data";
 
@@ -278,19 +308,17 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxCFKb8rubtldDl_p8LC47f
 let allData  = null;
 let chart    = null;
 let hidden   = new Set();
-let curRange = { n: 0, unit: 'ALL' };
+let curRange = { n: 6, unit: 'M' };
+let chartMode = 'nav'; // 'nav' | 'pct'
 
 // ─────────────────────────────────────────
-// Init — ดึงข้อมูลจาก GAS API แทน google.script.run
+// Init
 // ─────────────────────────────────────────
 window.addEventListener('load', () => {
   fetch(GAS_URL)
-    .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    })
+    .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
     .then(onDataLoaded)
-    .catch(e => onError({ message: 'โหลดข้อมูลไม่สำเร็จ: ' + e.message }));
+    .catch(e => showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message));
 });
 
 function onDataLoaded(data) {
@@ -304,14 +332,76 @@ function onDataLoaded(data) {
   setTimeout(() => document.getElementById('loader').style.display = 'none', 400);
 }
 
-function onError(e) {
-  showError(e.message || 'เกิดข้อผิดพลาด');
-}
-
 function showError(msg) {
   document.getElementById('loader').style.display = 'none';
   document.getElementById('error-text').textContent = msg;
   document.getElementById('error-msg').style.display = 'flex';
+}
+
+// ─────────────────────────────────────────
+// Mode Toggle — NAV จริง / % เปลี่ยนแปลง
+// ─────────────────────────────────────────
+function setMode(mode) {
+  chartMode = mode;
+  document.getElementById('btn-nav').classList.toggle('active', mode === 'nav');
+  document.getElementById('btn-pct').classList.toggle('active', mode === 'pct');
+  document.getElementById('normalize-banner').classList.toggle('show', mode === 'pct');
+
+  if (!chart || !allData) return;
+  rebuildSeries();
+  updateHighLow();
+}
+
+// ─────────────────────────────────────────
+// สร้าง series ตาม mode + range
+// ─────────────────────────────────────────
+function getVisibleDateRange() {
+  const lastDate = new Date(allData.dates[allData.dates.length - 1]);
+  if (curRange.unit === 'ALL') return { min: null, max: lastDate };
+
+  const minDate = new Date(lastDate);
+  if (curRange.unit === 'M') minDate.setMonth(minDate.getMonth() - curRange.n);
+  if (curRange.unit === 'Y') minDate.setFullYear(minDate.getFullYear() - curRange.n);
+  return { min: minDate, max: lastDate };
+}
+
+function buildSeriesData() {
+  const { min } = getVisibleDateRange();
+
+  return allData.plans.map(plan => {
+    let data = plan.data;
+
+    if (chartMode === 'pct') {
+      // หา base value = ค่าแรกในช่วงที่มองเห็น
+      let baseVal = null;
+      for (let i = 0; i < allData.dates.length; i++) {
+        const ts = new Date(allData.dates[i]);
+        if (min && ts < min) continue;
+        if (data[i] !== null) { baseVal = data[i]; break; }
+      }
+      if (!baseVal) {
+        // fallback: ค่าแรกที่ไม่ null
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] !== null) { baseVal = data[i]; break; }
+        }
+      }
+      data = data.map(v => v !== null && baseVal ? parseFloat(((v - baseVal) / baseVal * 100).toFixed(4)) : null);
+    }
+
+    return { name: plan.label, data, color: plan.color };
+  });
+}
+
+function rebuildSeries() {
+  if (!chart) return;
+  const series = buildSeriesData();
+  chart.updateSeries(series, false);
+
+  // re-apply hidden
+  allData.plans.forEach(p => {
+    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    else chart.showSeries(p.label);
+  });
 }
 
 // ─────────────────────────────────────────
@@ -320,12 +410,11 @@ function showError(msg) {
 function buildSidebar() {
   const list = document.getElementById('plan-list');
   list.innerHTML = '';
-
   allData.plans.forEach((plan, i) => {
     const lastVal = getLastValue(plan.data);
     const prevVal = getPrevValue(plan.data);
     const chg     = (lastVal && prevVal) ? ((lastVal - prevVal) / prevVal * 100) : 0;
-    const chgCls  = chg > 0 ? 'up' : chg < 0 ? 'down' : 'flat';
+    const chgCls  = chg > 0.001 ? 'up' : chg < -0.001 ? 'down' : 'flat';
     const chgTxt  = chg > 0 ? `+${chg.toFixed(2)}%` : `${chg.toFixed(2)}%`;
 
     const el = document.createElement('div');
@@ -364,15 +453,8 @@ function togglePlan(idx, key) {
 function toggleAll(show) {
   allData.plans.forEach((p, i) => {
     const el = document.getElementById(`pi-${i}`);
-    if (show) {
-      hidden.delete(p.key);
-      el.classList.remove('hidden');
-      chart.showSeries(p.label);
-    } else {
-      hidden.add(p.key);
-      el.classList.add('hidden');
-      chart.hideSeries(p.label);
-    }
+    if (show) { hidden.delete(p.key); el.classList.remove('hidden'); chart.showSeries(p.label); }
+    else       { hidden.add(p.key);   el.classList.add('hidden');    chart.hideSeries(p.label); }
   });
   updateVisibleCount();
   updateBestWorst();
@@ -381,7 +463,7 @@ function toggleAll(show) {
 }
 
 function updateVisibleCount() {
-  const vis = allData.plans.length - hidden.size;
+  const vis = allData.plans.filter(p => !hidden.has(p.key)).length;
   document.getElementById('s-count').textContent = vis;
 }
 
@@ -389,48 +471,41 @@ function updateVisibleCount() {
 // Chart
 // ─────────────────────────────────────────
 function buildChart() {
-  const series = allData.plans.map(plan => ({
-    name:  plan.label,
-    data:  plan.data,
-    color: plan.color
-  }));
+  const series = buildSeriesData();
 
   const options = {
     series,
     chart: {
-      type:       'line',
-      height:     '100%',
-      background: 'transparent',
+      type: 'line', height: '100%', background: 'transparent',
       animations: { enabled: false },
       redrawOnParentResize: false,
       redrawOnWindowResize: false,
-      toolbar: {
-        show: true,
-        tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
-      },
-      zoom:      { enabled: true, type: 'x' },
-      pan:       { enabled: true, type: 'xy' },
-      selection: { enabled: true },
+      toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true } },
+      zoom: { enabled: true, type: 'x' },
       events: {
         dataPointMouseEnter: function(e, ctx, cfg) {
           const p = allData.plans[cfg.seriesIndex];
           if (!p) return;
           const v = cfg.w.globals.series[cfg.seriesIndex][cfg.dataPointIndex];
           document.getElementById('s-plan-label').textContent = p.label;
-          document.getElementById('s-plan-nav').textContent   = v ? v.toFixed(4) : '—';
-          document.getElementById('s-plan-nav').style.color   = p.color;
-        }
+          if (chartMode === 'pct') {
+            document.getElementById('s-plan-nav').textContent = v !== null ? `${v >= 0 ? '+' : ''}${v.toFixed(2)}%` : '—';
+          } else {
+            document.getElementById('s-plan-nav').textContent = v ? v.toFixed(4) : '—';
+          }
+          document.getElementById('s-plan-nav').style.color = p.color;
+        },
+        zoomed: function() { setTimeout(updateHighLow, 300); },
+        scrolled: function() { setTimeout(updateHighLow, 300); }
       }
     },
-    stroke:  { curve: 'straight', width: 1.8 },
-    colors:  allData.plans.map(p => p.color),
+    stroke: { curve: 'straight', width: 1.8 },
+    colors: allData.plans.map(p => p.color),
     xaxis: {
-      categories: allData.dates,
-      type:       'datetime',
-      tickAmount: 10,
+      categories: allData.dates, type: 'datetime', tickAmount: 10,
       labels: {
         style: { colors: '#8b949e', fontSize: '11px' },
-        datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM', hour: 'HH:mm' }
+        datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM' }
       },
       axisBorder: { color: '#30363d' },
       axisTicks:  { color: '#30363d' },
@@ -438,29 +513,34 @@ function buildChart() {
     },
     yaxis: {
       labels: {
-        style:     { colors: '#8b949e', fontSize: '11px' },
-        formatter: v => v ? v.toFixed(2) : ''
+        style: { colors: '#8b949e', fontSize: '11px' },
+        formatter: v => {
+          if (v === null || v === undefined) return '';
+          if (chartMode === 'pct') return `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
+          return v.toFixed(2);
+        }
       },
       tooltip: { enabled: true }
     },
-    grid: {
-      borderColor:     '#21262d',
-      strokeDashArray: 3,
-      xaxis: { lines: { show: false } }
-    },
+    grid: { borderColor: '#21262d', strokeDashArray: 3, xaxis: { lines: { show: false } } },
     tooltip: {
-      theme:  'dark',
-      shared: false,
+      theme: 'dark',
+      // ✅ shared: true — เห็นทุกแผนพร้อมกัน
+      shared: true,
+      intersect: false,
       x: { format: 'dd MMM yyyy' },
-      y: { formatter: v => v ? v.toFixed(4) : '—' }
+      y: {
+        formatter: v => {
+          if (v === null || v === undefined) return '—';
+          if (chartMode === 'pct') return `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
+          return v.toFixed(4);
+        }
+      }
     },
     legend:     { show: false },
     dataLabels: { enabled: false },
     markers:    { size: 0, hover: { sizeOffset: 3 } },
-    noData: {
-      text:  'ไม่พบข้อมูล',
-      style: { color: '#8b949e', fontSize: '14px' }
-    }
+    noData:     { text: 'ไม่พบข้อมูล', style: { color: '#8b949e', fontSize: '14px' } }
   };
 
   chart = new ApexCharts(document.getElementById('main-chart'), options);
@@ -471,7 +551,7 @@ function buildChart() {
 }
 
 // ─────────────────────────────────────────
-// Date range filter
+// Range filter
 // ─────────────────────────────────────────
 function setRange(n, unit, btn) {
   curRange = { n, unit };
@@ -479,21 +559,17 @@ function setRange(n, unit, btn) {
   btn.classList.add('active');
 
   if (unit === 'ALL' || !chart) {
-    chart.updateOptions({
-      xaxis: { type: 'datetime', min: undefined, max: undefined }
-    });
-    setTimeout(updateHighLow, 300);
-    return;
+    chart.updateOptions({ xaxis: { type: 'datetime', min: undefined, max: undefined } });
+  } else {
+    const now = new Date(allData.dates[allData.dates.length - 1]);
+    const minDt = new Date(now);
+    if (unit === 'M') minDt.setMonth(minDt.getMonth() - n);
+    if (unit === 'Y') minDt.setFullYear(minDt.getFullYear() - n);
+    chart.updateOptions({ xaxis: { type: 'datetime', min: minDt.getTime(), max: now.getTime() } });
   }
 
-  const now   = new Date(allData.dates[allData.dates.length - 1]);
-  const minDt = new Date(now);
-  if (unit === 'M') minDt.setMonth(minDt.getMonth() - n);
-  if (unit === 'Y') minDt.setFullYear(minDt.getFullYear() - n);
-
-  chart.updateOptions({
-    xaxis: { type: 'datetime', min: minDt.getTime(), max: now.getTime() }
-  });
+  // rebuild series ใหม่เพื่อ normalize จากต้นช่วงใหม่
+  if (chartMode === 'pct') rebuildSeries();
   setTimeout(updateHighLow, 300);
 }
 
@@ -504,26 +580,23 @@ const fmtDate = s => {
   if (!s) return '—';
   let d;
   if (typeof s === 'string' && s.includes('/')) {
-    const parts = s.split('/');
-    d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-  } else {
-    d = new Date(s);
-  }
+    const p = s.split('/');
+    d = new Date(`${p[2]}-${p[1]}-${p[0]}`);
+  } else d = new Date(s);
   if (isNaN(d)) return s;
   return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 function updateStats() {
-  document.getElementById('s-start').textContent      = fmtDate(allData.startDate);
-  document.getElementById('s-end').textContent        = fmtDate(allData.endDate);
-  document.getElementById('s-rows').textContent       = `${allData.totalRows.toLocaleString()} วันทำการ`;
-  document.getElementById('s-count').textContent      = allData.plans.length;
-  document.getElementById('last-update').textContent  = `อัปเดต: ${fmtDate(allData.endDate)}`;
+  document.getElementById('s-start').textContent     = fmtDate(allData.startDate);
+  document.getElementById('s-end').textContent       = fmtDate(allData.endDate);
+  document.getElementById('s-rows').textContent      = `${allData.totalRows.toLocaleString()} วันทำการ`;
+  document.getElementById('s-count').textContent     = 0;
+  document.getElementById('last-update').textContent = `อัปเดต: ${fmtDate(allData.endDate)}`;
 
   const main = allData.plans.find(p => p.label === 'แผนหลัก') || allData.plans[0];
   if (main) {
-    const v   = getLastValue(main.data);
-    const p   = getPrevValue(main.data);
+    const v = getLastValue(main.data), p = getPrevValue(main.data);
     const chg = (v && p) ? ((v - p) / p * 100) : 0;
     document.getElementById('s-plan-label').textContent = main.label;
     document.getElementById('s-plan-nav').textContent   = v ? v.toFixed(4) : '—';
@@ -532,15 +605,13 @@ function updateStats() {
     document.getElementById('s-plan-chg').style.color   = chg >= 0 ? '#3fb950' : '#f85149';
   }
 
-  const now    = new Date(allData.dates[allData.dates.length - 1]);
+  // default 6 เดือน
+  const now = new Date(allData.dates[allData.dates.length - 1]);
   const sixAgo = new Date(now);
   sixAgo.setMonth(sixAgo.getMonth() - 6);
-  chart.updateOptions({
-    xaxis: { type: 'datetime', min: sixAgo.getTime(), max: now.getTime() }
-  });
-
+  chart.updateOptions({ xaxis: { type: 'datetime', min: sixAgo.getTime(), max: now.getTime() } });
   document.querySelectorAll('.range-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent === '6เดือน');
+    b.classList.toggle('active', b.textContent === '6ด.');
   });
 
   updateBestWorst();
@@ -548,53 +619,50 @@ function updateStats() {
   setTimeout(updateHighLow, 500);
 }
 
-// ─────────────────────────────────────────
-// Best / Worst วันนี้
-// ─────────────────────────────────────────
 function updateBestWorst() {
   let best = null, worst = null;
-
   allData.plans.forEach(plan => {
     if (hidden.has(plan.key)) return;
-    const last = getLastValue(plan.data);
-    const prev = getPrevValue(plan.data);
+    const last = getLastValue(plan.data), prev = getPrevValue(plan.data);
     if (!last || !prev) return;
     const chgPct = (last - prev) / prev * 100;
     if (!best  || chgPct > best.chg)  best  = { label: plan.label, color: plan.color, chg: chgPct };
     if (!worst || chgPct < worst.chg) worst = { label: plan.label, color: plan.color, chg: chgPct };
   });
 
-  if (best) {
+  const visCount = allData.plans.filter(p => !hidden.has(p.key)).length;
+
+  if (best && visCount >= 1) {
     document.getElementById('s-best-name').textContent = best.label;
     document.getElementById('s-best-name').style.color = best.color;
     document.getElementById('s-best-chg').textContent  = `+${best.chg.toFixed(2)}%`;
     document.getElementById('s-best-chg').style.color  = '#3fb950';
   }
-  if (worst) {
+  // ✅ แสดง worst เฉพาะตอนที่มีมากกว่า 1 แผน
+  if (worst && visCount >= 2 && worst.label !== (best && best.label)) {
     document.getElementById('s-worst-name').textContent = worst.label;
     document.getElementById('s-worst-name').style.color = worst.color;
     document.getElementById('s-worst-chg').textContent  = `${worst.chg.toFixed(2)}%`;
     document.getElementById('s-worst-chg').style.color  = worst.chg < 0 ? '#f85149' : '#3fb950';
+  } else if (visCount < 2) {
+    document.getElementById('s-worst-name').textContent = '—';
+    document.getElementById('s-worst-name').style.color = '';
+    document.getElementById('s-worst-chg').textContent  = 'ต้องการ ≥ 2 แผน';
+    document.getElementById('s-worst-chg').style.color  = '';
   }
 }
 
-// ─────────────────────────────────────────
-// YTD
-// ─────────────────────────────────────────
 function updateYTD() {
   const thisYear = new Date(allData.dates[allData.dates.length - 1]).getFullYear();
   const janFirst = `${thisYear}-01-01`;
 
   let target = allData.plans.find(p => p.label === 'แผนหลัก' && !hidden.has(p.key))
             || allData.plans.find(p => !hidden.has(p.key));
-  if (!target) return;
+  if (!target) { document.getElementById('s-ytd').textContent = '—'; return; }
 
   let startVal = null;
   for (let i = 0; i < allData.dates.length; i++) {
-    if (allData.dates[i] >= janFirst && target.data[i] !== null) {
-      startVal = target.data[i];
-      break;
-    }
+    if (allData.dates[i] >= janFirst && target.data[i] !== null) { startVal = target.data[i]; break; }
   }
   const endVal = getLastValue(target.data);
   if (!startVal || !endVal) return;
@@ -605,14 +673,10 @@ function updateYTD() {
   document.getElementById('s-ytd-sub').textContent = target.label;
 }
 
-// ─────────────────────────────────────────
-// High / Low ในช่วงที่กราฟแสดง
-// ─────────────────────────────────────────
 function updateHighLow() {
   if (!chart) return;
   const minTs = chart.w.globals.minX;
   const maxTs = chart.w.globals.maxX;
-
   let high = -Infinity, low = Infinity;
 
   allData.plans.forEach(plan => {
@@ -628,9 +692,11 @@ function updateHighLow() {
   });
 
   if (high !== -Infinity) {
-    document.getElementById('s-high').textContent = `▲ ${high.toFixed(4)}`;
+    const suffix = chartMode === 'pct' ? '%' : '';
+    const fmt    = chartMode === 'pct' ? (v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`) : (v => v.toFixed(4));
+    document.getElementById('s-high').textContent = `▲ ${fmt(high)}`;
     document.getElementById('s-high').style.color = '#3fb950';
-    document.getElementById('s-low').textContent  = `▼ ${low.toFixed(4)}`;
+    document.getElementById('s-low').textContent  = `▼ ${fmt(low)}`;
     document.getElementById('s-low').style.color  = '#f85149';
   }
 }
@@ -639,16 +705,13 @@ function updateHighLow() {
 // Helpers
 // ─────────────────────────────────────────
 function getLastValue(arr) {
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (arr[i] !== null) return arr[i];
-  }
+  for (let i = arr.length - 1; i >= 0; i--) if (arr[i] !== null) return arr[i];
   return null;
 }
-
 function getPrevValue(arr) {
   let found = 0;
   for (let i = arr.length - 1; i >= 0; i--) {
-    if (arr[i] !== null) { if (++found === 2) return arr[i]; }
+    if (arr[i] !== null && ++found === 2) return arr[i];
   }
   return null;
 }

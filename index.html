@@ -708,7 +708,8 @@ function loadCmpFromStorage(ab) {
 }
   
 function buildCmpPanel(ab) {
-  const wrap = document.getElementById(`cmp-${ab.toLowerCase()}-wrap`);
+  const portLabel = ab === 'A' ? 'พอร์ตเดิม ก่อนเปลี่ยน' : 'พอร์ตใหม่ หลังเปลี่ยน';
+  //const wrap = document.getElementById(`cmp-${ab.toLowerCase()}-wrap`);
   wrap.innerHTML = `
     <div style="font-size:11px; font-weight:700; color:#388bfd; margin-bottom:8px;">Port ${ab}</div>
     <div id="cmp-${ab.toLowerCase()}-rows"></div>

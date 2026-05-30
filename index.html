@@ -668,13 +668,45 @@ function getPrevValue(arr) {
 // ─────────────────────────────────────────
 function openCmp() {
   buildCmpPanel('A'); buildCmpPanel('B');
+  loadCmpFromStorage('a');  // ✅ โหลดค่าเดิม
+  loadCmpFromStorage('b');  // ✅ โหลดค่าเดิม
   document.getElementById('cmp-result').style.display = 'none';
   document.getElementById('cmp-modal').style.display  = 'flex';
 }
 function closeCmp() {
   document.getElementById('cmp-modal').style.display = 'none';
 }
+function saveCmpToStorage() {
+  const getData = ab => {
+    const rows = document.getElementById(`cmp-${ab}-rows`).children;
+    return [...rows].map(row => ({
+      key: row.querySelector('select').value,
+      pct: row.querySelector('input').value
+    }));
+  };
+  localStorage.setItem('gpf_cmp', JSON.stringify({
+    a: getData('a'),
+    b: getData('b')
+  }));
+}
 
+function loadCmpFromStorage(ab) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('gpf_cmp'));
+    if (!saved || !saved[ab] || saved[ab].length === 0) return false;
+    const rows = document.getElementById(`cmp-${ab}-rows`);
+    rows.innerHTML = '';
+    saved[ab].forEach(item => {
+      addCmpRow(ab.toUpperCase());
+      const lastRow = rows.lastElementChild;
+      lastRow.querySelector('select').value = item.key;
+      lastRow.querySelector('input').value  = item.pct;
+    });
+    updateCmpSum(ab.toUpperCase());
+    return true;
+  } catch { return false; }
+}
+  
 function buildCmpPanel(ab) {
   const wrap = document.getElementById(`cmp-${ab.toLowerCase()}-wrap`);
   wrap.innerHTML = `
@@ -758,6 +790,8 @@ function calcCmp() {
   const retB = getPortfolioReturn(document.getElementById('cmp-b-rows').children);
   if (retA === null || retB === null) { alert('ข้อมูลบางแผนไม่ครบในช่วงที่เลือก'); return; }
 
+  saveCmpToStorage(); // ✅ เพิ่มบรรทัดนี้
+  
   const diff   = retA - retB;
   const winner = diff > 0 ? 'A' : diff < 0 ? 'B' : null;
   const clrA   = retA >= 0 ? '#3fb950' : '#f85149';

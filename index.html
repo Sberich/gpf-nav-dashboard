@@ -366,28 +366,38 @@ function getVisibleDateRange() {
 }
 
 function buildSeriesData() {
-  const { min } = getVisibleDateRange();
+  // ✅ ดึง minX จากกราฟจริง ไม่ใช่คำนวณเอง
+  let minTs = null;
+  if (chart && chart.w.globals.minX) {
+    minTs = chart.w.globals.minX;
+  } else {
+    const { min } = getVisibleDateRange();
+    minTs = min ? min.getTime() : null;
+  }
 
   return allData.plans.map(plan => {
     let data = plan.data;
-
     if (chartMode === 'pct') {
-      // หา base value = ค่าแรกในช่วงที่มองเห็น
       let baseVal = null;
       for (let i = 0; i < allData.dates.length; i++) {
-        const ts = new Date(allData.dates[i]);
-        if (min && ts < min) continue;
-        if (data[i] !== null) { baseVal = data[i]; break; }
-      }
-      if (!baseVal) {
-        // fallback: ค่าแรกที่ไม่ null
-        for (let i = 0; i < data.length; i++) {
-          if (data[i] !== null) { baseVal = data[i]; break; }
+        const ts = new Date(allData.dates[i]).getTime();
+        if (minTs && ts < minTs) continue;  // ✅ ข้ามวันก่อนช่วง
+        if (data[i] !== null && data[i] > 0) { 
+          baseVal = data[i]; 
+          break; 
         }
       }
-      data = data.map(v => v !== null && baseVal ? parseFloat(((v - baseVal) / baseVal * 100).toFixed(4)) : null);
+      // fallback ถ้าไม่เจอในช่วง
+      if (!baseVal) {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] !== null && data[i] > 0) { baseVal = data[i]; break; }
+        }
+      }
+      data = data.map(v => v !== null && baseVal 
+        ? parseFloat(((v - baseVal) / baseVal * 100).toFixed(4)) 
+        : null
+      );
     }
-
     return { name: plan.label, data, color: plan.color };
   });
 }

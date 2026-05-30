@@ -205,6 +205,7 @@
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxCFKb8rubtldDl_p8LC47fPXKLSuskAMtV5PiIfVRz7J8D3xy1XboikkUDnh82V_FW/exec?action=data";
 
+let dateTimestamps = [];
 let allData   = null;
 let chart     = null;
 let hidden    = new Set();
@@ -224,6 +225,8 @@ window.addEventListener('load', () => {
 function onDataLoaded(data) {
   if (data.error) { showError(data.error); return; }
   allData = data;
+    // ✅ แปลง dates → timestamps ครั้งเดียว ไม่ต้องทำซ้ำใน getBaseValue
+  dateTimestamps = allData.dates.map(d => new Date(d).getTime());
   allData.plans.forEach(p => hidden.add(p.key));
   computeCurrentMinTs();
   buildSidebar();
@@ -260,13 +263,10 @@ function computeCurrentMinTs() {
 // → ค่าแรกที่ไม่ null และ >= currentMinTs
 // ─────────────────────────────────────────
 function getBaseValue(planData) {
-  // pass 1: หาจากช่วงที่มองเห็น
-  for (let i = 0; i < allData.dates.length; i++) {
-    const ts = new Date(allData.dates[i]).getTime();
-    if (ts < currentMinTs) continue;
+  for (let i = 0; i < dateTimestamps.length; i++) {
+    if (dateTimestamps[i] < currentMinTs) continue; // ✅ ไม่ต้อง new Date()
     if (planData[i] !== null && planData[i] > 0) return planData[i];
   }
-  // pass 2: fallback = ค่าแรกที่ไม่ null ทั้งหมด
   for (let i = 0; i < planData.length; i++) {
     if (planData[i] !== null && planData[i] > 0) return planData[i];
   }
@@ -280,7 +280,10 @@ function normalizePlan(planData) {
   if (chartMode === 'nav') return planData;
   const base = getBaseValue(planData);
   if (!base) return planData.map(() => null);
-  return planData.map(v => v !== null ? parseFloat(((v - base) / base * 100).toFixed(4)) : null);
+  //return planData.map(v => v !== null ? parseFloat(((v - base) / base * 100).toFixed(4)) : null);
+  return planData.map(v => v !== null
+  ? (v - base) / base * 100   // ✅ ตัด toFixed+parseFloat ออก กราฟไม่ได้ต้องการความแม่นขนาดนั้น
+  : null);
 }
 
 // ─────────────────────────────────────────
@@ -833,7 +836,7 @@ function calcCmp() {
 <div id="cmp-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:900; align-items:center; justify-content:center;">
   <div style="background:#161b22; border:1px solid #30363d; border-radius:12px; padding:20px; width:560px; max-width:95vw; max-height:90vh; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <div style="font-size:14px; font-weight:700;">⚖️ เปรียบเทียบ Portfolio</div>
+      <div style="font-size:14px; font-weight:700;">⚖️ เปรียบเทียบ แผนการลงทุน</div>
       <button onclick="closeCmp()" style="background:none; border:none; color:#8b949e; font-size:18px; cursor:pointer;">✕</button>
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">

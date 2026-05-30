@@ -373,14 +373,11 @@ function buildSeriesData() {
 
 function rebuildSeries() {
   if (!chart) return;
-  // รวม series + visibility เป็น call เดียว ไม่ render ซ้ำ
-  const series = buildSeriesData().map(s => {
-    const plan = allData.plans.find(p => p.label === s.name);
-    return hidden.has(plan?.key)
-      ? { ...s, data: [] }   // ซ่อนโดยส่ง data ว่าง แทน hideSeries()
-      : s;
+  chart.updateSeries(buildSeriesData(), false);
+  allData.plans.forEach(p => {
+    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    else chart.showSeries(p.label);
   });
-  chart.updateSeries(series, false);
 }
 
 // ─────────────────────────────────────────
@@ -485,16 +482,17 @@ function setRange(n, unit, btn) {
     xMax = now.getTime();
   }
 
-  // ✅ รวม xaxis + series เป็น call เดียว → render แค่ 1 ครั้ง
-  const series = buildSeriesData().map(s => {
-    const plan = allData.plans.find(p => p.label === s.name);
-    return hidden.has(plan?.key) ? { ...s, data: [] } : s;
-  });
+  // ✅ รวม xaxis + series เป็น call เดียว ไม่เรียก rebuildSeries() แยก
   chart.updateOptions(
-    { xaxis: { type: 'datetime', min: xMin, max: xMax }, series },
-    false,   // redrawPaths = false (เร็วขึ้น)
-    false    // animate = false
+    { xaxis: { type: 'datetime', min: xMin, max: xMax }, series: buildSeriesData() },
+    false, false
   );
+
+  // ✅ re-apply hidden state หลัง updateOptions เสร็จ (1 batch ของ hideSeries ยังโอเค)
+  allData.plans.forEach(p => {
+    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    else chart.showSeries(p.label);
+  });
 
   updateHighLightCard();
   setTimeout(updateHighLow, 300);

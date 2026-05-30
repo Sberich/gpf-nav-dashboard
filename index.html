@@ -432,7 +432,7 @@ function buildChart() {
         zoomed()   { setTimeout(updateHighLow, 300); },
         scrolled() { setTimeout(updateHighLow, 300); }
       },
-    
+    },
     stroke:  { curve: 'straight', width: 1.8 },
     colors:  allData.plans.map(p => p.color),
     xaxis: {

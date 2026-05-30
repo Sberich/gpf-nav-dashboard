@@ -373,12 +373,14 @@ function buildSeriesData() {
 
 function rebuildSeries() {
   if (!chart) return;
-  chart.updateSeries(buildSeriesData(), false);
-  // re-apply hidden state
-  allData.plans.forEach(p => {
-    if (hidden.has(p.key)) chart.hideSeries(p.label);
-    else chart.showSeries(p.label);
+  // รวม series + visibility เป็น call เดียว ไม่ render ซ้ำ
+  const series = buildSeriesData().map(s => {
+    const plan = allData.plans.find(p => p.label === s.name);
+    return hidden.has(plan?.key)
+      ? { ...s, data: [] }   // ซ่อนโดยส่ง data ว่าง แทน hideSeries()
+      : s;
   });
+  chart.updateSeries(series, false);
 }
 
 // ─────────────────────────────────────────
@@ -471,27 +473,34 @@ function setRange(n, unit, btn) {
   curRange = { n, unit };
   document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-
-  computeCurrentMinTs(); // ✅ คำนวณ minTs ใหม่ก่อน
+  computeCurrentMinTs();
 
   const now = new Date(allData.dates[allData.dates.length - 1]);
-  if (unit === 'ALL') {
-    chart.updateOptions({ xaxis: { type: 'datetime', min: undefined, max: undefined } });
-  } else {
+  let xMin, xMax;
+  if (unit !== 'ALL') {
     const minDt = new Date(now);
     if (unit === 'M') minDt.setMonth(minDt.getMonth() - n);
     if (unit === 'Y') minDt.setFullYear(minDt.getFullYear() - n);
-    chart.updateOptions({ xaxis: { type: 'datetime', min: minDt.getTime(), max: now.getTime() } });
+    xMin = minDt.getTime();
+    xMax = now.getTime();
   }
 
-  // rebuild series ใหม่ด้วย base ใหม่ (สำคัญสำหรับ pct mode)
-  rebuildSeries();
+  // ✅ รวม xaxis + series เป็น call เดียว → render แค่ 1 ครั้ง
+  const series = buildSeriesData().map(s => {
+    const plan = allData.plans.find(p => p.label === s.name);
+    return hidden.has(plan?.key) ? { ...s, data: [] } : s;
+  });
+  chart.updateOptions(
+    { xaxis: { type: 'datetime', min: xMin, max: xMax }, series },
+    false,   // redrawPaths = false (เร็วขึ้น)
+    false    // animate = false
+  );
+
   updateHighLightCard();
   setTimeout(updateHighLow, 300);
-  updateBestWorst(); // ✅ เพิ่ม
-  updateYTD();       // ✅ เพิ่ม
+  updateBestWorst();
+  updateYTD();
 }
-
 // ─────────────────────────────────────────
 // Stats
 // ─────────────────────────────────────────

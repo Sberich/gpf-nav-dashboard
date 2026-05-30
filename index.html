@@ -19,12 +19,10 @@
       --accent: #388bfd;
       --up:     #3fb950;
       --down:   #f85149;
-      --gold:   #d29922;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Sarabun', sans-serif; }
 
-    /* ── Header ── */
     #header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 8px 16px; background: var(--bg2);
@@ -38,14 +36,10 @@
     }
     .logo-title { font-size: 15px; font-weight: 600; }
     .logo-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
-
     .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
     #last-update  { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
-    /* ── Toggle Mode Button ── */
-    .mode-toggle {
-      display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0;
-    }
+    .mode-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
     .mode-btn {
       padding: 4px 10px; background: transparent; color: var(--muted);
       font-size: 11px; font-weight: 600; cursor: pointer;
@@ -54,7 +48,6 @@
     .mode-btn.active { background: var(--accent); color: #fff; }
     .mode-btn:hover:not(.active) { background: var(--bg3); color: var(--text); }
 
-    /* ── Range Buttons ── */
     .range-bar { display: flex; gap: 3px; flex-shrink: 0; }
     .range-btn {
       padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border);
@@ -64,10 +57,8 @@
     .range-btn:hover { background: var(--bg3); color: var(--text); }
     .range-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
 
-    /* ── Layout ── */
     #layout { display: flex; height: calc(100dvh - 52px); overflow: hidden; }
 
-    /* ── Sidebar ── */
     #sidebar {
       width: 200px; flex-shrink: 0; background: var(--bg2);
       border-right: 1px solid var(--border);
@@ -84,13 +75,11 @@
 
     .plan-item {
       display: flex; align-items: center; gap: 8px;
-      padding: 6px 12px; cursor: pointer; transition: background .12s;
-      user-select: none;
+      padding: 6px 12px; cursor: pointer; transition: background .12s; user-select: none;
     }
     .plan-item:hover { background: var(--bg3); }
     .plan-item.hidden { opacity: .3; }
-
-    .plan-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .plan-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .plan-info { flex: 1; min-width: 0; }
     .plan-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .plan-nav  { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
@@ -99,10 +88,7 @@
     .plan-chg.down { background: rgba(248,81,73,.15);  color: var(--down); }
     .plan-chg.flat { background: rgba(139,148,158,.1); color: var(--muted); }
 
-    .sidebar-footer {
-      border-top: 1px solid var(--border); padding: 8px 12px;
-      display: flex; gap: 6px; flex-shrink: 0;
-    }
+    .sidebar-footer { border-top: 1px solid var(--border); padding: 8px 12px; display: flex; gap: 6px; flex-shrink: 0; }
     .sb-btn {
       flex: 1; padding: 5px; border-radius: 5px; border: 1px solid var(--border);
       background: var(--bg3); color: var(--muted); font-size: 11px;
@@ -110,35 +96,24 @@
     }
     .sb-btn:hover { color: var(--text); border-color: var(--accent); }
 
-    /* ── Chart Area ── */
     #chart-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
-    /* ── Stats Bar ── */
     #stats-bar {
       display: flex; border-bottom: 1px solid var(--border);
-      background: var(--bg2); flex-shrink: 0;
-      overflow-x: auto; position: relative;
+      background: var(--bg2); flex-shrink: 0; overflow-x: auto; position: relative;
     }
     #stats-bar::-webkit-scrollbar { height: 2px; }
     #stats-bar::-webkit-scrollbar-thumb { background: var(--border); }
-
-    /* fade right edge */
     #stats-bar::after {
       content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 32px;
-      background: linear-gradient(to right, transparent, var(--bg2));
-      pointer-events: none;
+      background: linear-gradient(to right, transparent, var(--bg2)); pointer-events: none;
     }
-
-    .stat-card {
-      padding: 7px 14px; border-right: 1px solid var(--border);
-      min-width: 110px; flex-shrink: 0;
-    }
+    .stat-card { padding: 7px 14px; border-right: 1px solid var(--border); min-width: 115px; flex-shrink: 0; }
     .stat-card:first-child { display: none; }
     .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
     .stat-val   { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .stat-sub   { font-size: 9px; color: var(--muted); margin-top: 1px; }
 
-    /* ── Normalize banner ── */
     #normalize-banner {
       display: none; align-items: center; justify-content: center; gap: 8px;
       padding: 4px 12px; background: rgba(56,139,253,.12);
@@ -147,12 +122,9 @@
     }
     #normalize-banner.show { display: flex; }
 
-    /* ── Main Chart ── */
     #main-chart { flex: 1; padding: 6px 6px 0; min-height: 0; overflow: hidden; }
-    #main-chart .apexcharts-canvas { overflow: hidden !important; }
 
-    /* ── Tooltip Override ── */
-    .apexcharts-tooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; max-height: 280px; overflow-y: auto; }
+    .apexcharts-tooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; max-height: 300px; overflow-y: auto; }
     .apexcharts-tooltip-title { background: var(--bg2) !important; border-bottom: 1px solid var(--border) !important; color: var(--text) !important; font-size: 11px !important; padding: 4px 8px !important; }
     .apexcharts-tooltip-series-group { padding: 2px 8px !important; }
     .apexcharts-tooltip-text { color: var(--text) !important; font-size: 11px !important; }
@@ -160,65 +132,37 @@
     .apexcharts-menu { background: var(--bg2) !important; border: 1px solid var(--border) !important; color: var(--text) !important; }
     .apexcharts-menu-item:hover { background: var(--bg3) !important; }
 
-    /* ── Loading ── */
     #loader {
       position: fixed; inset: 0; background: var(--bg);
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
       z-index: 999; transition: opacity .4s;
     }
-    .spinner {
-      width: 42px; height: 42px; border-radius: 50%;
-      border: 3px solid var(--border); border-top-color: var(--accent);
-      animation: spin .8s linear infinite;
-    }
+    .spinner { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .load-text { color: var(--muted); font-size: 13px; }
 
-    /* ── Error ── */
-    #error-msg {
-      display: none; position: fixed; inset: 0; background: var(--bg);
-      align-items: center; justify-content: center; z-index: 998;
-    }
-    .error-box {
-      background: var(--bg2); border: 1px solid var(--down);
-      border-radius: 10px; padding: 28px 36px; text-align: center; max-width: 400px;
-    }
+    #error-msg { display: none; position: fixed; inset: 0; background: var(--bg); align-items: center; justify-content: center; z-index: 998; }
+    .error-box { background: var(--bg2); border: 1px solid var(--down); border-radius: 10px; padding: 28px 36px; text-align: center; max-width: 400px; }
     .error-title { font-size: 16px; font-weight: 600; color: var(--down); margin-bottom: 8px; }
     .error-body  { font-size: 13px; color: var(--muted); }
   </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="spinner"></div>
-  <div class="load-text">กำลังโหลดข้อมูล NAV...</div>
-</div>
+<div id="loader"><div class="spinner"></div><div class="load-text">กำลังโหลดข้อมูล NAV...</div></div>
+<div id="error-msg"><div class="error-box"><div class="error-title">⚠️ ไม่สามารถโหลดข้อมูลได้</div><div class="error-body" id="error-text">กรุณาตรวจสอบการตั้งค่า</div></div></div>
 
-<div id="error-msg">
-  <div class="error-box">
-    <div class="error-title">⚠️ ไม่สามารถโหลดข้อมูลได้</div>
-    <div class="error-body" id="error-text">กรุณาตรวจสอบการตั้งค่า</div>
-  </div>
-</div>
-
-<!-- Header -->
 <div id="header">
   <div class="logo">
     <div class="logo-badge">GPF</div>
-    <div>
-      <div class="logo-title">NAV Dashboard</div>
-      <div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div>
-    </div>
+    <div><div class="logo-title">NAV Dashboard</div><div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div></div>
   </div>
   <div class="header-right">
     <div id="last-update">กำลังโหลด...</div>
-
-    <!-- ✅ ปุ่ม Toggle NAV / % -->
     <div class="mode-toggle">
       <button class="mode-btn active" id="btn-nav" onclick="setMode('nav')">NAV จริง</button>
       <button class="mode-btn" id="btn-pct" onclick="setMode('pct')">% เปลี่ยนแปลง</button>
     </div>
-
     <div class="range-bar">
       <button class="range-btn" onclick="setRange(1,'M',this)">1ด.</button>
       <button class="range-btn" onclick="setRange(3,'M',this)">3ด.</button>
@@ -231,7 +175,6 @@
   </div>
 </div>
 
-<!-- Main Layout -->
 <div id="layout">
   <div id="sidebar">
     <div class="sidebar-header">แผนการลงทุน</div>
@@ -243,77 +186,33 @@
   </div>
 
   <div id="chart-wrap">
-    <!-- Stats bar -->
     <div id="stats-bar">
-      <div class="stat-card">
-        <div class="stat-label">ข้อมูลตั้งแต่</div>
-        <div class="stat-val" id="s-start">—</div>
-        <div class="stat-sub" id="s-rows">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">ข้อมูลล่าสุด</div>
-        <div class="stat-val" id="s-end">—</div>
-        <div class="stat-sub">วันทำการล่าสุด</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label" id="s-plan-label">—</div>
-        <div class="stat-val" id="s-plan-nav">—</div>
-        <div class="stat-sub" id="s-plan-chg">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">จำนวนแผน</div>
-        <div class="stat-val" id="s-count">—</div>
-        <div class="stat-sub">แผนที่แสดงอยู่</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">ดีสุดวันนี้</div>
-        <div class="stat-val" id="s-best-name" style="font-size:12px">—</div>
-        <div class="stat-sub" id="s-best-chg">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">แย่สุดวันนี้</div>
-        <div class="stat-val" id="s-worst-name" style="font-size:12px">—</div>
-        <div class="stat-sub" id="s-worst-chg">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">YTD (ต้นปี)</div>
-        <div class="stat-val" id="s-ytd">—</div>
-        <div class="stat-sub" id="s-ytd-sub">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">High / Low (ช่วงนี้)</div>
-        <div class="stat-val" id="s-high">—</div>
-        <div class="stat-sub" id="s-low">—</div>
-      </div>
+      <div class="stat-card"><div class="stat-label">ข้อมูลตั้งแต่</div><div class="stat-val" id="s-start">—</div><div class="stat-sub" id="s-rows">—</div></div>
+      <div class="stat-card"><div class="stat-label">ข้อมูลล่าสุด</div><div class="stat-val" id="s-end">—</div><div class="stat-sub">วันทำการล่าสุด</div></div>
+      <div class="stat-card"><div class="stat-label" id="s-plan-label">—</div><div class="stat-val" id="s-plan-nav">—</div><div class="stat-sub" id="s-plan-chg">—</div></div>
+      <div class="stat-card"><div class="stat-label">จำนวนแผน</div><div class="stat-val" id="s-count">—</div><div class="stat-sub">แผนที่แสดงอยู่</div></div>
+      <div class="stat-card"><div class="stat-label">ดีสุดวันนี้</div><div class="stat-val" id="s-best-name" style="font-size:12px">—</div><div class="stat-sub" id="s-best-chg">—</div></div>
+      <div class="stat-card"><div class="stat-label">แย่สุดวันนี้</div><div class="stat-val" id="s-worst-name" style="font-size:12px">—</div><div class="stat-sub" id="s-worst-chg">—</div></div>
+      <div class="stat-card"><div class="stat-label">YTD (ต้นปี)</div><div class="stat-val" id="s-ytd">—</div><div class="stat-sub" id="s-ytd-sub">—</div></div>
+      <div class="stat-card"><div class="stat-label">High / Low (ช่วงนี้)</div><div class="stat-val" id="s-high">—</div><div class="stat-sub" id="s-low">—</div></div>
     </div>
-
-    <!-- Normalize banner -->
-    <div id="normalize-banner">
-      📊 โหมด % เปลี่ยนแปลง — ทุกแผนเริ่มต้นที่ 0% จากวันแรกในช่วงที่เลือก
-    </div>
-
+    <div id="normalize-banner">📊 โหมด % เปลี่ยนแปลง — ทุกแผนเริ่มต้นที่ 0% จากวันแรกในช่วงที่เลือก</div>
     <div id="main-chart"></div>
   </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────
-// *** แก้ URL ตรงนี้ ***
-// ─────────────────────────────────────────
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxCFKb8rubtldDl_p8LC47fPXKLSuskAMtV5PiIfVRz7J8D3xy1XboikkUDnh82V_FW/exec?action=data";
 
-// ─────────────────────────────────────────
-// State
-// ─────────────────────────────────────────
-let allData  = null;
-let chart    = null;
-let hidden   = new Set();
-let curRange = { n: 6, unit: 'M' };
-let chartMode = 'nav'; // 'nav' | 'pct'
+let allData   = null;
+let chart     = null;
+let hidden    = new Set();
+let chartMode = 'nav';
+let curRange  = { n: 6, unit: 'M' };
 
-// ─────────────────────────────────────────
-// Init
-// ─────────────────────────────────────────
+// ─── minTs ที่ใช้จริง (sync กับ range ที่เลือก) ───
+let currentMinTs = null;
+
 window.addEventListener('load', () => {
   fetch(GAS_URL)
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
@@ -325,6 +224,7 @@ function onDataLoaded(data) {
   if (data.error) { showError(data.error); return; }
   allData = data;
   allData.plans.forEach(p => hidden.add(p.key));
+  computeCurrentMinTs();
   buildSidebar();
   buildChart();
   updateStats();
@@ -339,79 +239,71 @@ function showError(msg) {
 }
 
 // ─────────────────────────────────────────
-// Mode Toggle — NAV จริง / % เปลี่ยนแปลง
+// คำนวณ minTs จาก curRange — ใช้เป็น base ของ % mode
+// ─────────────────────────────────────────
+function computeCurrentMinTs() {
+  if (!allData) return;
+  const lastDate = new Date(allData.dates[allData.dates.length - 1]);
+  if (curRange.unit === 'ALL') {
+    currentMinTs = new Date(allData.dates[0]).getTime();
+    return;
+  }
+  const minDate = new Date(lastDate);
+  if (curRange.unit === 'M') minDate.setMonth(minDate.getMonth() - curRange.n);
+  if (curRange.unit === 'Y') minDate.setFullYear(minDate.getFullYear() - curRange.n);
+  currentMinTs = minDate.getTime();
+}
+
+// ─────────────────────────────────────────
+// หา base value ของแต่ละแผนใน range ปัจจุบัน
+// → ค่าแรกที่ไม่ null และ >= currentMinTs
+// ─────────────────────────────────────────
+function getBaseValue(planData) {
+  // pass 1: หาจากช่วงที่มองเห็น
+  for (let i = 0; i < allData.dates.length; i++) {
+    const ts = new Date(allData.dates[i]).getTime();
+    if (ts < currentMinTs) continue;
+    if (planData[i] !== null && planData[i] > 0) return planData[i];
+  }
+  // pass 2: fallback = ค่าแรกที่ไม่ null ทั้งหมด
+  for (let i = 0; i < planData.length; i++) {
+    if (planData[i] !== null && planData[i] > 0) return planData[i];
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────
+// normalize แผนเดียว → ส่งคืน array % หรือ NAV จริง
+// ─────────────────────────────────────────
+function normalizePlan(planData) {
+  if (chartMode === 'nav') return planData;
+  const base = getBaseValue(planData);
+  if (!base) return planData.map(() => null);
+  return planData.map(v => v !== null ? parseFloat(((v - base) / base * 100).toFixed(4)) : null);
+}
+
+// ─────────────────────────────────────────
+// % เปลี่ยนแปลงใน range ปัจจุบัน (สำหรับ stat card)
+// ─────────────────────────────────────────
+function getPctInRange(planData) {
+  const base = getBaseValue(planData);
+  const last = getLastValue(planData);
+  if (!base || !last) return null;
+  return (last - base) / base * 100;
+}
+
+// ─────────────────────────────────────────
+// Mode Toggle
 // ─────────────────────────────────────────
 function setMode(mode) {
   chartMode = mode;
   document.getElementById('btn-nav').classList.toggle('active', mode === 'nav');
   document.getElementById('btn-pct').classList.toggle('active', mode === 'pct');
   document.getElementById('normalize-banner').classList.toggle('show', mode === 'pct');
-
   if (!chart || !allData) return;
   rebuildSeries();
+  updateHighLightCard();
   updateHighLow();
-}
-
-// ─────────────────────────────────────────
-// สร้าง series ตาม mode + range
-// ─────────────────────────────────────────
-function getVisibleDateRange() {
-  const lastDate = new Date(allData.dates[allData.dates.length - 1]);
-  if (curRange.unit === 'ALL') return { min: null, max: lastDate };
-
-  const minDate = new Date(lastDate);
-  if (curRange.unit === 'M') minDate.setMonth(minDate.getMonth() - curRange.n);
-  if (curRange.unit === 'Y') minDate.setFullYear(minDate.getFullYear() - curRange.n);
-  return { min: minDate, max: lastDate };
-}
-
-function buildSeriesData() {
-  // ✅ ดึง minX จากกราฟจริง ไม่ใช่คำนวณเอง
-  let minTs = null;
-  if (chart && chart.w.globals.minX) {
-    minTs = chart.w.globals.minX;
-  } else {
-    const { min } = getVisibleDateRange();
-    minTs = min ? min.getTime() : null;
-  }
-
-  return allData.plans.map(plan => {
-    let data = plan.data;
-    if (chartMode === 'pct') {
-      let baseVal = null;
-      for (let i = 0; i < allData.dates.length; i++) {
-        const ts = new Date(allData.dates[i]).getTime();
-        if (minTs && ts < minTs) continue;  // ✅ ข้ามวันก่อนช่วง
-        if (data[i] !== null && data[i] > 0) { 
-          baseVal = data[i]; 
-          break; 
-        }
-      }
-      // fallback ถ้าไม่เจอในช่วง
-      if (!baseVal) {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i] !== null && data[i] > 0) { baseVal = data[i]; break; }
-        }
-      }
-      data = data.map(v => v !== null && baseVal 
-        ? parseFloat(((v - baseVal) / baseVal * 100).toFixed(4)) 
-        : null
-      );
-    }
-    return { name: plan.label, data, color: plan.color };
-  });
-}
-
-function rebuildSeries() {
-  if (!chart) return;
-  const series = buildSeriesData();
-  chart.updateSeries(series, false);
-
-  // re-apply hidden
-  allData.plans.forEach(p => {
-    if (hidden.has(p.key)) chart.hideSeries(p.label);
-    else chart.showSeries(p.label);
-  });
 }
 
 // ─────────────────────────────────────────
@@ -421,11 +313,11 @@ function buildSidebar() {
   const list = document.getElementById('plan-list');
   list.innerHTML = '';
   allData.plans.forEach((plan, i) => {
-    const lastVal = getLastValue(plan.data);
-    const prevVal = getPrevValue(plan.data);
-    const chg     = (lastVal && prevVal) ? ((lastVal - prevVal) / prevVal * 100) : 0;
-    const chgCls  = chg > 0.001 ? 'up' : chg < -0.001 ? 'down' : 'flat';
-    const chgTxt  = chg > 0 ? `+${chg.toFixed(2)}%` : `${chg.toFixed(2)}%`;
+    const last = getLastValue(plan.data);
+    const prev = getPrevValue(plan.data);
+    const chg  = (last && prev) ? ((last - prev) / prev * 100) : 0;
+    const cls  = chg > 0.001 ? 'up' : chg < -0.001 ? 'down' : 'flat';
+    const txt  = chg > 0 ? `+${chg.toFixed(2)}%` : `${chg.toFixed(2)}%`;
 
     const el = document.createElement('div');
     el.className = 'plan-item hidden';
@@ -434,10 +326,9 @@ function buildSidebar() {
       <div class="plan-dot" style="background:${plan.color}"></div>
       <div class="plan-info">
         <div class="plan-name">${plan.label}</div>
-        <div class="plan-nav">${lastVal ? lastVal.toFixed(4) : '—'}</div>
+        <div class="plan-nav">${last ? last.toFixed(4) : '—'}</div>
       </div>
-      <div class="plan-chg ${chgCls}">${chgTxt}</div>
-    `;
+      <div class="plan-chg ${cls}">${txt}</div>`;
     el.addEventListener('click', () => togglePlan(i, plan.key));
     list.appendChild(el);
   });
@@ -446,18 +337,11 @@ function buildSidebar() {
 function togglePlan(idx, key) {
   const el = document.getElementById(`pi-${idx}`);
   if (hidden.has(key)) {
-    hidden.delete(key);
-    el.classList.remove('hidden');
-    chart.showSeries(allData.plans[idx].label);
+    hidden.delete(key); el.classList.remove('hidden'); chart.showSeries(allData.plans[idx].label);
   } else {
-    hidden.add(key);
-    el.classList.add('hidden');
-    chart.hideSeries(allData.plans[idx].label);
+    hidden.add(key); el.classList.add('hidden'); chart.hideSeries(allData.plans[idx].label);
   }
-  updateVisibleCount();
-  updateBestWorst();
-  updateYTD();
-  setTimeout(updateHighLow, 300);
+  updateVisibleCount(); updateBestWorst(); updateYTD(); setTimeout(updateHighLow, 300);
 }
 
 function toggleAll(show) {
@@ -466,91 +350,92 @@ function toggleAll(show) {
     if (show) { hidden.delete(p.key); el.classList.remove('hidden'); chart.showSeries(p.label); }
     else       { hidden.add(p.key);   el.classList.add('hidden');    chart.hideSeries(p.label); }
   });
-  updateVisibleCount();
-  updateBestWorst();
-  updateYTD();
-  setTimeout(updateHighLow, 300);
+  updateVisibleCount(); updateBestWorst(); updateYTD(); setTimeout(updateHighLow, 300);
 }
 
 function updateVisibleCount() {
-  const vis = allData.plans.filter(p => !hidden.has(p.key)).length;
-  document.getElementById('s-count').textContent = vis;
+  document.getElementById('s-count').textContent = allData.plans.filter(p => !hidden.has(p.key)).length;
+}
+
+// ─────────────────────────────────────────
+// สร้าง series ตาม mode ปัจจุบัน
+// ─────────────────────────────────────────
+function buildSeriesData() {
+  return allData.plans.map(plan => ({
+    name:  plan.label,
+    data:  normalizePlan(plan.data),
+    color: plan.color
+  }));
+}
+
+function rebuildSeries() {
+  if (!chart) return;
+  chart.updateSeries(buildSeriesData(), false);
+  // re-apply hidden state
+  allData.plans.forEach(p => {
+    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    else chart.showSeries(p.label);
+  });
 }
 
 // ─────────────────────────────────────────
 // Chart
 // ─────────────────────────────────────────
 function buildChart() {
-  const series = buildSeriesData();
+  const yFormatter = v => {
+    if (v === null || v === undefined) return '';
+    return chartMode === 'pct' ? `${v >= 0 ? '+' : ''}${v.toFixed(1)}%` : v.toFixed(2);
+  };
+
+  const tooltipY = v => {
+    if (v === null || v === undefined) return '—';
+    return chartMode === 'pct' ? `${v >= 0 ? '+' : ''}${v.toFixed(2)}%` : v.toFixed(4);
+  };
 
   const options = {
-    series,
+    series: buildSeriesData(),
     chart: {
       type: 'line', height: '100%', background: 'transparent',
       animations: { enabled: false },
-      redrawOnParentResize: false,
-      redrawOnWindowResize: false,
+      redrawOnParentResize: false, redrawOnWindowResize: false,
       toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true } },
       zoom: { enabled: true, type: 'x' },
       events: {
-        dataPointMouseEnter: function(e, ctx, cfg) {
+        dataPointMouseEnter(e, ctx, cfg) {
           const p = allData.plans[cfg.seriesIndex];
           if (!p) return;
           const v = cfg.w.globals.series[cfg.seriesIndex][cfg.dataPointIndex];
           document.getElementById('s-plan-label').textContent = p.label;
-          if (chartMode === 'pct') {
-            document.getElementById('s-plan-nav').textContent = v !== null ? `${v >= 0 ? '+' : ''}${v.toFixed(2)}%` : '—';
-          } else {
-            document.getElementById('s-plan-nav').textContent = v ? v.toFixed(4) : '—';
-          }
-          document.getElementById('s-plan-nav').style.color = p.color;
+          document.getElementById('s-plan-nav').textContent   = tooltipY(v);
+          document.getElementById('s-plan-nav').style.color   = p.color;
+          // ล้าง s-plan-chg เมื่อ hover เพื่อไม่สับสน
+          document.getElementById('s-plan-chg').textContent = chartMode === 'pct' ? '% จากต้นช่วง' : 'NAV ณ วันนั้น';
         },
-        zoomed: function() { setTimeout(updateHighLow, 300); },
-        scrolled: function() { setTimeout(updateHighLow, 300); }
+        zoomed()   { setTimeout(updateHighLow, 300); },
+        scrolled() { setTimeout(updateHighLow, 300); }
       }
     },
-    stroke: { curve: 'straight', width: 1.8 },
-    colors: allData.plans.map(p => p.color),
+    stroke:  { curve: 'straight', width: 1.8 },
+    colors:  allData.plans.map(p => p.color),
     xaxis: {
       categories: allData.dates, type: 'datetime', tickAmount: 10,
-      labels: {
-        style: { colors: '#8b949e', fontSize: '11px' },
-        datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM' }
-      },
-      axisBorder: { color: '#30363d' },
-      axisTicks:  { color: '#30363d' },
+      labels: { style: { colors: '#8b949e', fontSize: '11px' }, datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM' } },
+      axisBorder: { color: '#30363d' }, axisTicks: { color: '#30363d' },
       crosshairs: { stroke: { color: '#388bfd', dashArray: 4 } }
     },
     yaxis: {
-      labels: {
-        style: { colors: '#8b949e', fontSize: '11px' },
-        formatter: v => {
-          if (v === null || v === undefined) return '';
-          if (chartMode === 'pct') return `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
-          return v.toFixed(2);
-        }
-      },
+      labels: { style: { colors: '#8b949e', fontSize: '11px' }, formatter: yFormatter },
       tooltip: { enabled: true }
     },
     grid: { borderColor: '#21262d', strokeDashArray: 3, xaxis: { lines: { show: false } } },
     tooltip: {
-      theme: 'dark',
-      // ✅ shared: true — เห็นทุกแผนพร้อมกัน
-      shared: true,
-      intersect: false,
+      theme: 'dark', shared: true, intersect: false,
       x: { format: 'dd MMM yyyy' },
-      y: {
-        formatter: v => {
-          if (v === null || v === undefined) return '—';
-          if (chartMode === 'pct') return `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
-          return v.toFixed(4);
-        }
-      }
+      y: { formatter: tooltipY }
     },
-    legend:     { show: false },
-    dataLabels: { enabled: false },
-    markers:    { size: 0, hover: { sizeOffset: 3 } },
-    noData:     { text: 'ไม่พบข้อมูล', style: { color: '#8b949e', fontSize: '14px' } }
+    legend: { show: false }, dataLabels: { enabled: false },
+    markers: { size: 0, hover: { sizeOffset: 3 } },
+    noData: { text: 'ไม่พบข้อมูล', style: { color: '#8b949e', fontSize: '14px' } }
   };
 
   chart = new ApexCharts(document.getElementById('main-chart'), options);
@@ -568,18 +453,21 @@ function setRange(n, unit, btn) {
   document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 
-  if (unit === 'ALL' || !chart) {
+  computeCurrentMinTs(); // ✅ คำนวณ minTs ใหม่ก่อน
+
+  const now = new Date(allData.dates[allData.dates.length - 1]);
+  if (unit === 'ALL') {
     chart.updateOptions({ xaxis: { type: 'datetime', min: undefined, max: undefined } });
   } else {
-    const now = new Date(allData.dates[allData.dates.length - 1]);
     const minDt = new Date(now);
     if (unit === 'M') minDt.setMonth(minDt.getMonth() - n);
     if (unit === 'Y') minDt.setFullYear(minDt.getFullYear() - n);
     chart.updateOptions({ xaxis: { type: 'datetime', min: minDt.getTime(), max: now.getTime() } });
   }
 
-  // rebuild series ใหม่เพื่อ normalize จากต้นช่วงใหม่
-  if (chartMode === 'pct') rebuildSeries();
+  // rebuild series ใหม่ด้วย base ใหม่ (สำคัญสำหรับ pct mode)
+  rebuildSeries();
+  updateHighLightCard();
   setTimeout(updateHighLow, 300);
 }
 
@@ -588,11 +476,9 @@ function setRange(n, unit, btn) {
 // ─────────────────────────────────────────
 const fmtDate = s => {
   if (!s) return '—';
-  let d;
-  if (typeof s === 'string' && s.includes('/')) {
-    const p = s.split('/');
-    d = new Date(`${p[2]}-${p[1]}-${p[0]}`);
-  } else d = new Date(s);
+  let d = typeof s === 'string' && s.includes('/')
+    ? (() => { const p = s.split('/'); return new Date(`${p[2]}-${p[1]}-${p[0]}`); })()
+    : new Date(s);
   if (isNaN(d)) return s;
   return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
 };
@@ -604,71 +490,97 @@ function updateStats() {
   document.getElementById('s-count').textContent     = 0;
   document.getElementById('last-update').textContent = `อัปเดต: ${fmtDate(allData.endDate)}`;
 
-  const main = allData.plans.find(p => p.label === 'แผนหลัก') || allData.plans[0];
-  if (main) {
-    const v = getLastValue(main.data), p = getPrevValue(main.data);
-    const chg = (v && p) ? ((v - p) / p * 100) : 0;
-    document.getElementById('s-plan-label').textContent = main.label;
-    document.getElementById('s-plan-nav').textContent   = v ? v.toFixed(4) : '—';
-    document.getElementById('s-plan-nav').style.color   = main.color;
-    document.getElementById('s-plan-chg').textContent   = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}% จากวันก่อน`;
-    document.getElementById('s-plan-chg').style.color   = chg >= 0 ? '#3fb950' : '#f85149';
-  }
-
-  // default 6 เดือน
+  // default range 6M
   const now = new Date(allData.dates[allData.dates.length - 1]);
   const sixAgo = new Date(now);
   sixAgo.setMonth(sixAgo.getMonth() - 6);
   chart.updateOptions({ xaxis: { type: 'datetime', min: sixAgo.getTime(), max: now.getTime() } });
-  document.querySelectorAll('.range-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent === '6ด.');
-  });
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.textContent === '6ด.'));
 
+  updateHighLightCard();
   updateBestWorst();
   updateYTD();
   setTimeout(updateHighLow, 500);
 }
 
+// ─────────────────────────────────────────
+// ✅ Highlight card — sync กับ mode ปัจจุบัน
+// ─────────────────────────────────────────
+function updateHighLightCard() {
+  const main = allData.plans.find(p => p.label === 'แผนหลัก') || allData.plans[0];
+  if (!main) return;
+
+  const lastNav = getLastValue(main.data);
+  const prevNav = getPrevValue(main.data);
+  const dayChg  = (lastNav && prevNav) ? ((lastNav - prevNav) / prevNav * 100) : 0;
+
+  document.getElementById('s-plan-label').textContent = main.label;
+
+  if (chartMode === 'nav') {
+    // แสดง NAV จริง + เปลี่ยนแปลงจากวันก่อน
+    document.getElementById('s-plan-nav').textContent = lastNav ? lastNav.toFixed(4) : '—';
+    document.getElementById('s-plan-nav').style.color = main.color;
+    document.getElementById('s-plan-chg').textContent = `${dayChg >= 0 ? '+' : ''}${dayChg.toFixed(2)}% จากวันก่อน`;
+    document.getElementById('s-plan-chg').style.color = dayChg >= 0 ? '#3fb950' : '#f85149';
+  } else {
+    // ✅ แสดง % เปลี่ยนแปลงในช่วงที่เลือก (ใช้ base เดียวกับกราฟ)
+    const pct = getPctInRange(main.data);
+    document.getElementById('s-plan-nav').textContent = pct !== null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—';
+    document.getElementById('s-plan-nav').style.color = pct !== null ? (pct >= 0 ? '#3fb950' : '#f85149') : main.color;
+    document.getElementById('s-plan-chg').textContent = '% เปลี่ยนแปลงในช่วงนี้';
+    document.getElementById('s-plan-chg').style.color = '#8b949e';
+  }
+}
+
+// ─────────────────────────────────────────
+// Best / Worst — ใช้ % เปลี่ยนแปลงจากวันก่อนเสมอ (ไม่ขึ้นกับ mode)
+// ─────────────────────────────────────────
 function updateBestWorst() {
   let best = null, worst = null;
   allData.plans.forEach(plan => {
     if (hidden.has(plan.key)) return;
     const last = getLastValue(plan.data), prev = getPrevValue(plan.data);
     if (!last || !prev) return;
-    const chgPct = (last - prev) / prev * 100;
-    if (!best  || chgPct > best.chg)  best  = { label: plan.label, color: plan.color, chg: chgPct };
-    if (!worst || chgPct < worst.chg) worst = { label: plan.label, color: plan.color, chg: chgPct };
+    const chg = (last - prev) / prev * 100;
+    if (!best  || chg > best.chg)  best  = { label: plan.label, color: plan.color, chg };
+    if (!worst || chg < worst.chg) worst = { label: plan.label, color: plan.color, chg };
   });
 
-  const visCount = allData.plans.filter(p => !hidden.has(p.key)).length;
+  const vis = allData.plans.filter(p => !hidden.has(p.key)).length;
 
-  if (best && visCount >= 1) {
+  if (best) {
     document.getElementById('s-best-name').textContent = best.label;
     document.getElementById('s-best-name').style.color = best.color;
     document.getElementById('s-best-chg').textContent  = `+${best.chg.toFixed(2)}%`;
     document.getElementById('s-best-chg').style.color  = '#3fb950';
+  } else {
+    document.getElementById('s-best-name').textContent = '—';
+    document.getElementById('s-best-chg').textContent  = '';
   }
-  // ✅ แสดง worst เฉพาะตอนที่มีมากกว่า 1 แผน
-  if (worst && visCount >= 2 && worst.label !== (best && best.label)) {
+
+  if (worst && vis >= 2) {
     document.getElementById('s-worst-name').textContent = worst.label;
     document.getElementById('s-worst-name').style.color = worst.color;
     document.getElementById('s-worst-chg').textContent  = `${worst.chg.toFixed(2)}%`;
     document.getElementById('s-worst-chg').style.color  = worst.chg < 0 ? '#f85149' : '#3fb950';
-  } else if (visCount < 2) {
+  } else {
     document.getElementById('s-worst-name').textContent = '—';
     document.getElementById('s-worst-name').style.color = '';
-    document.getElementById('s-worst-chg').textContent  = 'ต้องการ ≥ 2 แผน';
+    document.getElementById('s-worst-chg').textContent  = vis < 2 ? 'ต้องการ ≥ 2 แผน' : '';
     document.getElementById('s-worst-chg').style.color  = '';
   }
 }
 
+// ─────────────────────────────────────────
+// YTD — ใช้ NAV จริงเสมอ (ไม่ขึ้นกับ mode)
+// ─────────────────────────────────────────
 function updateYTD() {
   const thisYear = new Date(allData.dates[allData.dates.length - 1]).getFullYear();
   const janFirst = `${thisYear}-01-01`;
 
   let target = allData.plans.find(p => p.label === 'แผนหลัก' && !hidden.has(p.key))
             || allData.plans.find(p => !hidden.has(p.key));
-  if (!target) { document.getElementById('s-ytd').textContent = '—'; return; }
+  if (!target) { document.getElementById('s-ytd').textContent = '—'; document.getElementById('s-ytd-sub').textContent = ''; return; }
 
   let startVal = null;
   for (let i = 0; i < allData.dates.length; i++) {
@@ -683,6 +595,9 @@ function updateYTD() {
   document.getElementById('s-ytd-sub').textContent = target.label;
 }
 
+// ─────────────────────────────────────────
+// ✅ High/Low — sync กับ mode ปัจจุบัน
+// ─────────────────────────────────────────
 function updateHighLow() {
   if (!chart) return;
   const minTs = chart.w.globals.minX;
@@ -691,10 +606,11 @@ function updateHighLow() {
 
   allData.plans.forEach(plan => {
     if (hidden.has(plan.key)) return;
+    const displayData = normalizePlan(plan.data); // ✅ ใช้ข้อมูลตาม mode
     allData.dates.forEach((dateStr, i) => {
       const ts = new Date(dateStr).getTime();
       if (ts < minTs || ts > maxTs) return;
-      const v = plan.data[i];
+      const v = displayData[i];
       if (v === null) return;
       if (v > high) high = v;
       if (v < low)  low  = v;
@@ -702,8 +618,9 @@ function updateHighLow() {
   });
 
   if (high !== -Infinity) {
-    const suffix = chartMode === 'pct' ? '%' : '';
-    const fmt    = chartMode === 'pct' ? (v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`) : (v => v.toFixed(4));
+    const fmt = chartMode === 'pct'
+      ? v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`
+      : v => v.toFixed(4);
     document.getElementById('s-high').textContent = `▲ ${fmt(high)}`;
     document.getElementById('s-high').style.color = '#3fb950';
     document.getElementById('s-low').textContent  = `▼ ${fmt(low)}`;
@@ -720,9 +637,7 @@ function getLastValue(arr) {
 }
 function getPrevValue(arr) {
   let found = 0;
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (arr[i] !== null && ++found === 2) return arr[i];
-  }
+  for (let i = arr.length - 1; i >= 0; i--) if (arr[i] !== null && ++found === 2) return arr[i];
   return null;
 }
 </script>

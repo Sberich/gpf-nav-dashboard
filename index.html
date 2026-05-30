@@ -403,22 +403,36 @@ function buildChart() {
       toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true } },
       zoom: { enabled: true, type: 'x' },
       events: {
-        dataPointMouseLeave(e, ctx, cfg) {
-            updateHighLightCard();
-        }
+        dataPointMouseEnter(e, ctx, cfg) {
           const p = allData.plans[cfg.seriesIndex];
           if (!p) return;
           const v = cfg.w.globals.series[cfg.seriesIndex][cfg.dataPointIndex];
+      
           document.getElementById('s-plan-label').textContent = p.label;
           document.getElementById('s-plan-nav').textContent   = tooltipY(v);
           document.getElementById('s-plan-nav').style.color   = p.color;
-          // ล้าง s-plan-chg เมื่อ hover เพื่อไม่สับสน
-          document.getElementById('s-plan-chg').textContent = chartMode === 'pct' ? '% จากต้นช่วง' : 'NAV ณ วันนั้น';
+      
+          if (chartMode === 'nav') {
+            const i    = cfg.dataPointIndex;
+            const cur  = p.data[i];
+            const prev = i > 0 ? p.data.slice(0, i).reverse().find(x => x !== null) : null;
+            const chg  = (cur && prev) ? ((cur - prev) / prev * 100) : null;
+            document.getElementById('s-plan-chg').textContent =
+              chg !== null ? `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}% จากวันก่อน` : '—';
+            document.getElementById('s-plan-chg').style.color =
+              chg !== null ? (chg >= 0 ? '#3fb950' : '#f85149') : '#8b949e';
+          } else {
+            document.getElementById('s-plan-chg').textContent = '% จากต้นช่วง';
+            document.getElementById('s-plan-chg').style.color = '#8b949e';
+          }
+        },
+        dataPointMouseLeave(e, ctx, cfg) {
+          updateHighLightCard();
         },
         zoomed()   { setTimeout(updateHighLow, 300); },
         scrolled() { setTimeout(updateHighLow, 300); }
-      }
-    },
+      },
+    
     stroke:  { curve: 'straight', width: 1.8 },
     colors:  allData.plans.map(p => p.color),
     xaxis: {

@@ -304,6 +304,8 @@ function setMode(mode) {
   rebuildSeries();
   updateHighLightCard();
   updateHighLow();
+  updateBestWorst(); // ✅ เพิ่ม
+  updateYTD();       // ✅ เพิ่ม
 }
 
 // ─────────────────────────────────────────
@@ -401,7 +403,9 @@ function buildChart() {
       toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true } },
       zoom: { enabled: true, type: 'x' },
       events: {
-        dataPointMouseEnter(e, ctx, cfg) {
+        dataPointMouseLeave(e, ctx, cfg) {
+            updateHighLightCard();
+        }
           const p = allData.plans[cfg.seriesIndex];
           if (!p) return;
           const v = cfg.w.globals.series[cfg.seriesIndex][cfg.dataPointIndex];
@@ -469,6 +473,8 @@ function setRange(n, unit, btn) {
   rebuildSeries();
   updateHighLightCard();
   setTimeout(updateHighLow, 300);
+  updateBestWorst(); // ✅ เพิ่ม
+  updateYTD();       // ✅ เพิ่ม
 }
 
 // ─────────────────────────────────────────
@@ -497,6 +503,8 @@ function updateStats() {
   chart.updateOptions({ xaxis: { type: 'datetime', min: sixAgo.getTime(), max: now.getTime() } });
   document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.textContent === '6ด.'));
 
+  curRange = { n: 6, unit: 'M' }; // ✅ ให้ตรงกับที่ตั้งค่าไว้ด้านบน
+  computeCurrentMinTs();           // ✅ sync minTs
   updateHighLightCard();
   updateBestWorst();
   updateYTD();

@@ -865,7 +865,7 @@ function buildChart() {
     updateVisibleCount();
     // ไม่ต้อง hideSeries แล้ว เพราะกรอง series ออกตั้งแต่แรก
   });
-
+}
 // ─────────────────────────────────────────
 // RANGE FILTER
 // ─────────────────────────────────────────
@@ -1046,8 +1046,7 @@ function updateHighLow() {
     if (hidden.has(plan.key)) return;
     const displayData = normalizePlan(plan.data);
     allData.dates.forEach((dateStr, i) => {
-      //const ts = new Date(dateStr).getTime();
-      if (ts < minTs || ts > maxTs) return;
+      if (ts < minTs || ts > maxTs) return; 
       const v = displayData[i];
       if (v === null) return;
       if (v > high) high = v;

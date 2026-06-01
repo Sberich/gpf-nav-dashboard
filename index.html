@@ -1046,7 +1046,8 @@ function updateHighLow() {
     if (hidden.has(plan.key)) return;
     const displayData = normalizePlan(plan.data);
     allData.dates.forEach((dateStr, i) => {
-      if (ts < minTs || ts > maxTs) return; 
+      //const ts = new Date(dateStr).getTime();  ← comment แล้ว แต่ ts ยังถูกใช้อยู่
+      if (ts < minTs || ts > maxTs) return;      ← ts = undefined!
       const v = displayData[i];
       if (v === null) return;
       if (v > high) high = v;

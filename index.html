@@ -9,6 +9,9 @@
   <title>GPF NAV Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
   <style>
+    /* ════════════════════════════════════════
+       BASE VARIABLES & RESET
+    ════════════════════════════════════════ */
     :root {
       --bg:     #0d1117;
       --bg2:    #161b22;
@@ -21,12 +24,20 @@
       --down:   #f85149;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Sarabun', sans-serif; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: var(--bg); color: var(--text);
+      font-family: 'Sarabun', sans-serif;
+    }
 
+    /* ════════════════════════════════════════
+       HEADER
+    ════════════════════════════════════════ */
     #header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 8px 16px; background: var(--bg2);
-      border-bottom: 1px solid var(--border); height: 52px; flex-shrink: 0; gap: 10px;
+      border-bottom: 1px solid var(--border);
+      height: 52px; flex-shrink: 0; gap: 10px;
     }
     .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .logo-badge {
@@ -39,7 +50,13 @@
     .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
     #last-update  { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
-    .mode-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+    /* ════════════════════════════════════════
+       MODE TOGGLE
+    ════════════════════════════════════════ */
+    .mode-toggle {
+      display: flex; border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden; flex-shrink: 0;
+    }
     .mode-btn {
       padding: 4px 10px; background: transparent; color: var(--muted);
       font-size: 11px; font-weight: 600; cursor: pointer;
@@ -48,6 +65,9 @@
     .mode-btn.active { background: var(--accent); color: #fff; }
     .mode-btn:hover:not(.active) { background: var(--bg3); color: var(--text); }
 
+    /* ════════════════════════════════════════
+       RANGE BAR
+    ════════════════════════════════════════ */
     .range-bar { display: flex; gap: 3px; flex-shrink: 0; }
     .range-btn {
       padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border);
@@ -55,10 +75,19 @@
       cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap;
     }
     .range-btn:hover { background: var(--bg3); color: var(--text); }
-    .range-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .range-btn.active {
+      background: var(--accent); border-color: var(--accent);
+      color: #fff; font-weight: 600;
+    }
 
+    /* ════════════════════════════════════════
+       LAYOUT
+    ════════════════════════════════════════ */
     #layout { display: flex; height: calc(100dvh - 52px); overflow: hidden; }
 
+    /* ════════════════════════════════════════
+       SIDEBAR
+    ════════════════════════════════════════ */
     #sidebar {
       width: 200px; flex-shrink: 0; background: var(--bg2);
       border-right: 1px solid var(--border);
@@ -75,20 +104,27 @@
 
     .plan-item {
       display: flex; align-items: center; gap: 8px;
-      padding: 6px 12px; cursor: pointer; transition: background .12s; user-select: none;
+      padding: 6px 12px; cursor: pointer;
+      transition: background .12s; user-select: none;
     }
     .plan-item:hover { background: var(--bg3); }
     .plan-item.hidden { opacity: .3; }
     .plan-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .plan-info { flex: 1; min-width: 0; }
-    .plan-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .plan-name {
+      font-size: 12px; font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
     .plan-nav  { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
     .plan-chg  { font-size: 10px; font-weight: 600; padding: 1px 4px; border-radius: 3px; flex-shrink: 0; }
-    .plan-chg.up   { background: rgba(63,185,80,.15); color: var(--up); }
+    .plan-chg.up   { background: rgba(63,185,80,.15);  color: var(--up); }
     .plan-chg.down { background: rgba(248,81,73,.15);  color: var(--down); }
     .plan-chg.flat { background: rgba(139,148,158,.1); color: var(--muted); }
 
-    .sidebar-footer { border-top: 1px solid var(--border); padding: 8px 12px; display: flex; gap: 6px; flex-shrink: 0; }
+    .sidebar-footer {
+      border-top: 1px solid var(--border); padding: 8px 12px;
+      display: flex; gap: 6px; flex-shrink: 0;
+    }
     .sb-btn {
       flex: 1; padding: 5px; border-radius: 5px; border: 1px solid var(--border);
       background: var(--bg3); color: var(--muted); font-size: 11px;
@@ -96,8 +132,14 @@
     }
     .sb-btn:hover { color: var(--text); border-color: var(--accent); }
 
+    /* ════════════════════════════════════════
+       CHART WRAP
+    ════════════════════════════════════════ */
     #chart-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
+    /* ════════════════════════════════════════
+       STATS BAR
+    ════════════════════════════════════════ */
     #stats-bar {
       display: flex; border-bottom: 1px solid var(--border);
       background: var(--bg2); flex-shrink: 0; overflow-x: auto; position: relative;
@@ -106,14 +148,21 @@
     #stats-bar::-webkit-scrollbar-thumb { background: var(--border); }
     #stats-bar::after {
       content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 32px;
-      background: linear-gradient(to right, transparent, var(--bg2)); pointer-events: none;
+      background: linear-gradient(to right, transparent, var(--bg2));
+      pointer-events: none;
     }
-    .stat-card { padding: 7px 14px; border-right: 1px solid var(--border); min-width: 115px; flex-shrink: 0; }
+    .stat-card {
+      padding: 7px 14px; border-right: 1px solid var(--border);
+      min-width: 115px; flex-shrink: 0;
+    }
     .stat-card:first-child { display: none; }
     .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
     .stat-val   { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .stat-sub   { font-size: 9px; color: var(--muted); margin-top: 1px; }
 
+    /* ════════════════════════════════════════
+       NORMALIZE BANNER
+    ════════════════════════════════════════ */
     #normalize-banner {
       display: none; align-items: center; justify-content: center; gap: 8px;
       padding: 4px 12px; background: rgba(56,139,253,.12);
@@ -122,40 +171,231 @@
     }
     #normalize-banner.show { display: flex; }
 
+    /* ════════════════════════════════════════
+       MAIN CHART
+    ════════════════════════════════════════ */
     #main-chart { flex: 1; padding: 6px 6px 0; min-height: 0; overflow: hidden; }
 
-    .apexcharts-tooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; border-radius: 8px !important; max-height: 300px; overflow-y: auto; }
-    .apexcharts-tooltip-title { background: var(--bg2) !important; border-bottom: 1px solid var(--border) !important; color: var(--text) !important; font-size: 11px !important; padding: 4px 8px !important; }
+    /* ════════════════════════════════════════
+       APEXCHARTS OVERRIDES
+    ════════════════════════════════════════ */
+    .apexcharts-tooltip {
+      background: var(--bg3) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      max-height: 300px; overflow-y: auto;
+    }
+    .apexcharts-tooltip-title {
+      background: var(--bg2) !important;
+      border-bottom: 1px solid var(--border) !important;
+      color: var(--text) !important; font-size: 11px !important; padding: 4px 8px !important;
+    }
     .apexcharts-tooltip-series-group { padding: 2px 8px !important; }
     .apexcharts-tooltip-text { color: var(--text) !important; font-size: 11px !important; }
-    .apexcharts-xaxistooltip { background: var(--bg3) !important; border: 1px solid var(--border) !important; color: var(--muted) !important; }
+    .apexcharts-xaxistooltip {
+      background: var(--bg3) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--muted) !important;
+    }
     .apexcharts-menu { background: var(--bg2) !important; border: 1px solid var(--border) !important; color: var(--text) !important; }
     .apexcharts-menu-item:hover { background: var(--bg3) !important; }
 
+    /* ════════════════════════════════════════
+       LOADER & ERROR
+    ════════════════════════════════════════ */
     #loader {
       position: fixed; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
       z-index: 999; transition: opacity .4s;
     }
-    .spinner { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; }
+    .spinner {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 3px solid var(--border); border-top-color: var(--accent);
+      animation: spin .8s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
     .load-text { color: var(--muted); font-size: 13px; }
 
-    #error-msg { display: none; position: fixed; inset: 0; background: var(--bg); align-items: center; justify-content: center; z-index: 998; }
-    .error-box { background: var(--bg2); border: 1px solid var(--down); border-radius: 10px; padding: 28px 36px; text-align: center; max-width: 400px; }
+    #error-msg {
+      display: none; position: fixed; inset: 0; background: var(--bg);
+      align-items: center; justify-content: center; z-index: 998;
+    }
+    .error-box {
+      background: var(--bg2); border: 1px solid var(--down);
+      border-radius: 10px; padding: 28px 36px;
+      text-align: center; max-width: 400px;
+    }
     .error-title { font-size: 16px; font-weight: 600; color: var(--down); margin-bottom: 8px; }
     .error-body  { font-size: 13px; color: var(--muted); }
+
+    /* ════════════════════════════════════════
+       COMPARATOR MODAL
+    ════════════════════════════════════════ */
+    #cmp-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.75); z-index: 900;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    #cmp-modal.open { display: flex; }
+
+    .cmp-box {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 14px; padding: 0;
+      width: 680px; max-width: 96vw; max-height: 92vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,.6);
+    }
+
+    .cmp-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid #30363d;
+      background: #1c2330; flex-shrink: 0;
+    }
+    .cmp-header-title { font-size: 14px; font-weight: 700; color: #e6edf3; }
+    .cmp-header-sub   { font-size: 10px; color: #8b949e; margin-top: 2px; }
+    .cmp-close {
+      background: none; border: none; color: #8b949e;
+      font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1;
+      transition: color .15s;
+    }
+    .cmp-close:hover { color: #f85149; }
+
+    .cmp-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+    .cmp-body::-webkit-scrollbar { width: 4px; }
+    .cmp-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+
+    /* date range row */
+    .cmp-date-row {
+      display: flex; gap: 8px; align-items: center;
+      background: #1c2330; border: 1px solid #30363d;
+      border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;
+    }
+    .cmp-date-label { font-size: 10px; color: #8b949e; white-space: nowrap; }
+    .cmp-date-input {
+      flex: 1; background: #0d1117; border: 1px solid #30363d;
+      color: #e6edf3; border-radius: 5px; padding: 4px 8px;
+      font-size: 11px; font-family: 'Sarabun', sans-serif; min-width: 0;
+    }
+    .cmp-date-input:focus { outline: none; border-color: #388bfd; }
+    .cmp-date-sep { font-size: 11px; color: #8b949e; }
+
+    /* port panels */
+    .cmp-ports { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .cmp-port {
+      background: #1c2330; border: 1px solid #30363d;
+      border-radius: 10px; padding: 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .cmp-port-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .cmp-port-label { font-size: 12px; font-weight: 700; }
+    .cmp-port-sum   { font-size: 10px; font-weight: 600; }
+
+    .cmp-row { display: flex; gap: 4px; align-items: center; margin-bottom: 3px; }
+    .cmp-select {
+      flex: 1; background: #0d1117; border: 1px solid #30363d;
+      color: #e6edf3; border-radius: 4px; padding: 4px 6px;
+      font-size: 11px; font-family: 'Sarabun', sans-serif; min-width: 0;
+    }
+    .cmp-select:focus { outline: none; border-color: #388bfd; }
+    .cmp-pct {
+      width: 52px; background: #0d1117; border: 1px solid #30363d;
+      color: #e6edf3; border-radius: 4px; padding: 4px 6px;
+      font-size: 11px; text-align: right;
+    }
+    .cmp-pct:focus { outline: none; border-color: #388bfd; }
+    .cmp-del {
+      background: none; border: none; color: #8b949e;
+      cursor: pointer; font-size: 13px; padding: 0 3px;
+      transition: color .15s; line-height: 1;
+    }
+    .cmp-del:hover { color: #f85149; }
+    .cmp-add {
+      width: 100%; margin-top: 2px; padding: 4px;
+      border-radius: 4px; border: 1px dashed #30363d;
+      background: transparent; color: #8b949e; font-size: 11px;
+      cursor: pointer; transition: all .15s; font-family: inherit;
+    }
+    .cmp-add:hover { border-color: #388bfd; color: #388bfd; }
+
+    /* result */
+    .cmp-result {
+      display: none; margin-top: 14px;
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 10px; padding: 16px; text-align: center;
+    }
+    .cmp-result.show { display: block; }
+    .cmp-result-grid {
+      display: flex; justify-content: center; align-items: center;
+      gap: 24px; flex-wrap: wrap; margin: 10px 0;
+    }
+    .cmp-result-port { text-align: center; }
+    .cmp-result-portlabel { font-size: 10px; margin-bottom: 4px; }
+    .cmp-result-val   { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .cmp-result-range { font-size: 9px; color: #8b949e; margin-top: 2px; }
+    .cmp-result-diff  { margin-top: 10px; font-size: 13px; font-weight: 600; }
+    .cmp-result-winner {
+      display: inline-block; margin-top: 8px;
+      padding: 3px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* footer */
+    .cmp-footer {
+      display: flex; gap: 8px; padding: 12px 20px;
+      border-top: 1px solid #30363d; flex-shrink: 0;
+      background: #1c2330;
+    }
+    .cmp-calc-btn {
+      flex: 1; padding: 8px; border-radius: 6px; border: none;
+      background: #388bfd; color: #fff; font-size: 13px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: background .15s;
+    }
+    .cmp-calc-btn:hover { background: #4c96ff; }
+    .cmp-save-btn {
+      padding: 8px 14px; border-radius: 6px;
+      border: 1px solid #30363d; background: transparent;
+      color: #8b949e; font-size: 12px; cursor: pointer;
+      font-family: inherit; transition: all .15s;
+    }
+    .cmp-save-btn:hover { border-color: #388bfd; color: #388bfd; }
   </style>
 </head>
 <body>
 
-<div id="loader"><div class="spinner"></div><div class="load-text">กำลังโหลดข้อมูล NAV...</div></div>
-<div id="error-msg"><div class="error-box"><div class="error-title">⚠️ ไม่สามารถโหลดข้อมูลได้</div><div class="error-body" id="error-text">กรุณาตรวจสอบการตั้งค่า</div></div></div>
+<!-- ════════════════════════════════════════
+     LOADER
+════════════════════════════════════════ -->
+<div id="loader">
+  <div class="spinner"></div>
+  <div class="load-text">กำลังโหลดข้อมูล NAV...</div>
+</div>
 
+<!-- ════════════════════════════════════════
+     ERROR
+════════════════════════════════════════ -->
+<div id="error-msg">
+  <div class="error-box">
+    <div class="error-title">⚠️ ไม่สามารถโหลดข้อมูลได้</div>
+    <div class="error-body" id="error-text">กรุณาตรวจสอบการตั้งค่า</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HEADER
+════════════════════════════════════════ -->
 <div id="header">
   <div class="logo">
     <div class="logo-badge">GPF</div>
-    <div><div class="logo-title">NAV Dashboard</div><div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div></div>
+    <div>
+      <div class="logo-title">NAV Dashboard</div>
+      <div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div>
+    </div>
   </div>
   <div class="header-right">
     <div id="last-update">กำลังโหลด...</div>
@@ -173,16 +413,20 @@
       <button class="range-btn" onclick="setRange(0,'ALL',this)">ทั้งหมด</button>
     </div>
     <button id="cmp-open-btn" onclick="openCmp()"
-  style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
-         background:transparent; color:#8b949e; font-size:11px; font-weight:600;
-         cursor:pointer; font-family:inherit; white-space:nowrap;
-         transition: all .15s;">
-  ⚖️ เปรียบเทียบ
+      style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
+             background:transparent; color:#8b949e; font-size:11px; font-weight:600;
+             cursor:pointer; font-family:inherit; white-space:nowrap; transition:all .15s;">
+      ⚖️ เปรียบเทียบ
     </button>
   </div>
 </div>
 
+<!-- ════════════════════════════════════════
+     MAIN LAYOUT
+════════════════════════════════════════ -->
 <div id="layout">
+
+  <!-- SIDEBAR -->
   <div id="sidebar">
     <div class="sidebar-header">แผนการลงทุน</div>
     <div id="plan-list"></div>
@@ -192,35 +436,151 @@
     </div>
   </div>
 
+  <!-- CHART AREA -->
   <div id="chart-wrap">
     <div id="stats-bar">
-      <div class="stat-card"><div class="stat-label">ข้อมูลตั้งแต่</div><div class="stat-val" id="s-start">—</div><div class="stat-sub" id="s-rows">—</div></div>
-      <div class="stat-card"><div class="stat-label">ข้อมูลล่าสุด</div><div class="stat-val" id="s-end">—</div><div class="stat-sub">วันทำการล่าสุด</div></div>
-      <div class="stat-card"><div class="stat-label" id="s-plan-label">—</div><div class="stat-val" id="s-plan-nav">—</div><div class="stat-sub" id="s-plan-chg">—</div></div>
-      <div class="stat-card"><div class="stat-label">จำนวนแผน</div><div class="stat-val" id="s-count">—</div><div class="stat-sub">แผนที่แสดงอยู่</div></div>
-      <div class="stat-card"><div class="stat-label">ดีสุดวันนี้</div><div class="stat-val" id="s-best-name" style="font-size:12px">—</div><div class="stat-sub" id="s-best-chg">—</div></div>
-      <div class="stat-card"><div class="stat-label">แย่สุดวันนี้</div><div class="stat-val" id="s-worst-name" style="font-size:12px">—</div><div class="stat-sub" id="s-worst-chg">—</div></div>
-      <div class="stat-card"><div class="stat-label">YTD (ต้นปี)</div><div class="stat-val" id="s-ytd">—</div><div class="stat-sub" id="s-ytd-sub">—</div></div>
-      <div class="stat-card"><div class="stat-label">High / Low (ช่วงนี้)</div><div class="stat-val" id="s-high">—</div><div class="stat-sub" id="s-low">—</div></div>
+      <div class="stat-card">
+        <div class="stat-label">ข้อมูลตั้งแต่</div>
+        <div class="stat-val" id="s-start">—</div>
+        <div class="stat-sub" id="s-rows">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ข้อมูลล่าสุด</div>
+        <div class="stat-val" id="s-end">—</div>
+        <div class="stat-sub">วันทำการล่าสุด</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" id="s-plan-label">—</div>
+        <div class="stat-val" id="s-plan-nav">—</div>
+        <div class="stat-sub" id="s-plan-chg">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">จำนวนแผน</div>
+        <div class="stat-val" id="s-count">—</div>
+        <div class="stat-sub">แผนที่แสดงอยู่</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ดีสุดวันนี้</div>
+        <div class="stat-val" id="s-best-name" style="font-size:12px">—</div>
+        <div class="stat-sub" id="s-best-chg">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">แย่สุดวันนี้</div>
+        <div class="stat-val" id="s-worst-name" style="font-size:12px">—</div>
+        <div class="stat-sub" id="s-worst-chg">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">YTD (ต้นปี)</div>
+        <div class="stat-val" id="s-ytd">—</div>
+        <div class="stat-sub" id="s-ytd-sub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">High / Low (ช่วงนี้)</div>
+        <div class="stat-val" id="s-high">—</div>
+        <div class="stat-sub" id="s-low">—</div>
+      </div>
     </div>
-    <div id="normalize-banner">📊 โหมด % เปลี่ยนแปลง — ทุกแผนเริ่มต้นที่ 0% จากวันแรกในช่วงที่เลือก</div>
+    <div id="normalize-banner">
+      📊 โหมด % เปลี่ยนแปลง — ทุกแผนเริ่มต้นที่ 0% จากวันแรกในช่วงที่เลือก
+    </div>
     <div id="main-chart"></div>
   </div>
 </div>
 
+<!-- ════════════════════════════════════════
+     COMPARATOR MODAL
+════════════════════════════════════════ -->
+<div id="cmp-modal">
+  <div class="cmp-box">
+
+    <!-- Header -->
+    <div class="cmp-header">
+      <div>
+        <div class="cmp-header-title">⚖️ เปรียบเทียบแผนการลงทุน</div>
+        <div class="cmp-header-sub">กำหนดช่วงวันที่และสัดส่วนแต่ละ Port แล้วกดคำนวณ</div>
+      </div>
+      <button class="cmp-close" onclick="closeCmp()">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div class="cmp-body">
+
+      <!-- Port Panels -->
+      <div class="cmp-ports">
+
+        <!-- Port A -->
+        <div class="cmp-port" id="cmp-port-a">
+          <div class="cmp-port-header">
+            <span class="cmp-port-label" style="color:#388bfd;">Port A</span>
+            <span class="cmp-port-sum" id="cmp-a-sum" style="color:#8b949e;">รวม 0%</span>
+          </div>
+          <div class="cmp-date-row">
+            <span class="cmp-date-label">เริ่ม</span>
+            <input type="date" class="cmp-date-input" id="cmp-a-start">
+            <span class="cmp-date-sep">→</span>
+            <span class="cmp-date-label">สิ้นสุด</span>
+            <input type="date" class="cmp-date-input" id="cmp-a-end">
+          </div>
+          <div id="cmp-a-rows"></div>
+          <button class="cmp-add" onclick="addCmpRow('a')">+ เพิ่มแผน</button>
+        </div>
+
+        <!-- Port B -->
+        <div class="cmp-port" id="cmp-port-b">
+          <div class="cmp-port-header">
+            <span class="cmp-port-label" style="color:#FF9800;">Port B</span>
+            <span class="cmp-port-sum" id="cmp-b-sum" style="color:#8b949e;">รวม 0%</span>
+          </div>
+          <div class="cmp-date-row">
+            <span class="cmp-date-label">เริ่ม</span>
+            <input type="date" class="cmp-date-input" id="cmp-b-start">
+            <span class="cmp-date-sep">→</span>
+            <span class="cmp-date-label">สิ้นสุด</span>
+            <input type="date" class="cmp-date-input" id="cmp-b-end">
+          </div>
+          <div id="cmp-b-rows"></div>
+          <button class="cmp-add" onclick="addCmpRow('b')">+ เพิ่มแผน</button>
+        </div>
+
+      </div>
+
+      <!-- Result -->
+      <div class="cmp-result" id="cmp-result"></div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="cmp-footer">
+      <button class="cmp-calc-btn" onclick="calcCmp()">คำนวณผลตอบแทน</button>
+      <button class="cmp-save-btn" onclick="saveCmpToStorage()">💾 บันทึก</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
 <script>
+// ─────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec?action=data";
 
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
 let dateTimestamps = [];
-let allData   = null;
-let chart     = null;
-let hidden    = new Set();
-let chartMode = 'nav';
-let curRange  = { n: 6, unit: 'M' };
+let allData        = null;
+let chart          = null;
+let hidden         = new Set();
+let chartMode      = 'nav';
+let curRange       = { n: 6, unit: 'M' };
+let currentMinTs   = null;  // sync กับ range ที่เลือก
 
-// ─── minTs ที่ใช้จริง (sync กับ range ที่เลือก) ───
-let currentMinTs = null;
-
+// ─────────────────────────────────────────
+// INIT — โหลดข้อมูลเมื่อหน้าพร้อม
+// ─────────────────────────────────────────
 window.addEventListener('load', () => {
   fetch(GAS_URL)
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
@@ -231,7 +591,7 @@ window.addEventListener('load', () => {
 function onDataLoaded(data) {
   if (data.error) { showError(data.error); return; }
   allData = data;
-    // ✅ แปลง dates → timestamps ครั้งเดียว ไม่ต้องทำซ้ำใน getBaseValue
+  // แปลง dates → timestamps ครั้งเดียว ไม่ต้องทำซ้ำใน getBaseValue
   dateTimestamps = allData.dates.map(d => new Date(d).getTime());
   allData.plans.forEach(p => hidden.add(p.key));
   computeCurrentMinTs();
@@ -270,7 +630,7 @@ function computeCurrentMinTs() {
 // ─────────────────────────────────────────
 function getBaseValue(planData) {
   for (let i = 0; i < dateTimestamps.length; i++) {
-    if (dateTimestamps[i] < currentMinTs) continue; // ✅ ไม่ต้อง new Date()
+    if (dateTimestamps[i] < currentMinTs) continue;
     if (planData[i] !== null && planData[i] > 0) return planData[i];
   }
   for (let i = 0; i < planData.length; i++) {
@@ -286,10 +646,7 @@ function normalizePlan(planData) {
   if (chartMode === 'nav') return planData;
   const base = getBaseValue(planData);
   if (!base) return planData.map(() => null);
-  //return planData.map(v => v !== null ? parseFloat(((v - base) / base * 100).toFixed(4)) : null);
-  return planData.map(v => v !== null
-  ? (v - base) / base * 100   // ✅ ตัด toFixed+parseFloat ออก กราฟไม่ได้ต้องการความแม่นขนาดนั้น
-  : null);
+  return planData.map(v => v !== null ? (v - base) / base * 100 : null);
 }
 
 // ─────────────────────────────────────────
@@ -303,7 +660,7 @@ function getPctInRange(planData) {
 }
 
 // ─────────────────────────────────────────
-// Mode Toggle
+// MODE TOGGLE
 // ─────────────────────────────────────────
 function setMode(mode) {
   chartMode = mode;
@@ -314,12 +671,12 @@ function setMode(mode) {
   rebuildSeries();
   updateHighLightCard();
   updateHighLow();
-  updateBestWorst(); // ✅ เพิ่ม
-  updateYTD();       // ✅ เพิ่ม
+  updateBestWorst();
+  updateYTD();
 }
 
 // ─────────────────────────────────────────
-// Sidebar
+// SIDEBAR
 // ─────────────────────────────────────────
 function buildSidebar() {
   const list = document.getElementById('plan-list');
@@ -349,24 +706,38 @@ function buildSidebar() {
 function togglePlan(idx, key) {
   const el = document.getElementById(`pi-${idx}`);
   if (hidden.has(key)) {
-    hidden.delete(key); el.classList.remove('hidden'); chart.showSeries(allData.plans[idx].label);
+    hidden.delete(key);
+    el.classList.remove('hidden');
+    chart.showSeries(allData.plans[idx].label);
   } else {
-    hidden.add(key); el.classList.add('hidden'); chart.hideSeries(allData.plans[idx].label);
+    hidden.add(key);
+    el.classList.add('hidden');
+    chart.hideSeries(allData.plans[idx].label);
   }
-  updateVisibleCount(); updateBestWorst(); updateYTD(); setTimeout(updateHighLow, 300);
+  updateVisibleCount();
+  updateBestWorst();
+  updateYTD();
+  setTimeout(updateHighLow, 300);
 }
 
 function toggleAll(show) {
   allData.plans.forEach((p, i) => {
     const el = document.getElementById(`pi-${i}`);
-    if (show) { hidden.delete(p.key); el.classList.remove('hidden'); chart.showSeries(p.label); }
-    else       { hidden.add(p.key);   el.classList.add('hidden');    chart.hideSeries(p.label); }
+    if (show) {
+      hidden.delete(p.key); el.classList.remove('hidden'); chart.showSeries(p.label);
+    } else {
+      hidden.add(p.key);   el.classList.add('hidden');    chart.hideSeries(p.label);
+    }
   });
-  updateVisibleCount(); updateBestWorst(); updateYTD(); setTimeout(updateHighLow, 300);
+  updateVisibleCount();
+  updateBestWorst();
+  updateYTD();
+  setTimeout(updateHighLow, 300);
 }
 
 function updateVisibleCount() {
-  document.getElementById('s-count').textContent = allData.plans.filter(p => !hidden.has(p.key)).length;
+  document.getElementById('s-count').textContent =
+    allData.plans.filter(p => !hidden.has(p.key)).length;
 }
 
 // ─────────────────────────────────────────
@@ -378,7 +749,7 @@ function buildSeriesData() {
     data:  normalizePlan(plan.data),
     color: plan.color
   }));
-} 
+}
 
 function rebuildSeries() {
   if (!chart) return;
@@ -390,7 +761,7 @@ function rebuildSeries() {
 }
 
 // ─────────────────────────────────────────
-// Chart
+// CHART
 // ─────────────────────────────────────────
 function buildChart() {
   const yFormatter = v => {
@@ -409,7 +780,10 @@ function buildChart() {
       type: 'line', height: '100%', background: 'transparent',
       animations: { enabled: false },
       redrawOnParentResize: false, redrawOnWindowResize: false,
-      toolbar: { show: true, tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true } },
+      toolbar: {
+        show: true,
+        tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
+      },
       zoom: { enabled: true, type: 'x' },
       pan:  { enabled: true, type: 'x' },
       events: {
@@ -417,11 +791,11 @@ function buildChart() {
           const p = allData.plans[cfg.seriesIndex];
           if (!p) return;
           const v = cfg.w.globals.series[cfg.seriesIndex][cfg.dataPointIndex];
-      
+
           document.getElementById('s-plan-label').textContent = p.label;
           document.getElementById('s-plan-nav').textContent   = tooltipY(v);
           document.getElementById('s-plan-nav').style.color   = p.color;
-      
+
           if (chartMode === 'nav') {
             const i    = cfg.dataPointIndex;
             const cur  = p.data[i];
@@ -436,18 +810,21 @@ function buildChart() {
             document.getElementById('s-plan-chg').style.color = '#8b949e';
           }
         },
-        dataPointMouseLeave(e, ctx, cfg) {
+        dataPointMouseLeave() {
           updateHighLightCard();
         },
         zoomed()   { setTimeout(updateHighLow, 300); },
         scrolled() { setTimeout(updateHighLow, 300); }
-      },
+      }
     },
     stroke:  { curve: 'straight', width: 1.8 },
     colors:  allData.plans.map(p => p.color),
     xaxis: {
       categories: allData.dates, type: 'datetime', tickAmount: 10,
-      labels: { style: { colors: '#8b949e', fontSize: '11px' }, datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM' } },
+      labels: {
+        style: { colors: '#8b949e', fontSize: '11px' },
+        datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM' }
+      },
       axisBorder: { color: '#30363d' }, axisTicks: { color: '#30363d' },
       crosshairs: { stroke: { color: '#388bfd', dashArray: 4 } }
     },
@@ -461,9 +838,10 @@ function buildChart() {
       x: { format: 'dd MMM yyyy' },
       y: { formatter: tooltipY }
     },
-    legend: { show: false }, dataLabels: { enabled: false },
-    markers: { size: 0, hover: { sizeOffset: 3 } },
-    noData: { text: 'ไม่พบข้อมูล', style: { color: '#8b949e', fontSize: '14px' } }
+    legend:      { show: false },
+    dataLabels:  { enabled: false },
+    markers:     { size: 0, hover: { sizeOffset: 3 } },
+    noData:      { text: 'ไม่พบข้อมูล', style: { color: '#8b949e', fontSize: '14px' } }
   };
 
   chart = new ApexCharts(document.getElementById('main-chart'), options);
@@ -474,7 +852,7 @@ function buildChart() {
 }
 
 // ─────────────────────────────────────────
-// Range filter
+// RANGE FILTER
 // ─────────────────────────────────────────
 function setRange(n, unit, btn) {
   curRange = { n, unit };
@@ -492,13 +870,13 @@ function setRange(n, unit, btn) {
     xMax = now.getTime();
   }
 
-  // ✅ รวม xaxis + series เป็น call เดียว ไม่เรียก rebuildSeries() แยก
+  // รวม xaxis + series เป็น call เดียว
   chart.updateOptions(
     { xaxis: { type: 'datetime', min: xMin, max: xMax }, series: buildSeriesData() },
     false, false
   );
 
-  // ✅ re-apply hidden state หลัง updateOptions เสร็จ (1 batch ของ hideSeries ยังโอเค)
+  // re-apply hidden state
   allData.plans.forEach(p => {
     if (hidden.has(p.key)) chart.hideSeries(p.label);
     else chart.showSeries(p.label);
@@ -509,8 +887,9 @@ function setRange(n, unit, btn) {
   updateBestWorst();
   updateYTD();
 }
+
 // ─────────────────────────────────────────
-// Stats
+// STATS
 // ─────────────────────────────────────────
 const fmtDate = s => {
   if (!s) return '—';
@@ -535,8 +914,8 @@ function updateStats() {
   chart.updateOptions({ xaxis: { type: 'datetime', min: sixAgo.getTime(), max: now.getTime() } });
   document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.textContent === '6ด.'));
 
-  curRange = { n: 6, unit: 'M' }; // ✅ ให้ตรงกับที่ตั้งค่าไว้ด้านบน
-  computeCurrentMinTs();           // ✅ sync minTs
+  curRange = { n: 6, unit: 'M' };
+  computeCurrentMinTs();
   updateHighLightCard();
   updateBestWorst();
   updateYTD();
@@ -544,7 +923,7 @@ function updateStats() {
 }
 
 // ─────────────────────────────────────────
-// ✅ Highlight card — sync กับ mode ปัจจุบัน
+// HIGHLIGHT CARD — sync กับ mode ปัจจุบัน
 // ─────────────────────────────────────────
 function updateHighLightCard() {
   const main = allData.plans.find(p => p.label === 'แผนหลัก') || allData.plans[0];
@@ -557,13 +936,11 @@ function updateHighLightCard() {
   document.getElementById('s-plan-label').textContent = main.label;
 
   if (chartMode === 'nav') {
-    // แสดง NAV จริง + เปลี่ยนแปลงจากวันก่อน
     document.getElementById('s-plan-nav').textContent = lastNav ? lastNav.toFixed(4) : '—';
     document.getElementById('s-plan-nav').style.color = main.color;
     document.getElementById('s-plan-chg').textContent = `${dayChg >= 0 ? '+' : ''}${dayChg.toFixed(2)}% จากวันก่อน`;
     document.getElementById('s-plan-chg').style.color = dayChg >= 0 ? '#3fb950' : '#f85149';
   } else {
-    // ✅ แสดง % เปลี่ยนแปลงในช่วงที่เลือก (ใช้ base เดียวกับกราฟ)
     const pct = getPctInRange(main.data);
     document.getElementById('s-plan-nav').textContent = pct !== null ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—';
     document.getElementById('s-plan-nav').style.color = pct !== null ? (pct >= 0 ? '#3fb950' : '#f85149') : main.color;
@@ -573,7 +950,7 @@ function updateHighLightCard() {
 }
 
 // ─────────────────────────────────────────
-// Best / Worst — ใช้ % เปลี่ยนแปลงจากวันก่อนเสมอ (ไม่ขึ้นกับ mode)
+// BEST / WORST — ใช้ % จากวันก่อนเสมอ (ไม่ขึ้นกับ mode)
 // ─────────────────────────────────────────
 function updateBestWorst() {
   let best = null, worst = null;
@@ -620,11 +997,17 @@ function updateYTD() {
 
   let target = allData.plans.find(p => p.label === 'แผนหลัก' && !hidden.has(p.key))
             || allData.plans.find(p => !hidden.has(p.key));
-  if (!target) { document.getElementById('s-ytd').textContent = '—'; document.getElementById('s-ytd-sub').textContent = ''; return; }
+  if (!target) {
+    document.getElementById('s-ytd').textContent     = '—';
+    document.getElementById('s-ytd-sub').textContent = '';
+    return;
+  }
 
   let startVal = null;
   for (let i = 0; i < allData.dates.length; i++) {
-    if (allData.dates[i] >= janFirst && target.data[i] !== null) { startVal = target.data[i]; break; }
+    if (allData.dates[i] >= janFirst && target.data[i] !== null) {
+      startVal = target.data[i]; break;
+    }
   }
   const endVal = getLastValue(target.data);
   if (!startVal || !endVal) return;
@@ -636,7 +1019,7 @@ function updateYTD() {
 }
 
 // ─────────────────────────────────────────
-// ✅ High/Low — sync กับ mode ปัจจุบัน
+// HIGH / LOW — sync กับ mode ปัจจุบัน
 // ─────────────────────────────────────────
 function updateHighLow() {
   if (!chart) return;
@@ -646,7 +1029,7 @@ function updateHighLow() {
 
   allData.plans.forEach(plan => {
     if (hidden.has(plan.key)) return;
-    const displayData = normalizePlan(plan.data); // ✅ ใช้ข้อมูลตาม mode
+    const displayData = normalizePlan(plan.data);
     allData.dates.forEach((dateStr, i) => {
       const ts = new Date(dateStr).getTime();
       if (ts < minTs || ts > maxTs) return;
@@ -669,7 +1052,7 @@ function updateHighLow() {
 }
 
 // ─────────────────────────────────────────
-// Helpers
+// HELPERS
 // ─────────────────────────────────────────
 function getLastValue(arr) {
   for (let i = arr.length - 1; i >= 0; i--) if (arr[i] !== null) return arr[i];
@@ -677,22 +1060,21 @@ function getLastValue(arr) {
 }
 function getPrevValue(arr) {
   let found = 0;
-  for (let i = arr.length - 1; i >= 0; i--) if (arr[i] !== null && ++found === 2) return arr[i];
+  for (let i = arr.length - 1; i >= 0; i--)
+    if (arr[i] !== null && ++found === 2) return arr[i];
   return null;
 }
+
 // ─────────────────────────────────────────
-// Portfolio Comparator (v2 — per-port date range)
+// PORTFOLIO COMPARATOR (v2 — per-port date range)
 // ─────────────────────────────────────────
- 
+
 function openCmp() {
-  // ตั้งค่า default date
   const firstDate = allData.dates[0];
   const lastDate  = allData.dates[allData.dates.length - 1];
- 
-  // โหลดจาก storage ก่อน ถ้าไม่มีค่อย init
+
   const loaded = loadCmpFromStorage();
   if (!loaded) {
-    // init rows
     initCmpRows('a');
     initCmpRows('b');
     document.getElementById('cmp-a-start').value = firstDate;
@@ -700,15 +1082,15 @@ function openCmp() {
     document.getElementById('cmp-b-start').value = firstDate;
     document.getElementById('cmp-b-end').value   = lastDate;
   }
- 
+
   document.getElementById('cmp-result').classList.remove('show');
   document.getElementById('cmp-modal').classList.add('open');
 }
- 
+
 function closeCmp() {
   document.getElementById('cmp-modal').classList.remove('open');
 }
- 
+
 // สร้าง row เริ่มต้น 1 แผน
 function initCmpRows(ab) {
   const rows = document.getElementById(`cmp-${ab}-rows`);
@@ -716,13 +1098,13 @@ function initCmpRows(ab) {
   addCmpRow(ab);
   updateCmpSum(ab);
 }
- 
+
 // เพิ่ม row แผน
 function addCmpRow(ab) {
   const rows = document.getElementById(`cmp-${ab}-rows`);
   const row  = document.createElement('div');
   row.className = 'cmp-row';
- 
+
   const sel = document.createElement('select');
   sel.className = 'cmp-select';
   allData.plans.forEach(p => {
@@ -730,33 +1112,35 @@ function addCmpRow(ab) {
     opt.value = p.key; opt.textContent = p.label;
     sel.appendChild(opt);
   });
- 
+
   const inp = document.createElement('input');
   inp.type = 'number'; inp.min = 0; inp.max = 100; inp.value = 100;
   inp.className = 'cmp-pct';
   inp.addEventListener('input', () => updateCmpSum(ab));
- 
+
   const pct = document.createElement('span');
-  pct.textContent = '%'; pct.style.cssText = 'font-size:11px; color:#8b949e;';
- 
+  pct.textContent = '%';
+  pct.style.cssText = 'font-size:11px; color:#8b949e;';
+
   const del = document.createElement('button');
   del.className = 'cmp-del'; del.textContent = '✕';
   del.onclick = () => { row.remove(); updateCmpSum(ab); };
- 
+
   row.append(sel, inp, pct, del);
   rows.appendChild(row);
   updateCmpSum(ab);
 }
- 
+
 // อัปเดต % รวม
 function updateCmpSum(ab) {
   const rows = document.getElementById(`cmp-${ab}-rows`);
-  const sum  = [...rows.querySelectorAll('input')].reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
+  const sum  = [...rows.querySelectorAll('input')]
+    .reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
   const el   = document.getElementById(`cmp-${ab}-sum`);
   el.textContent = `รวม ${sum.toFixed(0)}%`;
   el.style.color = Math.abs(sum - 100) < 0.01 ? '#3fb950' : sum > 100 ? '#f85149' : '#8b949e';
 }
- 
+
 // ─────────────────────────────────────────
 // คำนวณผลตอบแทนของ Port ในช่วงวันที่กำหนด
 // ─────────────────────────────────────────
@@ -764,22 +1148,22 @@ function getPortReturnInRange(ab) {
   const startStr = document.getElementById(`cmp-${ab}-start`).value;
   const endStr   = document.getElementById(`cmp-${ab}-end`).value;
   if (!startStr || !endStr) return null;
- 
+
   const startTs = new Date(startStr).getTime();
   const endTs   = new Date(endStr).getTime();
   if (startTs >= endTs) return null;
- 
+
   const rows = document.getElementById(`cmp-${ab}-rows`).children;
   let totalReturn = 0;
- 
+
   for (const row of rows) {
     const key = row.querySelector('select').value;
     const w   = (parseFloat(row.querySelector('input').value) || 0) / 100;
     if (w === 0) continue;
- 
+
     const plan = allData.plans.find(p => p.key === key);
     if (!plan) continue;
- 
+
     // หา base value (ค่าแรกที่ >= startTs)
     let baseVal = null;
     for (let i = 0; i < dateTimestamps.length; i++) {
@@ -787,7 +1171,7 @@ function getPortReturnInRange(ab) {
         baseVal = plan.data[i]; break;
       }
     }
- 
+
     // หา end value (ค่าสุดท้ายที่ <= endTs)
     let endVal = null;
     for (let i = dateTimestamps.length - 1; i >= 0; i--) {
@@ -795,50 +1179,54 @@ function getPortReturnInRange(ab) {
         endVal = plan.data[i]; break;
       }
     }
- 
+
     if (!baseVal || !endVal) return null;
     totalReturn += ((endVal - baseVal) / baseVal * 100) * w;
   }
- 
+
   return totalReturn;
 }
- 
+
 // ─────────────────────────────────────────
 // คำนวณและแสดงผล
 // ─────────────────────────────────────────
 function calcCmp() {
-  // ตรวจ sum = 100
   ['a','b'].forEach(ab => updateCmpSum(ab));
+
   const sumA = [...document.getElementById('cmp-a-rows').querySelectorAll('input')]
     .reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
   const sumB = [...document.getElementById('cmp-b-rows').querySelectorAll('input')]
     .reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
- 
+
   if (Math.abs(sumA - 100) > 0.01 || Math.abs(sumB - 100) > 0.01) {
     alert('สัดส่วนแต่ละ Port ต้องรวมได้ 100% ครับ'); return;
   }
- 
-  // ตรวจวันที่
+
   const aStart = document.getElementById('cmp-a-start').value;
   const aEnd   = document.getElementById('cmp-a-end').value;
   const bStart = document.getElementById('cmp-b-start').value;
   const bEnd   = document.getElementById('cmp-b-end').value;
+
   if (!aStart || !aEnd || !bStart || !bEnd) {
     alert('กรุณากรอกวันที่ให้ครบทั้งสอง Port ครับ'); return;
   }
-  if (new Date(aStart) >= new Date(aEnd)) { alert('Port A: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return; }
-  if (new Date(bStart) >= new Date(bEnd)) { alert('Port B: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return; }
- 
+  if (new Date(aStart) >= new Date(aEnd)) {
+    alert('Port A: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return;
+  }
+  if (new Date(bStart) >= new Date(bEnd)) {
+    alert('Port B: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return;
+  }
+
   const retA = getPortReturnInRange('a');
   const retB = getPortReturnInRange('b');
- 
+
   if (retA === null) { alert('ข้อมูล Port A ไม่ครบในช่วงที่เลือกครับ'); return; }
   if (retB === null) { alert('ข้อมูล Port B ไม่ครบในช่วงที่เลือกครับ'); return; }
- 
+
   saveCmpToStorage();
   renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd);
 }
- 
+
 // ─────────────────────────────────────────
 // แสดงผลลัพธ์
 // ─────────────────────────────────────────
@@ -848,19 +1236,22 @@ function renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd) {
   const clrA   = retA >= 0 ? '#3fb950' : '#f85149';
   const clrB   = retB >= 0 ? '#3fb950' : '#f85149';
   const clrD   = diff  > 0 ? '#3fb950' : diff < 0 ? '#f85149' : '#8b949e';
- 
-  const fmt = d => {
-    const dt = new Date(d);
-    return dt.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
- 
-  const winnerBg  = winner === 'A' ? 'rgba(56,139,253,.2)'  : winner === 'B' ? 'rgba(255,152,0,.2)' : 'rgba(139,148,158,.15)';
+
+  const fmt = d => new Date(d).toLocaleDateString('th-TH', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
+
+  const winnerBg  = winner === 'A' ? 'rgba(56,139,253,.2)'
+                  : winner === 'B' ? 'rgba(255,152,0,.2)'
+                  : 'rgba(139,148,158,.15)';
   const winnerClr = winner === 'A' ? '#388bfd' : winner === 'B' ? '#FF9800' : '#8b949e';
   const winnerTxt = winner ? `🏆 Port ${winner} ผลตอบแทนดีกว่า` : '🤝 ผลตอบแทนเท่ากัน';
- 
+
   document.getElementById('cmp-result').classList.add('show');
   document.getElementById('cmp-result').innerHTML = `
-    <div style="font-size:10px; color:#8b949e; margin-bottom:12px; letter-spacing:.5px;">ผลตอบแทนในช่วงที่เลือก</div>
+    <div style="font-size:10px; color:#8b949e; margin-bottom:12px; letter-spacing:.5px;">
+      ผลตอบแทนในช่วงที่เลือก
+    </div>
     <div class="cmp-result-grid">
       <div class="cmp-result-port">
         <div class="cmp-result-portlabel" style="color:#388bfd;">Port A</div>
@@ -881,9 +1272,9 @@ function renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd) {
       ${winnerTxt}
     </div>`;
 }
- 
+
 // ─────────────────────────────────────────
-// Save / Load localStorage
+// SAVE / LOAD localStorage
 // ─────────────────────────────────────────
 function saveCmpToStorage() {
   const getData = ab => {
@@ -901,12 +1292,12 @@ function saveCmpToStorage() {
     localStorage.setItem('gpf_cmp_v2', JSON.stringify({ a: getData('a'), b: getData('b') }));
   } catch(e) {}
 }
- 
+
 function loadCmpFromStorage() {
   try {
     const saved = JSON.parse(localStorage.getItem('gpf_cmp_v2'));
     if (!saved) return false;
- 
+
     ['a','b'].forEach(ab => {
       const d = saved[ab];
       if (!d) return;
@@ -925,229 +1316,6 @@ function loadCmpFromStorage() {
     return true;
   } catch(e) { return false; }
 }
-
-  document.getElementById('cmp-result').style.display = 'block';
-  document.getElementById('cmp-result').innerHTML = `
-    <div style="font-size:10px; color:#8b949e; margin-bottom:10px;">ผลตอบแทนในช่วง ${rangeLabel}</div>
-    <div style="display:flex; justify-content:center; align-items:center; gap:20px; flex-wrap:wrap;">
-      <div>
-        <div style="font-size:10px; color:#388bfd; margin-bottom:4px;">พอร์ตเดิม ก่อนเปลี่ยน</div>
-        <div style="font-size:22px; font-weight:700; color:${clrA};">${retA >= 0 ? '+' : ''}${retA.toFixed(2)}%</div>
-      </div>
-      <div style="font-size:11px; color:#8b949e;">vs</div>
-      <div>
-        <div style="font-size:10px; color:#FF9800; margin-bottom:4px;">พอร์ตใหม่ หลังเปลี่ยน</div>
-        <div style="font-size:22px; font-weight:700; color:${clrB};">${retB >= 0 ? '+' : ''}${retB.toFixed(2)}%</div>
-      </div>
-    </div>
-    <div style="margin-top:10px; font-size:12px; color:${clrD}; font-weight:600;">
-      ผลต่าง: ${diff >= 0 ? '+' : ''}${diff.toFixed(2)}%
-      ${winner ? `→ Port ${winner} ดีกว่า` : '→ เท่ากัน'}
-    </div>`;
-}
-   /* ── Comparator Modal ── */
-  #cmp-modal {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.75); z-index: 900;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  #cmp-modal.open { display: flex; }
-  .cmp-box {
-    background: #161b22; border: 1px solid #30363d;
-    border-radius: 14px; padding: 0;
-    width: 680px; max-width: 96vw; max-height: 92vh;
-    display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 24px 64px rgba(0,0,0,.6);
-  }
-  .cmp-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px; border-bottom: 1px solid #30363d;
-    background: #1c2330; flex-shrink: 0;
-  }
-  .cmp-header-title { font-size: 14px; font-weight: 700; color: #e6edf3; }
-  .cmp-header-sub   { font-size: 10px; color: #8b949e; margin-top: 2px; }
-  .cmp-close {
-    background: none; border: none; color: #8b949e;
-    font-size: 20px; cursor: pointer; padding: 0 4px; line-height: 1;
-    transition: color .15s;
-  }
-  .cmp-close:hover { color: #f85149; }
- 
-  .cmp-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
-  .cmp-body::-webkit-scrollbar { width: 4px; }
-  .cmp-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
- 
-  /* date range row */
-  .cmp-date-row {
-    display: flex; gap: 8px; align-items: center;
-    background: #1c2330; border: 1px solid #30363d;
-    border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;
-  }
-  .cmp-date-label { font-size: 10px; color: #8b949e; white-space: nowrap; }
-  .cmp-date-input {
-    flex: 1; background: #0d1117; border: 1px solid #30363d;
-    color: #e6edf3; border-radius: 5px; padding: 4px 8px;
-    font-size: 11px; font-family: 'Sarabun', sans-serif;
-    min-width: 0;
-  }
-  .cmp-date-input:focus { outline: none; border-color: #388bfd; }
-  .cmp-date-sep { font-size: 11px; color: #8b949e; }
- 
-  /* port panels */
-  .cmp-ports { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .cmp-port {
-    background: #1c2330; border: 1px solid #30363d;
-    border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px;
-  }
-  .cmp-port-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 2px;
-  }
-  .cmp-port-label { font-size: 12px; font-weight: 700; }
-  .cmp-port-sum   { font-size: 10px; font-weight: 600; }
- 
-  .cmp-row { display: flex; gap: 4px; align-items: center; margin-bottom: 3px; }
-  .cmp-select {
-    flex: 1; background: #0d1117; border: 1px solid #30363d;
-    color: #e6edf3; border-radius: 4px; padding: 4px 6px;
-    font-size: 11px; font-family: 'Sarabun', sans-serif; min-width: 0;
-  }
-  .cmp-select:focus { outline: none; border-color: #388bfd; }
-  .cmp-pct {
-    width: 52px; background: #0d1117; border: 1px solid #30363d;
-    color: #e6edf3; border-radius: 4px; padding: 4px 6px;
-    font-size: 11px; text-align: right;
-  }
-  .cmp-pct:focus { outline: none; border-color: #388bfd; }
-  .cmp-del {
-    background: none; border: none; color: #8b949e;
-    cursor: pointer; font-size: 13px; padding: 0 3px;
-    transition: color .15s; line-height: 1;
-  }
-  .cmp-del:hover { color: #f85149; }
-  .cmp-add {
-    width: 100%; margin-top: 2px; padding: 4px;
-    border-radius: 4px; border: 1px dashed #30363d;
-    background: transparent; color: #8b949e; font-size: 11px;
-    cursor: pointer; transition: all .15s; font-family: inherit;
-  }
-  .cmp-add:hover { border-color: #388bfd; color: #388bfd; }
- 
-  /* result */
-  .cmp-result {
-    display: none; margin-top: 14px;
-    background: #0d1117; border: 1px solid #30363d;
-    border-radius: 10px; padding: 16px; text-align: center;
-  }
-  .cmp-result.show { display: block; }
-  .cmp-result-grid {
-    display: flex; justify-content: center; align-items: center;
-    gap: 24px; flex-wrap: wrap; margin: 10px 0;
-  }
-  .cmp-result-port { text-align: center; }
-  .cmp-result-portlabel { font-size: 10px; margin-bottom: 4px; }
-  .cmp-result-val   { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .cmp-result-range { font-size: 9px; color: #8b949e; margin-top: 2px; }
-  .cmp-result-diff  { margin-top: 10px; font-size: 13px; font-weight: 600; }
-  .cmp-result-winner {
-    display: inline-block; margin-top: 8px;
-    padding: 3px 12px; border-radius: 20px;
-    font-size: 11px; font-weight: 700;
-  }
- 
-  /* footer */
-  .cmp-footer {
-    display: flex; gap: 8px; padding: 12px 20px;
-    border-top: 1px solid #30363d; flex-shrink: 0;
-    background: #1c2330;
-  }
-  .cmp-calc-btn {
-    flex: 1; padding: 8px; border-radius: 6px; border: none;
-    background: #388bfd; color: #fff; font-size: 13px;
-    font-weight: 700; cursor: pointer; font-family: inherit;
-    transition: background .15s;
-  }
-  .cmp-calc-btn:hover { background: #4c96ff; }
-  .cmp-save-btn {
-    padding: 8px 14px; border-radius: 6px;
-    border: 1px solid #30363d; background: transparent;
-    color: #8b949e; font-size: 12px; cursor: pointer;
-    font-family: inherit; transition: all .15s;
-  }
-  .cmp-save-btn:hover { border-color: #388bfd; color: #388bfd; }
-  
 </script>
-<div id="cmp-modal">
-  <div class="cmp-box">
- 
-    <!-- Header -->
-    <div class="cmp-header">
-      <div>
-        <div class="cmp-header-title">⚖️ เปรียบเทียบ แผนการลงทุน</div>
-        <div class="cmp-header-sub">กำหนดช่วงวันที่และสัดส่วนแต่ละ Port แล้วกดคำนวณ</div>
-      </div>
-      <button class="cmp-close" onclick="closeCmp()">✕</button>
-    </div>
- 
-    <!-- Body -->
-    <div class="cmp-body">
- 
-      <!-- Port panels -->
-      <div class="cmp-ports">
- 
-        <!-- Port A -->
-        <div class="cmp-port" id="cmp-port-a">
-          <div class="cmp-port-header">
-            <span class="cmp-port-label" style="color:#388bfd;">Port A</span>
-            <span class="cmp-port-sum" id="cmp-a-sum" style="color:#8b949e;">รวม 0%</span>
-          </div>
-          <!-- Date range A -->
-          <div class="cmp-date-row">
-            <span class="cmp-date-label">เริ่ม</span>
-            <input type="date" class="cmp-date-input" id="cmp-a-start">
-            <span class="cmp-date-sep">→</span>
-            <span class="cmp-date-label">สิ้นสุด</span>
-            <input type="date" class="cmp-date-input" id="cmp-a-end">
-          </div>
-          <!-- Rows A -->
-          <div id="cmp-a-rows"></div>
-          <button class="cmp-add" onclick="addCmpRow('a')">+ เพิ่มแผน</button>
-        </div>
- 
-        <!-- Port B -->
-        <div class="cmp-port" id="cmp-port-b">
-          <div class="cmp-port-header">
-            <span class="cmp-port-label" style="color:#FF9800;">Port B</span>
-            <span class="cmp-port-sum" id="cmp-b-sum" style="color:#8b949e;">รวม 0%</span>
-          </div>
-          <!-- Date range B -->
-          <div class="cmp-date-row">
-            <span class="cmp-date-label">เริ่ม</span>
-            <input type="date" class="cmp-date-input" id="cmp-b-start">
-            <span class="cmp-date-sep">→</span>
-            <span class="cmp-date-label">สิ้นสุด</span>
-            <input type="date" class="cmp-date-input" id="cmp-b-end">
-          </div>
-          <!-- Rows B -->
-          <div id="cmp-b-rows"></div>
-          <button class="cmp-add" onclick="addCmpRow('b')">+ เพิ่มแผน</button>
-        </div>
- 
-      </div>
- 
-      <!-- Result -->
-      <div class="cmp-result" id="cmp-result"></div>
- 
-    </div>
- 
-    <!-- Footer -->
-    <div class="cmp-footer">
-      <button class="cmp-calc-btn" onclick="calcCmp()">คำนวณผลตอบแทน</button>
-      <button class="cmp-save-btn" onclick="saveCmpToStorage()">💾 บันทึก</button>
-    </div>
- 
-  </div>
-</div>
 </body>
 </html>

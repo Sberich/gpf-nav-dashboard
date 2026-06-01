@@ -309,7 +309,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 140px; /* ← เพิ่มบรรทัดนี้ */
+      max-width: 140px;
     }
     .cmp-select:focus { outline: none; border-color: #388bfd; }
     .cmp-pct {
@@ -1055,9 +1055,8 @@ function updateHighLow() {
   allData.plans.forEach(plan => {
     if (hidden.has(plan.key)) return;
     const displayData = normalizePlan(plan.data);
-    allData.dates.forEach((dateStr, i) => {
-      //const ts = new Date(dateStr).getTime();  ← comment แล้ว แต่ ts ยังถูกใช้อยู่
-      if (ts < minTs || ts > maxTs) return;      ← ts = undefined!
+    dateTimestamps.forEach((ts, i) => {
+      if (ts < minTs || ts > maxTs) return;
       const v = displayData[i];
       if (v === null) return;
       if (v > high) high = v;

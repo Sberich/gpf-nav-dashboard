@@ -1254,13 +1254,13 @@ function renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd) {
     </div>
     <div class="cmp-result-grid">
       <div class="cmp-result-port">
-        <div class="cmp-result-portlabel" style="color:#388bfd;">Port A</div>
+        <div class="cmp-result-portlabel" style="color:#388bfd;">พอร์ตเดิม ก่อนเปลี่ยน</div>
         <div class="cmp-result-val" style="color:${clrA};">${retA >= 0 ? '+' : ''}${retA.toFixed(2)}%</div>
         <div class="cmp-result-range">${fmt(aStart)} → ${fmt(aEnd)}</div>
       </div>
       <div style="font-size:13px; color:#8b949e; font-weight:600;">vs</div>
       <div class="cmp-result-port">
-        <div class="cmp-result-portlabel" style="color:#FF9800;">Port B</div>
+        <div class="cmp-result-portlabel" style="color:#FF9800;">พอร์ตใหม่ หลังเปลี่ยน</div>
         <div class="cmp-result-val" style="color:${clrB};">${retB >= 0 ? '+' : ''}${retB.toFixed(2)}%</div>
         <div class="cmp-result-range">${fmt(bStart)} → ${fmt(bEnd)}</div>
       </div>

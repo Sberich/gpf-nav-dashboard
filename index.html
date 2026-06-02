@@ -156,7 +156,7 @@
       padding: 7px 14px; border-right: 1px solid var(--border);
       min-width: 115px; flex-shrink: 0;
     }
-    .stat-card:first-child { display: none; }
+    /* .stat-card:first-child { display: none; } — เปิดแสดง stat card แรก */
     .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
     .stat-val   { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .stat-sub   { font-size: 9px; color: var(--muted); margin-top: 1px; }
@@ -423,6 +423,20 @@
       font-size: 10px; color: #8b949e; margin-top: 12px;
       padding-top: 12px; border-top: 1px solid #30363d;
     }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #header { flex-wrap: wrap; height: auto; padding: 8px 12px; gap: 6px; }
+      .header-right { flex-wrap: wrap; width: 100%; justify-content: flex-start; }
+      .range-bar { overflow-x: auto; flex-wrap: nowrap; }
+      #stats-bar { flex-wrap: nowrap; }
+      .cmp-ports { grid-template-columns: 1fr; }
+      .cmp-box { width: 96vw; }
+      #donate-fab { bottom: 10px; right: 10px; font-size: 11px; padding: 7px 14px; }
+    }
     
   </style>
 </head>
@@ -443,6 +457,7 @@
   <div class="error-box">
     <div class="error-title">⚠️ ไม่สามารถโหลดข้อมูลได้</div>
     <div class="error-body" id="error-text">กรุณาตรวจสอบการตั้งค่า</div>
+    <button onclick="location.reload()" style="margin-top:14px; padding:8px 20px; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-size:13px; cursor:pointer; font-family:inherit; transition:all .15s;">🔄 ลองอีกครั้ง</button>
   </div>
 </div>
 
@@ -464,13 +479,13 @@
       <button class="mode-btn" id="btn-pct" onclick="setMode('pct')">% เปลี่ยนแปลง</button>
     </div>
     <div class="range-bar">
-      <button class="range-btn" onclick="setRange(1,'M',this)">1ด.</button>
-      <button class="range-btn" onclick="setRange(3,'M',this)">3ด.</button>
-      <button class="range-btn" onclick="setRange(6,'M',this)">6ด.</button>
-      <button class="range-btn" onclick="setRange(1,'Y',this)">1ปี</button>
-      <button class="range-btn" onclick="setRange(3,'Y',this)">3ปี</button>
-      <button class="range-btn" onclick="setRange(5,'Y',this)">5ปี</button>
-      <button class="range-btn" onclick="setRange(0,'ALL',this)">ทั้งหมด</button>
+      <button class="range-btn" data-range="1M" onclick="setRange(1,'M',this)">1ด.</button>
+      <button class="range-btn" data-range="3M" onclick="setRange(3,'M',this)">3ด.</button>
+      <button class="range-btn" data-range="6M" onclick="setRange(6,'M',this)">6ด.</button>
+      <button class="range-btn" data-range="1Y" onclick="setRange(1,'Y',this)">1ปี</button>
+      <button class="range-btn" data-range="3Y" onclick="setRange(3,'Y',this)">3ปี</button>
+      <button class="range-btn" data-range="5Y" onclick="setRange(5,'Y',this)">5ปี</button>
+      <button class="range-btn" data-range="ALL" onclick="setRange(0,'ALL',this)">ทั้งหมด</button>
     </div>
     <button id="cmp-open-btn" onclick="openCmp()"
       style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
@@ -642,7 +657,7 @@ let currentMinTs   = null;  // sync กับ range ที่เลือก
 // INIT — โหลดข้อมูลเมื่อหน้าพร้อม
 // ─────────────────────────────────────────
 const CACHE_KEY = 'gpf_nav_cache';
-const CACHE_TTL = 60 * 60 * 1000; // 1 ชั่วโมง
+const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 ชั่วโมง (NAV อัพเดทวันละครั้ง)
 
 window.addEventListener('load', () => {
   try {
@@ -850,7 +865,7 @@ function buildChart() {
     chart: {
       type: 'line', height: '100%', background: 'transparent',
       animations: { enabled: false },
-      redrawOnParentResize: false, redrawOnWindowResize: false,
+      redrawOnParentResize: true, redrawOnWindowResize: true,
       toolbar: {
         show: true,
         tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
@@ -984,7 +999,7 @@ function updateStats() {
   const sixAgo = new Date(now);
   sixAgo.setMonth(sixAgo.getMonth() - 6);
   chart.updateOptions({ xaxis: { type: 'datetime', min: sixAgo.getTime(), max: now.getTime() } });
-  document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.textContent === '6ด.'));
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.dataset.range === '6M'));
 
   curRange = { n: 6, unit: 'M' };
   computeCurrentMinTs();
@@ -1040,7 +1055,7 @@ function updateBestWorst() {
   if (best) {
     document.getElementById('s-best-name').textContent = best.label;
     document.getElementById('s-best-name').style.color = best.color;
-    document.getElementById('s-best-chg').textContent  = `+${best.chg.toFixed(2)}%`;
+    document.getElementById('s-best-chg').textContent  = `${best.chg >= 0 ? '+' : ''}${best.chg.toFixed(2)}%`;
     document.getElementById('s-best-chg').style.color  = '#3fb950';
   } else {
     document.getElementById('s-best-name').textContent = '—';
@@ -1386,6 +1401,16 @@ function loadCmpFromStorage() {
     });
     return true;
   } catch(e) { return false; }
+}
+
+// ─────────────────────────────────────────
+// DONATE MODAL
+// ─────────────────────────────────────────
+function openDonate() {
+  document.getElementById('donate-modal').classList.add('open');
+}
+function closeDonate() {
+  document.getElementById('donate-modal').classList.remove('open');
 }
 </script>
 <button id="donate-fab" onclick="openDonate()">☕ สนับสนุนผู้พัฒนา</button>

@@ -801,8 +801,8 @@ function buildChart() {
         show: true,
         tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
       },
-      zoom: { enabled: true, type: 'x' },
-      pan:  { enabled: true, type: 'x' },
+      zoom: { enabled: true, type: 'xy' },
+      pan:  { enabled: true, type: 'xy' },
       events: {
         dataPointMouseEnter(e, ctx, cfg) {
           const p = allData.plans[cfg.seriesIndex];

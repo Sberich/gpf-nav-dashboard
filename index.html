@@ -728,12 +728,15 @@ function togglePlan(idx, key) {
   if (hidden.has(key)) {
     hidden.delete(key);
     el.classList.remove('hidden');
-    chart.showSeries(allData.plans[idx].label);
   } else {
     hidden.add(key);
     el.classList.add('hidden');
-    chart.hideSeries(allData.plans[idx].label);
   }
+  chart.updateSeries(buildSeriesData(), false);
+  allData.plans.forEach(p => {
+    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    else chart.showSeries(p.label);
+  });
   updateVisibleCount();
   updateBestWorst();
   updateYTD();
@@ -744,10 +747,15 @@ function toggleAll(show) {
   allData.plans.forEach((p, i) => {
     const el = document.getElementById(`pi-${i}`);
     if (show) {
-      hidden.delete(p.key); el.classList.remove('hidden'); chart.showSeries(p.label);
+      hidden.delete(p.key); el.classList.remove('hidden');
     } else {
-      hidden.add(p.key);   el.classList.add('hidden');    chart.hideSeries(p.label);
+      hidden.add(p.key); el.classList.add('hidden');
     }
+  });
+  chart.updateSeries(buildSeriesData(), false);
+  allData.plans.forEach(p => {
+    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    else chart.showSeries(p.label);
   });
   updateVisibleCount();
   updateBestWorst();

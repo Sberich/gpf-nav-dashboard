@@ -766,7 +766,7 @@ function updateVisibleCount() {
 function buildSeriesData() {
   return allData.plans.map(plan => ({
     name:  plan.label,
-    data:  hidden.has(plan.key) ? [] : normalizePlan(plan.data), // ← เพิ่มตรงนี้
+    data:  normalizePlan(plan.data),
     color: plan.color
   }));
 }
@@ -868,9 +868,9 @@ function buildChart() {
   // ใน options เพิ่ม initialSeries เป็น empty ก่อน render
 // แก้ buildSeriesData() ให้ hidden series ส่ง data: [] แทน
   chart.render().then(() => {
-    updateVisibleCount();
-    // ไม่ต้อง hideSeries แล้ว เพราะกรอง series ออกตั้งแต่แรก
-  });
+  allData.plans.forEach(p => chart.hideSeries(p.label));
+  updateVisibleCount();
+});
 }
 // ─────────────────────────────────────────
 // RANGE FILTER

@@ -824,7 +824,7 @@ function togglePlan(idx, key) {
   updateVisibleCount();
   updateBestWorst();
   updateYTD();
-  setTimeout(updateHighLow, 300);
+  setTimeout(() => { updateHighLow(); updateSwingStats(); }, 300);
 }
 
 function toggleAll(show) {
@@ -836,7 +836,7 @@ function toggleAll(show) {
   updateVisibleCount();
   updateBestWorst();
   updateYTD();
-  setTimeout(updateHighLow, 300);
+  setTimeout(() => { updateHighLow(); updateSwingStats(); }, 300);
 }
 
 function updateVisibleCount() {

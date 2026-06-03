@@ -7,6 +7,16 @@
   <meta name="referrer" content="no-referrer-when-downgrade">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPF NAV Dashboard</title>
+  
+  <!-- โค้ด PWA & Mobile Settings ที่เพิ่มเข้ามาใหม่ -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#161b22">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GPF NAV">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- จบส่วน PWA -->
+
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
   <style>
     /* ════════════════════════════════════════
@@ -1598,6 +1608,16 @@ document.getElementById('donate-modal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeDonate();
 });
-</script>  
+</script> 
+  <!-- PWA: ลงทะเบียน Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('Service Worker ลงทะเบียนสำเร็จ', reg))
+      .catch(err => console.error('Service Worker ลงทะเบียนไม่สำเร็จ', err));
+  });
+}
+</script>
 </body>
 </html>

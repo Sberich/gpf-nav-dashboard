@@ -554,6 +554,23 @@
         <div class="stat-val" id="s-high">—</div>
         <div class="stat-sub" id="s-low">—</div>
       </div>
+
+
+      <div class="stat-card">
+        <div class="stat-label">📉 ย่อตัวจากจุดสูงสุด</div>
+        <div class="stat-val" id="s-drawdown" style="font-size:13px">—</div>
+        <div class="stat-sub" id="s-drawdown-sub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🚀 แนวโน้มระยะสั้น</div>
+        <div class="stat-val" id="s-trend" style="font-size:12px">—</div>
+        <div class="stat-sub" id="s-trend-sub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🎯 ตำแหน่งราคา (3ด.)</div>
+        <div class="stat-val" id="s-zone" style="font-size:13px">—</div>
+        <div class="stat-sub" id="s-zone-sub">—</div>
+      </div>
     </div>
     <div id="normalize-banner">
       📊 โหมด % เปลี่ยนแปลง — ทุกแผนเริ่มต้นที่ 0% จากวันแรกในช่วงที่เลือก
@@ -762,6 +779,7 @@ function setMode(mode) {
   updateHighLow();
   updateBestWorst();
   updateYTD();
+  updateSwingStats();
 }
 
 // ─────────────────────────────────────────
@@ -970,7 +988,7 @@ function setRange(n, unit, btn) {
   });
 
   updateHighLightCard();
-  setTimeout(updateHighLow, 300);
+  setTimeout(() => { updateHighLow(); updateSwingStats(); }, 300);
   updateBestWorst();
   updateYTD();
 }
@@ -1006,7 +1024,7 @@ function updateStats() {
   updateHighLightCard();
   updateBestWorst();
   updateYTD();
-  setTimeout(updateHighLow, 500);
+  setTimeout(() => { updateHighLow(); updateSwingStats(); }, 500);
 }
 
 // ─────────────────────────────────────────
@@ -1150,7 +1168,140 @@ function getPrevValue(arr) {
     if (arr[i] !== null && ++found === 2) return arr[i];
   return null;
 }
+// ─────────────────────────────────────────
+// SWING TRADE HELPERS — ตัวช่วยจับจังหวะลงทุน
+// ─────────────────────────────────────────
 
+/**
+ * คำนวณ Drawdown จากจุดสูงสุดในช่วงที่เลือก
+ * = (ค่าปัจจุบัน - จุดสูงสุด) / จุดสูงสุด × 100
+ * ถ้าค่า -5% หมายถึง "ย่อตัวลงมา 5% จากดอย" → โอกาสช้อนซื้อ
+ */
+function calcDrawdownFromHigh(planData) {
+  if (!chart) return null;
+  const minTs = chart.w.globals.minX;
+  const maxTs = chart.w.globals.maxX;
+  let high = -Infinity;
+  let lastVal = null;
+
+  for (let i = 0; i < dateTimestamps.length; i++) {
+    if (dateTimestamps[i] < minTs || dateTimestamps[i] > maxTs) continue;
+    const v = planData[i];
+    if (v === null) continue;
+    if (v > high) high = v;
+    lastVal = v;
+  }
+  if (high <= 0 || lastVal === null) return null;
+  return { pct: (lastVal - high) / high * 100, high, lastVal };
+}
+
+/**
+ * คำนวณ Simple Moving Average (SMA) ย้อนหลัง N วัน
+ * ใช้เทียบกับราคาปัจจุบัน:
+ *   ราคา > SMA → ขาขึ้น (ทนถือ/ซื้อตาม)
+ *   ราคา < SMA → ขาลง (ระวัง/รอจังหวะ)
+ */
+function calcSMA(planData, period) {
+  // เก็บเฉพาะค่าที่ไม่เป็น null จากท้าย array
+  const vals = [];
+  for (let i = planData.length - 1; i >= 0 && vals.length < period; i--) {
+    if (planData[i] !== null) vals.push(planData[i]);
+  }
+  if (vals.length < period) return null;
+  const sma = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const lastVal = vals[0]; // ค่าล่าสุด
+  return { sma, lastVal, diff: (lastVal - sma) / sma * 100 };
+}
+
+/**
+ * คำนวณตำแหน่งราคาปัจจุบัน เทียบกับ High-Low ของช่วงที่เลือก
+ * ผลลัพธ์ 0% = ราคาอยู่ที่จุดต่ำสุด (ถูกสุด)
+ * ผลลัพธ์ 100% = ราคาอยู่ที่จุดสูงสุด (แพงสุด)
+ */
+function calcPriceZone(planData) {
+  if (!chart) return null;
+  const minTs = chart.w.globals.minX;
+  const maxTs = chart.w.globals.maxX;
+  let high = -Infinity, low = Infinity, lastVal = null;
+
+  for (let i = 0; i < dateTimestamps.length; i++) {
+    if (dateTimestamps[i] < minTs || dateTimestamps[i] > maxTs) continue;
+    const v = planData[i];
+    if (v === null) continue;
+    if (v > high) high = v;
+    if (v < low) low = v;
+    lastVal = v;
+  }
+  if (high === low || lastVal === null) return null;
+  return { pct: (lastVal - low) / (high - low) * 100, high, low, lastVal };
+}
+
+/**
+ * อัปเดตกล่อง Stat Cards ใหม่ 3 กล่อง
+ * เรียกใช้หลังจากเปลี่ยน range, mode, หรือ toggle plan
+ */
+function updateSwingStats() {
+  // หาแผนที่แสดงอยู่ตัวแรก (ถ้าไม่มี ใช้แผนแรก)
+  let target = allData.plans.find(p => !hidden.has(p.key)) || allData.plans[0];
+  if (!target) return;
+
+  // ── 1. Drawdown ──
+  const dd = calcDrawdownFromHigh(target.data);
+  const elDD = document.getElementById('s-drawdown');
+  const elDDsub = document.getElementById('s-drawdown-sub');
+  if (dd) {
+    elDD.textContent = `${dd.pct.toFixed(2)}%`;
+    if (dd.pct > -1) {
+      elDD.style.color = '#f85149'; // ใกล้ดอย = ระวัง (แดง)
+      elDDsub.textContent = `⚠️ ใกล้จุดสูงสุด — ระวังไล่ราคา`;
+    } else if (dd.pct > -5) {
+      elDD.style.color = '#d29922'; // ย่อนิดหน่อย (เหลือง)
+      elDDsub.textContent = `ย่อตัวเล็กน้อย (${target.label})`;
+    } else {
+      elDD.style.color = '#3fb950'; // ย่อลึก = โอกาสซื้อ (เขียว)
+      elDDsub.textContent = `✅ ย่อลึก — น่าพิจารณาเข้า`;
+    }
+  } else {
+    elDD.textContent = '—';
+    elDDsub.textContent = 'เลือกแผนเพื่อดู';
+  }
+
+  // ── 2. Trend (SMA 20 วัน ≈ 1 เดือนทำการ) ──
+  const sma = calcSMA(target.data, 20);
+  const elTrend = document.getElementById('s-trend');
+  const elTrendSub = document.getElementById('s-trend-sub');
+  if (sma) {
+    const above = sma.lastVal >= sma.sma;
+    elTrend.textContent = above ? '🟢 ขาขึ้น' : '🔴 ขาลง';
+    elTrend.style.color = above ? '#3fb950' : '#f85149';
+    elTrendSub.textContent = `NAV ${above ? '>' : '<'} SMA20 (${sma.diff >= 0 ? '+' : ''}${sma.diff.toFixed(2)}%)`;
+    elTrendSub.style.color = '#8b949e';
+  } else {
+    elTrend.textContent = '—';
+    elTrendSub.textContent = 'ข้อมูลไม่พอ';
+  }
+
+  // ── 3. Price Zone ──
+  const zone = calcPriceZone(target.data);
+  const elZone = document.getElementById('s-zone');
+  const elZoneSub = document.getElementById('s-zone-sub');
+  if (zone) {
+    elZone.textContent = `${zone.pct.toFixed(0)}%`;
+    if (zone.pct >= 80) {
+      elZone.style.color = '#f85149';
+      elZoneSub.textContent = '⚠️ โซนแพง — ระวังจุดเข้า';
+    } else if (zone.pct >= 40) {
+      elZone.style.color = '#d29922';
+      elZoneSub.textContent = `โซนกลาง (${target.label})`;
+    } else {
+      elZone.style.color = '#3fb950';
+      elZoneSub.textContent = '✅ โซนถูก — จังหวะน่าสนใจ';
+    }
+  } else {
+    elZone.textContent = '—';
+    elZoneSub.textContent = 'เลือกแผนเพื่อดู';
+  }
+}
 // ─────────────────────────────────────────
 // PORTFOLIO COMPARATOR (v2 — per-port date range)
 // ─────────────────────────────────────────

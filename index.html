@@ -939,7 +939,13 @@ function buildChart() {
       categories: allData.dates, type: 'datetime', tickAmount: 10,
       labels: {
         style: { colors: '#8b949e', fontSize: '11px' },
-        datetimeFormatter: { year: 'yyyy', month: "MMM 'yy", day: 'dd MMM' }
+        formatter: function(val, timestamp) {
+          if (!timestamp) return val;
+          const d = new Date(timestamp);
+          const shortM = d.toLocaleDateString('th-TH', { month: 'short' });
+          const shortY = String(d.getFullYear() + 543).slice(-2);
+          return `${d.getDate()} ${shortM} '${shortY}`;
+        }
       },
       axisBorder: { color: '#30363d' }, axisTicks: { color: '#30363d' },
       crosshairs: { stroke: { color: '#388bfd', dashArray: 4 } }
@@ -951,7 +957,7 @@ function buildChart() {
     grid: { borderColor: '#21262d', strokeDashArray: 3, xaxis: { lines: { show: false } } },
     tooltip: {
       theme: 'dark', shared: true, intersect: false,
-      x: { format: 'dd MMM yyyy' },
+      x: { formatter: function(val) { return fmtDate(val); } },
       y: { formatter: tooltipY }
     },
     legend:      { show: false },

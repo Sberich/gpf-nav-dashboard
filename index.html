@@ -172,6 +172,16 @@
     .stat-val   { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .stat-sub   { font-size: 9px; color: var(--muted); margin-top: 1px; }
 
+    /* PREMIUM BADGES (Pills) */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+      margin-top: 4px; line-height: 1.2; width: fit-content;
+    }
+    .badge.green { background: rgba(63, 185, 80, 0.15); color: var(--up); }
+    .badge.red   { background: rgba(248, 81, 73, 0.15); color: var(--down); }
+    .badge.gray  { background: rgba(139, 148, 158, 0.15); color: var(--muted); }
+
     /* ════════════════════════════════════════
        NORMALIZE BANNER
     ════════════════════════════════════════ */
@@ -1520,7 +1530,7 @@ function renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd) {
         <div class="cmp-result-range">${fmt(bStart)} → ${fmt(bEnd)}</div>
       </div>
     </div>
-    <div class="cmp-result-diff" style="color:${clrD};">
+    <div class="cmp-result-diff badge ${diff > 0 ? 'green' : diff < 0 ? 'red' : 'gray'}" style="margin-top:14px; font-size:12px; padding: 4px 10px;">
       ผลต่าง: ${diff >= 0 ? '+' : ''}${diff.toFixed(2)}%
     </div>
     <div class="cmp-result-winner" style="background:${winnerBg}; color:${winnerClr};">

@@ -854,9 +854,11 @@ function togglePlan(idx, key) {
 function toggleAll(show) {
   allData.plans.forEach((p, i) => {
     const el = document.getElementById(`pi-${i}`);
-    if (show) { hidden.delete(p.key); el.classList.remove('hidden'); chart.showSeries(p.label); }
-    else      { hidden.add(p.key);   el.classList.add('hidden');    chart.hideSeries(p.label); }
+    if (show) { hidden.delete(p.key); el.classList.remove('hidden'); }
+    else      { hidden.add(p.key);   el.classList.add('hidden'); }
   });
+  // 💡 สั่ง updateSeries ครั้งเดียว แล้ว hideSeries เฉพาะแผนที่ซ่อน (ไม่วน showSeries ทีละแผน)
+  rebuildSeries();
   updateVisibleCount();
   updateBestWorst();
   updateYTD();
@@ -1011,10 +1013,9 @@ function setRange(n, unit, btn) {
     false, false
   );
 
-  // re-apply hidden state
+  // 💡 re-apply hidden state — สั่งแค่ hideSeries เฉพาะแผนที่ซ่อน (ไม่สั่ง showSeries ทีละแผน)
   allData.plans.forEach(p => {
     if (hidden.has(p.key)) chart.hideSeries(p.label);
-    else chart.showSeries(p.label);
   });
 
   updateHighLightCard();
@@ -1061,7 +1062,7 @@ function updateStats() {
 // HIGHLIGHT CARD — sync กับ mode ปัจจุบัน
 // ─────────────────────────────────────────
 function updateHighLightCard() {
-  const main = allData.plans.find(p => p.label === 'แผนหลัก') || allData.plans[0];
+  const main = allData.plans.find(p => p.label === 'แผนลงทุนพื้นฐานทั่วไป') || allData.plans[0];
   if (!main) return;
 
   const lastNav = getLastValue(main.data);
@@ -1130,7 +1131,7 @@ function updateYTD() {
   const thisYear = new Date(allData.dates[allData.dates.length - 1]).getFullYear();
   const janFirst = `${thisYear}-01-01`;
 
-  let target = allData.plans.find(p => p.label === 'แผนหลัก' && !hidden.has(p.key))
+  let target = allData.plans.find(p => p.label === 'แผนลงทุนพื้นฐานทั่วไป' && !hidden.has(p.key))
             || allData.plans.find(p => !hidden.has(p.key));
   if (!target) {
     document.getElementById('s-ytd').textContent     = '—';
@@ -1281,19 +1282,21 @@ function updateSwingStats() {
   const elDDsub = document.getElementById('s-drawdown-sub');
   if (dd) {
     elDD.textContent = `${dd.pct.toFixed(2)}%`;
+    elDD.style.color = 'var(--text)';
     if (dd.pct > -1) {
-      elDD.style.color = '#f85149'; // ใกล้ดอย = ระวัง (แดง)
-      elDDsub.textContent = `⚠️ ใกล้จุดสูงสุด — ระวังไล่ราคา`;
+      elDDsub.textContent = `🚨 ระวังการย่อตัว — ควรชะลอเข้า`;
+      elDDsub.className = 'stat-sub badge red';
     } else if (dd.pct > -5) {
-      elDD.style.color = '#d29922'; // ย่อนิดหน่อย (เหลือง)
-      elDDsub.textContent = `ย่อตัวเล็กน้อย (${target.label})`;
+      elDDsub.textContent = `รอย่อตัวเพิ่ม (${target.label})`;
+      elDDsub.className = 'stat-sub badge gray';
     } else {
-      elDD.style.color = '#3fb950'; // ย่อลึก = โอกาสซื้อ (เขียว)
-      elDDsub.textContent = `✅ ย่อลึก — น่าพิจารณาเข้า`;
+      elDDsub.textContent = `📉 ย่อตัวลึก — ทยอยสะสมได้`;
+      elDDsub.className = 'stat-sub badge green';
     }
   } else {
     elDD.textContent = '—';
     elDDsub.textContent = 'เลือกแผนเพื่อดู';
+    elDDsub.className = 'stat-sub';
   }
 
   // ── 2. Trend (SMA 20 วัน ≈ 1 เดือนทำการ) ──
@@ -1302,13 +1305,14 @@ function updateSwingStats() {
   const elTrendSub = document.getElementById('s-trend-sub');
   if (sma) {
     const above = sma.lastVal >= sma.sma;
-    elTrend.textContent = above ? '🟢 ขาขึ้น' : '🔴 ขาลง';
-    elTrend.style.color = above ? '#3fb950' : '#f85149';
+    elTrend.textContent = above ? '📈 ขาขึ้น' : '📉 ขาลง';
+    elTrend.style.color = 'var(--text)';
     elTrendSub.textContent = `NAV ${above ? '>' : '<'} SMA20 (${sma.diff >= 0 ? '+' : ''}${sma.diff.toFixed(2)}%)`;
-    elTrendSub.style.color = '#8b949e';
+    elTrendSub.className = above ? 'stat-sub badge green' : 'stat-sub badge red';
   } else {
     elTrend.textContent = '—';
     elTrendSub.textContent = 'ข้อมูลไม่พอ';
+    elTrendSub.className = 'stat-sub';
   }
 
   // ── 3. Price Zone ──
@@ -1317,19 +1321,21 @@ function updateSwingStats() {
   const elZoneSub = document.getElementById('s-zone-sub');
   if (zone) {
     elZone.textContent = `${zone.pct.toFixed(0)}%`;
+    elZone.style.color = 'var(--text)';
     if (zone.pct >= 80) {
-      elZone.style.color = '#f85149';
-      elZoneSub.textContent = '⚠️ โซนแพง — ระวังจุดเข้า';
+      elZoneSub.textContent = '🚨 โซนแพง — ระวังจุดสูงสุด';
+      elZoneSub.className = 'stat-sub badge red';
     } else if (zone.pct >= 40) {
-      elZone.style.color = '#d29922';
-      elZoneSub.textContent = `โซนกลาง (${target.label})`;
+      elZoneSub.textContent = `โซนกลางๆ (${target.label})`;
+      elZoneSub.className = 'stat-sub badge gray';
     } else {
-      elZone.style.color = '#3fb950';
-      elZoneSub.textContent = '✅ โซนถูก — จังหวะน่าสนใจ';
+      elZoneSub.textContent = '🛒 โซนถูก — น่าสะสมเพิ่ม';
+      elZoneSub.className = 'stat-sub badge green';
     }
   } else {
     elZone.textContent = '—';
     elZoneSub.textContent = 'เลือกแผนเพื่อดู';
+    elZoneSub.className = 'stat-sub';
   }
 }
 // ─────────────────────────────────────────

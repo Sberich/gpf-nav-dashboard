@@ -447,11 +447,37 @@
       padding-top: 12px; border-top: 1px solid #30363d;
     }
 
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: var(--bg2); color: var(--text); border: 1px solid var(--border);
+      padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6); z-index: 10000;
+      opacity: 0; transition: opacity 0.3s, top 0.3s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; top: 40px; }
+
+    /* MOBILE SIDEBAR */
+    .mobile-menu-btn {
+      display: none; background: transparent; border: none; color: var(--text);
+      font-size: 24px; cursor: pointer; padding: 0 8px 0 0;
+    }
+    #sidebar-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6); z-index: 9998; opacity: 0; transition: opacity 0.3s;
+    }
+    #sidebar-overlay.show { display: block; opacity: 1; }
+
     /* ════════════════════════════════════════
        RESPONSIVE
     ════════════════════════════════════════ */
     @media (max-width: 768px) {
-      #sidebar { display: none; }
+      .mobile-menu-btn { display: block; }
+      #sidebar { 
+        display: flex; position: fixed; top: 0; left: -260px; bottom: 0; width: 240px; 
+        z-index: 9999; transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+      }
+      #sidebar.open { left: 0; }
       #header { flex-wrap: wrap; height: auto; padding: 8px 12px; gap: 6px; }
       .header-right { flex-wrap: wrap; width: 100%; justify-content: flex-start; }
       .range-bar { overflow-x: auto; flex-wrap: nowrap; }
@@ -488,6 +514,7 @@
      HEADER
 ════════════════════════════════════════ -->
 <div id="header">
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
   <div class="logo">
     <div class="logo-badge">GPF</div>
     <div>
@@ -523,6 +550,7 @@
      MAIN LAYOUT
 ════════════════════════════════════════ -->
 <div id="layout">
+  <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
   <!-- SIDEBAR -->
   <div id="sidebar">
@@ -1472,7 +1500,7 @@ function calcCmp() {
     .reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
 
   if (Math.abs(sumA - 100) > 0.01 || Math.abs(sumB - 100) > 0.01) {
-    alert('สัดส่วนแต่ละ Port ต้องรวมได้ 100% ครับ'); return;
+    showToast('สัดส่วนแต่ละ Port ต้องรวมได้ 100% ครับ'); return;
   }
 
   const aStart = document.getElementById('cmp-a-start').value;
@@ -1481,20 +1509,20 @@ function calcCmp() {
   const bEnd   = document.getElementById('cmp-b-end').value;
 
   if (!aStart || !aEnd || !bStart || !bEnd) {
-    alert('กรุณากรอกวันที่ให้ครบทั้งสอง Port ครับ'); return;
+    showToast('กรุณากรอกวันที่ให้ครบทั้งสอง Port ครับ'); return;
   }
   if (new Date(aStart) >= new Date(aEnd)) {
-    alert('Port A: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return;
+    showToast('Port A: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return;
   }
   if (new Date(bStart) >= new Date(bEnd)) {
-    alert('Port B: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return;
+    showToast('Port B: วันเริ่มต้องน้อยกว่าวันสิ้นสุดครับ'); return;
   }
 
   const retA = getPortReturnInRange('a');
   const retB = getPortReturnInRange('b');
 
-  if (retA === null) { alert('ข้อมูล Port A ไม่ครบในช่วงที่เลือกครับ'); return; }
-  if (retB === null) { alert('ข้อมูล Port B ไม่ครบในช่วงที่เลือกครับ'); return; }
+  if (retA === null) { showToast('ข้อมูล Port A ไม่ครบในช่วงที่เลือกครับ'); return; }
+  if (retB === null) { showToast('ข้อมูล Port B ไม่ครบในช่วงที่เลือกครับ'); return; }
 
   saveCmpToStorage();
   renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd);
@@ -1588,6 +1616,30 @@ function loadCmpFromStorage() {
     });
     return true;
   } catch(e) { return false; }
+}
+
+// ─────────────────────────────────────────
+// UI HELPERS (Sidebar, Toast)
+// ─────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast-notification');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast-notification';
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  
+  // Clear any existing timeout to prevent overlapping hides
+  if (t.timeoutId) clearTimeout(t.timeoutId);
+  t.timeoutId = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 // ─────────────────────────────────────────

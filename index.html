@@ -536,8 +536,19 @@
       #stats-bar::-webkit-scrollbar { display: none; }
       .stat-card { min-width: 140px; padding: 12px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
       
-      .cmp-ports { grid-template-columns: 1fr; }
-      .cmp-box { width: 96vw; }
+      .cmp-ports { grid-template-columns: 1fr; gap: 10px; }
+      .cmp-box { width: 95vw; border-radius: 12px; }
+      .cmp-body { padding: 12px 10px; }
+      .cmp-port { padding: 10px; }
+      .cmp-date-row { padding: 8px 6px; gap: 4px; }
+      .cmp-date-input { font-size: 11px; padding: 6px 4px; text-align: center; min-width: 0; }
+      .cmp-date-label { font-size: 10px; }
+      
+      /* Scale down Flatpickr on mobile */
+      .flatpickr-calendar {
+        transform: scale(0.85);
+        transform-origin: top center;
+      }
     }
     
   </style>

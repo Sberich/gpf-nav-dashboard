@@ -300,8 +300,8 @@
     }
     .cmp-close:hover { color: #f85149; }
 
-    .cmp-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
-    .cmp-body::-webkit-scrollbar { width: 4px; }
+    .cmp-body { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px 20px; }
+    .cmp-body::-webkit-scrollbar { width: 4px; height: 4px; }
     .cmp-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
 
     /* date range row */
@@ -314,7 +314,7 @@
     .cmp-date-input {
       flex: 1; background: #0d1117; border: 1px solid #30363d;
       color: #e6edf3; border-radius: 5px; padding: 4px 8px;
-      font-size: 11px; font-family: 'Sarabun', sans-serif; min-width: 0;
+      font-size: 11px; font-family: 'Sarabun', sans-serif; min-width: 80px; width: 30%;
     }
     .cmp-date-input:focus { outline: none; border-color: #388bfd; }
     .cmp-date-sep { font-size: 11px; color: #8b949e; }
@@ -344,6 +344,9 @@
       font-size: 11px;
       font-family: 'Sarabun', sans-serif;
       min-width: 0;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     .cmp-select:focus { outline: none; border-color: #388bfd; }
     .cmp-pct {

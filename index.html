@@ -513,6 +513,7 @@
       .mode-toggle { 
         display: flex; gap: 4px; flex-shrink: 0; background: rgba(255,255,255,0.05); 
         padding: 3px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+        order: 2; /* Move to the right side of range buttons */
       }
       .mode-btn { 
         flex: none; padding: 6px 14px; font-size: 12px; text-align: center; 
@@ -1115,7 +1116,7 @@ const fmtDate = s => {
     ? (() => { const p = s.split('/'); return new Date(`${p[2]}-${p[1]}-${p[0]}`); })()
     : new Date(s);
   if (isNaN(d)) return s;
-  return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', calendar: 'buddhist' });
 };
 
 function updateStats() {
@@ -1593,7 +1594,7 @@ function renderCmpResult(retA, retB, aStart, aEnd, bStart, bEnd) {
   const clrD   = diff  > 0 ? '#3fb950' : diff < 0 ? '#f85149' : '#8b949e';
 
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {
-    year: 'numeric', month: 'short', day: 'numeric'
+    year: 'numeric', month: 'short', day: 'numeric', calendar: 'buddhist'
   });
 
   const winnerBg  = winner === 'A' ? 'rgba(56,139,253,.2)'

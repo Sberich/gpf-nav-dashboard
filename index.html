@@ -58,8 +58,22 @@
       color: #fff; font-weight: 700; font-size: 13px;
       padding: 4px 10px; border-radius: 6px; letter-spacing: 1px;
     }
-    .logo-title { font-size: 15px; font-weight: 600; }
+    .logo-title {
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      background: linear-gradient(90deg, #ff007f, #ff7f00, #00ff00, #00d4ff, #7f00ff, #ff007f);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow-anim 3s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+      transition: filter 0.2s;
+    }
+    .logo-title:hover { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
+    @keyframes rainbow-anim {
+      to { background-position: 200% center; }
+    }
     .logo-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .header-left  { display: flex; align-items: center; gap: 4px; }
     .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
     #last-update  { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
@@ -478,13 +492,51 @@
         z-index: 9999; transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.5);
       }
       #sidebar.open { left: 0; }
-      #header { flex-wrap: wrap; height: auto; padding: 8px 12px; gap: 6px; }
-      .header-right { flex-wrap: wrap; width: 100%; justify-content: flex-start; }
-      .range-bar { overflow-x: auto; flex-wrap: nowrap; }
-      #stats-bar { flex-wrap: nowrap; }
+      
+      /* Mobile Header Remaster */
+      #header { position: relative; flex-wrap: wrap; height: auto; padding: 12px 12px 4px 12px; gap: 8px; }
+      
+      /* Put Mode and Range in the same scrollable row */
+      .header-right { 
+        width: 100%; display: flex; flex-direction: row; gap: 12px; 
+        align-items: center; overflow-x: auto; padding-bottom: 8px;
+      }
+      .header-right::-webkit-scrollbar { display: none; }
+      
+      /* Hide "last update" to save space */
+      #last-update { display: none; }
+      
+      /* Move "Compare" button to top right */
+      #cmp-open-btn { position: absolute; top: 12px; right: 12px; font-size: 11px; padding: 6px 10px; }
+      
+      /* Mode Toggle minimal pill */
+      .mode-toggle { 
+        display: flex; gap: 4px; flex-shrink: 0; background: rgba(255,255,255,0.05); 
+        padding: 3px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+      }
+      .mode-btn { 
+        flex: none; padding: 6px 14px; font-size: 12px; text-align: center; 
+        border-radius: 16px; transition: all 0.2s; background: transparent;
+      }
+      .mode-btn.active { background: var(--text); color: var(--bg); font-weight: 700; }
+      
+      /* Range Bar inline */
+      .range-bar { 
+        display: flex; flex-wrap: nowrap; gap: 6px; flex-shrink: 0;
+      }
+      .range-btn { 
+        padding: 6px 14px; border-radius: 16px; background: transparent; 
+        border: 1px solid rgba(255,255,255,0.15); font-size: 12px; color: var(--muted); 
+      }
+      .range-btn.active { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3); }
+      
+      /* Stat cards distinct horizontal scroll */
+      #stats-bar { flex-wrap: nowrap; padding: 12px; gap: 12px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+      #stats-bar::-webkit-scrollbar { display: none; }
+      .stat-card { min-width: 140px; padding: 12px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
+      
       .cmp-ports { grid-template-columns: 1fr; }
       .cmp-box { width: 96vw; }
-      #donate-fab { bottom: 10px; right: 10px; font-size: 11px; padding: 7px 14px; }
     }
     
   </style>
@@ -514,12 +566,14 @@
      HEADER
 ════════════════════════════════════════ -->
 <div id="header">
-  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-  <div class="logo">
-    <div class="logo-badge">GPF</div>
-    <div>
-      <div class="logo-title">NAV Dashboard</div>
-      <div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div>
+  <div class="header-left">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="logo">
+      <div class="logo-badge">GPF</div>
+      <div>
+        <div class="logo-title" onclick="openDonate()" title="คลิกเพื่อสนับสนุนผู้พัฒนา">NAV Dashboard</div>
+        <div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div>
+      </div>
     </div>
   </div>
   <div class="header-right">
@@ -940,7 +994,7 @@ function buildChart() {
       redrawOnParentResize: true, redrawOnWindowResize: true,
       toolbar: {
         show: true,
-        tools: { download: true, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
+        tools: { download: false, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
       },
       zoom: { enabled: true, type: 'xy' },
       pan:  { enabled: true, type: 'xy' },
@@ -1646,8 +1700,6 @@ function showToast(msg) {
 // DONATE MODAL
 // ─────────────────────────────────────────
 </script>
-<button id="donate-fab" onclick="openDonate()">☕ สนับสนุนผู้พัฒนา</button>
- 
 <div id="donate-modal">
   <div class="donate-box">
     <div class="donate-header">

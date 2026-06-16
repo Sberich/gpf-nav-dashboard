@@ -536,19 +536,24 @@
       #stats-bar::-webkit-scrollbar { display: none; }
       .stat-card { min-width: 140px; padding: 12px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
       
-      .cmp-ports { grid-template-columns: 1fr; gap: 10px; }
-      .cmp-box { width: 95vw; border-radius: 12px; }
-      .cmp-body { padding: 12px 10px; }
-      .cmp-port { padding: 10px; }
-      .cmp-date-row { padding: 8px 6px; gap: 4px; }
-      .cmp-date-input { font-size: 11px; padding: 6px 4px; text-align: center; min-width: 0; }
+      .cmp-ports { grid-template-columns: 1fr; gap: 8px; }
+      .cmp-box { width: 94vw; border-radius: 12px; }
+      .cmp-body { padding: 10px 8px; }
+      .cmp-port { padding: 8px; }
+      .cmp-date-row { padding: 6px; gap: 4px; flex-wrap: wrap; justify-content: center; }
+      .cmp-date-input { flex: 1 1 40%; min-width: 100px; font-size: 11px; padding: 6px 4px; text-align: center; }
       .cmp-date-label { font-size: 10px; }
       
-      /* Scale down Flatpickr on mobile */
-      .flatpickr-calendar {
-        transform: scale(0.85);
-        transform-origin: top center;
-      }
+      /* Shrink inner inputs to prevent width overflow */
+      .cmp-plan-sel { max-width: 100%; text-overflow: ellipsis; overflow: hidden; font-size: 12px; padding: 6px; }
+      .cmp-pct-input { width: 45px; font-size: 12px; padding: 6px; }
+      .cmp-add-btn { font-size: 11px; padding: 6px; }
+      
+      /* Scale down Flatpickr on mobile natively */
+      .flatpickr-calendar { font-size: 12px !important; width: 260px !important; padding: 0 !important; }
+      .flatpickr-day { max-width: 32px !important; height: 32px !important; line-height: 32px !important; }
+      .flatpickr-current-month { font-size: 110% !important; }
+      span.flatpickr-weekday { font-size: 11px !important; }
     }
     
   </style>
@@ -1804,6 +1809,7 @@ fetch('https://api.counterapi.dev/v1/gpfnav_dashboard/visits/up')
         }
         return flatpickr.formatDate(date, format);
       },
+      onOpen: function(d, s, instance) { updateYearToThai(instance); },
       onReady: function(d, s, instance) {
         updateYearToThai(instance);
         instance.currentYearElement.addEventListener('focus', function() {

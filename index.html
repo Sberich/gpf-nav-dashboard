@@ -541,6 +541,9 @@
     }
     
   </style>
+  <!-- Flatpickr CSS (Dark Theme) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 </head>
 <body>
 
@@ -715,10 +718,10 @@
           </div>
           <div class="cmp-date-row">
             <span class="cmp-date-label">เริ่ม</span>
-            <input type="date" class="cmp-date-input" id="cmp-a-start">
+            <input type="text" class="cmp-date-input" id="cmp-a-start" placeholder="เลือกวันที่">
             <span class="cmp-date-sep">→</span>
             <span class="cmp-date-label">สิ้นสุด</span>
-            <input type="date" class="cmp-date-input" id="cmp-a-end">
+            <input type="text" class="cmp-date-input" id="cmp-a-end" placeholder="เลือกวันที่">
           </div>
           <div id="cmp-a-rows"></div>
           <button class="cmp-add" onclick="addCmpRow('a')">+ เพิ่มแผน</button>
@@ -732,10 +735,10 @@
           </div>
           <div class="cmp-date-row">
             <span class="cmp-date-label">เริ่ม</span>
-            <input type="date" class="cmp-date-input" id="cmp-b-start">
+            <input type="text" class="cmp-date-input" id="cmp-b-start" placeholder="เลือกวันที่">
             <span class="cmp-date-sep">→</span>
             <span class="cmp-date-label">สิ้นสุด</span>
-            <input type="date" class="cmp-date-input" id="cmp-b-end">
+            <input type="text" class="cmp-date-input" id="cmp-b-end" placeholder="เลือกวันที่">
           </div>
           <div id="cmp-b-rows"></div>
           <button class="cmp-add" onclick="addCmpRow('b')">+ เพิ่มแผน</button>
@@ -1764,6 +1767,49 @@ fetch('https://api.counterapi.dev/v1/gpfnav_dashboard/visits/up')
     // ถ้าเน็ตช้าหรือโดนบล็อก ให้แสดงเนียนๆ เป็น v1.0001 แทน
     document.getElementById('global-visit-count').textContent = `v1.0001`;
   });
+
+  // ─────────────────────────────────────────
+  // INIT FLATPICKR (ปฏิทิน พ.ศ.)
+  // ─────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const updateYearToThai = (instance) => {
+      if (!instance.currentYearElement) return;
+      // แอบเปลี่ยนตัวเลขในกล่องปีของปฏิทินให้เป็น พ.ศ.
+      instance.currentYearElement.value = instance.currentYear + 543;
+    };
+
+    flatpickr(".cmp-date-input", {
+      locale: "th",
+      dateFormat: "Y-m-d", // รูปแบบที่ระบบจะนำไปคำนวณ (ค.ศ.)
+      altInput: true,
+      altFormat: "j M Y", // รูปแบบที่จะแสดงในช่องกรอก (พ.ศ.)
+      disableMobile: true, // บังคับใช้ Flatpickr แทนของ Native บนมือถือ
+      formatDate: (date, format, locale) => {
+        if (format === "j M Y") {
+          const d = date.getDate();
+          const m = locale.months.shorthand[date.getMonth()];
+          const y = date.getFullYear() + 543;
+          return `${d} ${m} ${y}`;
+        }
+        return flatpickr.formatDate(date, format);
+      },
+      onReady: function(d, s, instance) {
+        updateYearToThai(instance);
+        instance.currentYearElement.addEventListener('focus', function() {
+          this.value = instance.currentYear; // กลับเป็น ค.ศ. ตอนกำลังพิมพ์แก้
+        });
+        instance.currentYearElement.addEventListener('blur', function() {
+          updateYearToThai(instance); // คืนเป็น พ.ศ. ตอนพิมพ์เสร็จ
+        });
+      },
+      onYearChange: function(d, s, instance) { updateYearToThai(instance); },
+      onMonthChange: function(d, s, instance) { updateYearToThai(instance); }
+    });
+  });
 </script>
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 </body>
 </html>

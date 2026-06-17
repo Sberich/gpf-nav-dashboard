@@ -592,7 +592,7 @@
   <div class="header-left">
     <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
     <div class="logo">
-      <div class="logo-badge">GPF</div>
+      <div class="logo-badge" onclick="adminLogin()" style="cursor:pointer;" title="ระบบพอร์ตส่วนตัว">GPF</div>
       <div>
         <div class="logo-title" onclick="openDonate()" title="คลิกเพื่อสนับสนุนผู้พัฒนา">NAV Dashboard</div>
         <div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div>
@@ -614,12 +614,6 @@
       <button class="range-btn" data-range="5Y" onclick="setRange(5,'Y',this)">5ปี</button>
       <button class="range-btn" data-range="ALL" onclick="setRange(0,'ALL',this)">ทั้งหมด</button>
     </div>
-    <button id="port-open-btn" onclick="window.location.href='portfolio.html'"
-      style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
-             background:transparent; color:#8b949e; font-size:11px; font-weight:600;
-             cursor:pointer; font-family:inherit; white-space:nowrap; transition:all .15s; margin-right: 4px;">
-      💼 พอร์ตของฉัน
-    </button>
     <button id="cmp-open-btn" onclick="openCmp()"
       style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
              background:transparent; color:#8b949e; font-size:11px; font-weight:600;

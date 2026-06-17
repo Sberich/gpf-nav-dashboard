@@ -614,6 +614,12 @@
       <button class="range-btn" data-range="5Y" onclick="setRange(5,'Y',this)">5ปี</button>
       <button class="range-btn" data-range="ALL" onclick="setRange(0,'ALL',this)">ทั้งหมด</button>
     </div>
+    <button id="port-open-btn" onclick="window.location.href='portfolio.html'"
+      style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
+             background:transparent; color:#8b949e; font-size:11px; font-weight:600;
+             cursor:pointer; font-family:inherit; white-space:nowrap; transition:all .15s; margin-right: 4px;">
+      💼 พอร์ตของฉัน
+    </button>
     <button id="cmp-open-btn" onclick="openCmp()"
       style="padding:4px 10px; border-radius:5px; border:1px solid #30363d;
              background:transparent; color:#8b949e; font-size:11px; font-weight:600;
@@ -782,6 +788,7 @@
 <!-- ════════════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════════ -->
+<!-- Portfolio modal moved to portfolio.html -->
 <script>
 // ─────────────────────────────────────────
 // CONFIG
@@ -1746,6 +1753,15 @@ function showToast(msg) {
 </div>
  
 <script>
+function adminLogin() {
+  const pwd = prompt("กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบพอร์ตส่วนตัว:");
+  if (pwd === "gpfnav69") {
+    window.location.href = 'portfolio.html';
+  } else if (pwd !== null) {
+    alert("รหัสผ่านไม่ถูกต้อง!");
+  }
+}
+
 function openDonate() {
   document.getElementById('donate-modal').classList.add('open');
 }
@@ -1826,6 +1842,8 @@ fetch('https://api.counterapi.dev/v1/gpfnav_dashboard/visits/up')
       onMonthChange: function(d, s, instance) { updateYearToThai(instance); }
     });
   });
+
+
 </script>
 
 <!-- Flatpickr JS -->

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="#0d1117"/>
+  <!-- Portfolio Briefcase / Graph symbol -->
+  <path d="M25 65 L45 35 L65 45 L85 15" fill="none" stroke="#ff6b6b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <circle cx="85" cy="15" r="8" fill="#ff6b6b" filter="url(#glow)"/>
+</svg>

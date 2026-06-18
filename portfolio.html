@@ -108,37 +108,36 @@
           </div>
         </div>
 
-        <div class="card" style="margin-bottom: 12px; padding: 12px 16px; display:flex; align-items:stretch; gap:16px;">
-          <!-- Snapshots List (Left) -->
-          <div style="flex: 1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding-right:16px; border-right:1px solid #30363d;">
-            <div id="snap-1d" style="display:flex; justify-content:space-between; width:100%; font-size:13px; padding:5px 0; border-bottom:1px solid #30363d;">
+        <div class="card" style="margin-bottom: 12px; padding: 16px; display:flex; flex-direction:column; gap:12px;">
+          <!-- Snapshots List (Top) -->
+          <div style="display:flex; flex-direction:column; width:100%;">
+            <div id="snap-1d" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:8px 0; border-bottom:1px dashed #30363d;">
               <span style="color:#8b949e;">1D</span><span style="font-weight:600; color:#8b949e;">-</span>
             </div>
-            <div id="snap-1w" style="display:flex; justify-content:space-between; width:100%; font-size:13px; padding:5px 0; border-bottom:1px solid #30363d;">
+            <div id="snap-1w" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:8px 0; border-bottom:1px dashed #30363d;">
               <span style="color:#8b949e;">1W</span><span style="font-weight:600; color:#8b949e;">-</span>
             </div>
-            <div id="snap-1m" style="display:flex; justify-content:space-between; width:100%; font-size:13px; padding:5px 0; border-bottom:1px solid #30363d;">
+            <div id="snap-1m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:8px 0; border-bottom:1px dashed #30363d;">
               <span style="color:#8b949e;">1M</span><span style="font-weight:600; color:#8b949e;">-</span>
             </div>
-            <div id="snap-3m" style="display:flex; justify-content:space-between; width:100%; font-size:13px; padding:5px 0; border-bottom:1px solid #30363d;">
+            <div id="snap-3m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:8px 0; border-bottom:1px dashed #30363d;">
               <span style="color:#8b949e;">3M</span><span style="font-weight:600; color:#8b949e;">-</span>
             </div>
-            <div id="snap-6m" style="display:flex; justify-content:space-between; width:100%; font-size:13px; padding:5px 0;">
+            <div id="snap-6m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:8px 0;">
               <span style="color:#8b949e;">6M</span><span style="font-weight:600; color:#8b949e;">-</span>
             </div>
           </div>
 
-          <!-- Main PnL (Right) -->
-          <div style="flex: 1.2; display:flex; flex-direction:column; align-items:flex-end; justify-content:space-between;">
-            <div style="display:flex; flex-direction:column; align-items:flex-end;">
-              <div class="card-title" style="margin-bottom:4px;">กำไร / ขาดทุนสุทธิ</div>
-              <div class="card-val" id="val-pl" style="margin-bottom:2px; white-space:nowrap;">0.00</div>
-              <div><span id="val-pl-pct" style="font-size: 12px; font-weight:600;">0.00%</span></div>
+          <div style="height:1px; background:#30363d; width:100%;"></div>
+
+          <!-- Main PnL (Bottom) -->
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:baseline; gap:8px;">
+              <div class="card-title" style="margin-bottom:0; font-size:11px;">กำไรสุทธิ</div>
+              <div class="card-val" id="val-pl" style="font-size:16px; line-height:1.2;">0.00</div>
+              <div><span id="val-pl-pct" style="font-size: 11px; font-weight:600;">0.00%</span></div>
             </div>
-            
-            <div>
-              <button class="btn" style="width:auto; padding:4px 8px; font-size:11px; background:var(--bg3); color:var(--text); border:1px solid var(--border);" onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
-            </div>
+            <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); color:var(--text); border:1px solid var(--border);" onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
           </div>
         </div>
 
@@ -412,7 +411,7 @@ function initDashboard() {
           let sign = '';
           if (profitDiff > 0.01) { color = '#4caf50'; sign = '+'; }
           else if (profitDiff < -0.01) { color = '#f44336'; }
-          el.innerHTML = `<span style="color:#8b949e; margin-right:4px;">${p.toUpperCase()}</span> <span style="color:${color}; font-weight:600;">${sign}${formatMoney(profitDiff)}฿ (${sign}${pctDiff.toFixed(2)}%)</span>`;
+          el.innerHTML = `<span style="color:#8b949e; margin-right:4px;">${p.toUpperCase()}</span> <div><span style="color:${color}; font-size:16px; font-weight:700; margin-right:6px;">${sign}${formatMoney(profitDiff)}฿</span><span style="color:${color}; font-size:12px; opacity:0.8; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
         } else {
           el.innerHTML = `<span style="color:#8b949e; margin-right:4px;">${p.toUpperCase()}</span> <span style="color:#8b949e;">-</span>`;
         }

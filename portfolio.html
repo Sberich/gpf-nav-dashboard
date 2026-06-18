@@ -80,20 +80,30 @@
       margin-bottom: 16px; transition: all 0.2s;
     }
     .back-btn:hover { color: #fff; border-color: #8b949e; }
+    .rainbow-anim {
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #1dd1a1, #48dbfb, #ff9ff3, #ff6b6b);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-scroll 3s linear infinite;
+    }
+    @keyframes gradient-scroll {
+      to { background-position: 200% center; }
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <a href="index.html" class="back-btn">← กลับไปหน้าหลัก</a>
 
   <div id="loader">กำลังโหลดข้อมูลและเชื่อมต่อฐานข้อมูล...</div>
 
   <div id="main-content" style="display: none;">
     <!-- Dashboard Box -->
     <div class="box">
-      <div class="header">
-        <div class="title"><span>📊</span><span>สรุปพอร์ตลงทุน (Dashboard)</span></div>
+      <div class="header" style="display:flex; justify-content:space-between; align-items:flex-end; padding-bottom: 6px;">
+        <div class="title"><a href="index.html" style="text-decoration:none; margin-right:4px;" title="กลับไปหน้าหลัก">💼</a><span class="rainbow-anim" style="font-weight: 800; font-size: 16px;">GPF Dashboard</span></div>
+        <div style="font-size: 10px; color: var(--muted); font-weight: 400; text-align:right; line-height:1;" id="update-date-text"></div>
       </div>
       <div class="body">
         
@@ -319,6 +329,12 @@ function formatMoney(num) {
 
 function initDashboard() {
   const port = allData.myPort;
+  if (allData.dates && allData.dates.length > 0) {
+    const latestDateStr = allData.dates[allData.dates.length - 1];
+    const dStr = new Date(latestDateStr).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+    const elDate = document.getElementById('update-date-text');
+    if (elDate) elDate.innerHTML = `ยอดเงิน ณ วันที่ ${dStr}`;
+  }
   if(!port) {
     document.getElementById('loader').innerHTML = 'ไม่พบข้อมูลชีต MyPort ในระบบ<br><br>กรุณากดรัน setupDatabase() ใน Apps Script 1 ครั้ง';
     return;

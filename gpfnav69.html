@@ -416,8 +416,16 @@ function initDashboard() {
     
     for (let p in periods) {
       const targetTime = now - (periods[p] * dayMs);
-      // Find the first snapshot that is on or before the target time (with slight 12h padding)
-      let snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
+      
+      let snap;
+      if (p === '1d') {
+        // For 1D, prefer the most recent snapshot that has a different profit (last trading day)
+        // bounded by 7 days to avoid comparing with ancient data if no recent changes exist.
+        snap = snaps.find(s => Math.abs(s.profit - plBaht) > 0.01 && s.date >= now - (7 * dayMs));
+        if (!snap) snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
+      } else {
+        snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
+      }
       
       const el = document.getElementById('snap-' + p);
       if (el) {

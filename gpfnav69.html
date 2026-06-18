@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ระบบพอร์ตส่วนตัว</title>
+  <title>ระบบพอร์ตส่วนตัว (GPF Portfolio)</title>
   
   <!-- PWA & Mobile App Settings -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0d1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -863,6 +864,17 @@ fetch(GAS_URL + "?action=data&t=" + new Date().getTime())
     document.getElementById('loader').textContent = "เกิดข้อผิดพลาดในการโหลดข้อมูล: " + e.message;
   });
 
+</script>
+
+<!-- PWA: ลงทะเบียน Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('Service Worker ลงทะเบียนสำเร็จ', reg))
+      .catch(err => console.error('Service Worker ลงทะเบียนล้มเหลว', err));
+  });
+}
 </script>
 </body>
 </html>

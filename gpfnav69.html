@@ -543,12 +543,12 @@ function initDashboard() {
 
         tradeEl.innerHTML += `
           <div class="table-row" style="flex-direction:column; align-items:stretch;">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:4px;">
-              <span>${t.oldPlan}${oldNavStr} ➔ ${t.newPlan}${newNavStr}</span>
+            <div style="font-weight:bold; margin-bottom:4px;">
+              ${t.oldPlan}${oldNavStr} ➔ ${t.newPlan}${newNavStr}
             </div>
-            <div style="display:flex; justify-content:space-between; color:#8b949e; font-size:12px;">
-              <span>📅 ${finalDate}</span>
-              <span>💰 ย้าย: ${formatMoney(t.amount)} ฿ ${t.note ? `(${t.note})` : `(${percent}% ของมูลค่าที่สั่งย้ายทั้งหมดในวันนั้น)`}</span>
+            <div style="color:#8b949e; margin-bottom:4px;">
+              <div style="font-size:12px; margin-bottom:2px;">📅 ${finalDate}</div>
+              <div style="font-size:11px;">💰 ย้าย: ${formatMoney(t.amount)} ฿ ${t.note ? `(${t.note})` : `(${percent}% ของพอร์ตรวม)`}</div>
             </div>
             ${realizedHtml}
             ${whatIfHtml}

@@ -547,8 +547,11 @@ function initDashboard() {
               ${t.oldPlan}${oldNavStr} ➔ ${t.newPlan}${newNavStr}
             </div>
             <div style="color:#8b949e; margin-bottom:4px;">
-              <div style="font-size:12px; margin-bottom:2px;">📅 ${finalDate}</div>
-              <div style="font-size:11px;">💰 ย้าย: ${formatMoney(t.amount)} ฿ ${t.note ? `(${t.note})` : `(${percent}% ของพอร์ตรวม)`}</div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:2px;">
+                <span>📅 ${finalDate}</span>
+                <span>💰 ย้าย: ${formatMoney(t.amount)} ฿</span>
+              </div>
+              <div style="font-size:11px;">📝 ${t.note ? `(${t.note})` : `(${percent}% ของพอร์ตรวม)`}</div>
             </div>
             ${realizedHtml}
             ${whatIfHtml}

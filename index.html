@@ -432,6 +432,61 @@
     }
     #donate-modal.open { display: flex; }
  
+    /* DEV MODAL (Minimal & Cool) */
+    #dev-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 10000;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    #dev-modal.open { display: flex; animation: devFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes devFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .dev-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; width: 220px; max-width: 80vw;
+      text-align: center; position: relative; padding: 24px 16px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .dev-close {
+      position: absolute; top: 8px; right: 8px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: transparent; color: var(--muted);
+      border: none; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .dev-close:hover { color: #f85149; }
+    
+    .dev-icon-wrap {
+      display: flex; justify-content: center; margin-bottom: 12px;
+    }
+    .dev-title {
+      font-size: 15px; font-weight: 700; color: var(--text);
+      margin-bottom: 2px; letter-spacing: 0.5px;
+    }
+    .dev-version {
+      font-size: 10px; color: var(--muted); margin-bottom: 16px; font-family: monospace; letter-spacing: 1px;
+    }
+    .dev-credit-label {
+      font-size: 9px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase;
+    }
+    .dev-credit-name {
+      font-size: 13px; font-weight: 800; letter-spacing: 0.5px;
+    }
+
+    /* Rainbow Animation */
+    .rainbow-anim {
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #1dd1a1, #48dbfb, #ff9ff3, #ff6b6b);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-scroll 3s linear infinite;
+    }
+    @keyframes gradient-scroll {
+      to { background-position: 200% center; }
+    }
+ 
     .donate-box {
       background: #161b22; border: 1px solid #30363d;
       border-radius: 14px; width: 300px; max-width: 94vw;
@@ -592,7 +647,7 @@
   <div class="header-left">
     <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
     <div class="logo">
-      <div class="logo-badge" onclick="adminLogin()" style="cursor:pointer;" title="ระบบพอร์ตส่วนตัว">GPF</div>
+      <div class="logo-badge" onclick="openDev()" style="cursor:pointer;" title="ข้อมูลผู้พัฒนา">GPF</div>
       <div>
         <div class="logo-title" onclick="openDonate()" title="คลิกเพื่อสนับสนุนผู้พัฒนา">NAV Dashboard</div>
         <div class="logo-sub">กองทุนบำเหน็จบำนาญข้าราชการ</div>
@@ -787,7 +842,7 @@
 // ─────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec?action=data";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec?action=history";
 
 // ─────────────────────────────────────────
 // STATE
@@ -1724,6 +1779,32 @@ function showToast(msg) {
 // DONATE MODAL
 // ─────────────────────────────────────────
 </script>
+<div id="dev-modal">
+  <div class="dev-box">
+    <button class="dev-close" onclick="closeDev()">✕</button>
+    <div class="dev-icon-wrap" style="margin-bottom: 8px;">
+      <svg width="120" height="50" viewBox="0 0 120 50" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="gpfGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="blur1" />
+            <feGaussianBlur stdDeviation="6" result="blur2" />
+            <feMerge>
+              <feMergeNode in="blur2" />
+              <feMergeNode in="blur1" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <text x="60" y="38" font-family="sans-serif" font-weight="900" font-size="38" letter-spacing="4" text-anchor="middle" fill="none" stroke="#00e5ff" stroke-width="2.5" filter="url(#gpfGlow)">GPF</text>
+        <text x="60" y="38" font-family="sans-serif" font-weight="900" font-size="38" letter-spacing="4" text-anchor="middle" fill="#ffffff">GPF</text>
+      </svg>
+    </div>
+    <div class="dev-version" id="dev-visit-count">v1.0000</div>
+    <div class="dev-credit-label">Developed by</div>
+    <div class="dev-credit-name rainbow-anim">KⓇU M00 ¥EO</div>
+  </div>
+</div>
+
 <div id="donate-modal">
   <div class="donate-box">
     <div class="donate-header">
@@ -1747,14 +1828,7 @@ function showToast(msg) {
 </div>
  
 <script>
-function adminLogin() {
-  const pwd = prompt("กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบพอร์ตส่วนตัว:");
-  if (pwd === "gpfnav69") {
-    window.location.href = 'gpfnav69.html';
-  } else if (pwd !== null) {
-    alert("รหัสผ่านไม่ถูกต้อง!");
-  }
-}
+// removed adminLogin function
 
 function openDonate() {
   document.getElementById('donate-modal').classList.add('open');
@@ -1762,11 +1836,23 @@ function openDonate() {
 function closeDonate() {
   document.getElementById('donate-modal').classList.remove('open');
 }
+function openDev() {
+  document.getElementById('dev-modal').classList.add('open');
+}
+function closeDev() {
+  document.getElementById('dev-modal').classList.remove('open');
+}
 document.getElementById('donate-modal').addEventListener('click', function(e) {
   if (e.target === this) closeDonate();
 });
+document.getElementById('dev-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDev();
+});
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeDonate();
+  if (e.key === 'Escape') {
+    closeDonate();
+    closeDev();
+  }
 });
 </script> 
   <!-- PWA: ลงทะเบียน Service Worker -->
@@ -1791,10 +1877,16 @@ fetch('https://api.counterapi.dev/v1/gpfnav_dashboard/visits/up')
     let rem = (count % 10000).toString().padStart(4, '0');
     
     document.getElementById('global-visit-count').textContent = `v${v}.${rem}`;
+    if (document.getElementById('dev-visit-count')) {
+      document.getElementById('dev-visit-count').textContent = `v${v}.${rem}`;
+    }
   })
   .catch(err => {
     // ถ้าเน็ตช้าหรือโดนบล็อก ให้แสดงเนียนๆ เป็น v1.0001 แทน
     document.getElementById('global-visit-count').textContent = `v1.0001`;
+    if (document.getElementById('dev-visit-count')) {
+      document.getElementById('dev-visit-count').textContent = `v1.0001`;
+    }
   });
 
   // ─────────────────────────────────────────

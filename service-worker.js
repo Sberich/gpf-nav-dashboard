@@ -1,9 +1,12 @@
 const CACHE_NAME = 'gpf-app-cache-v1';
 const URLS_TO_CACHE = [
   './',
-  './index.txt',
+  './index.html',
+  './gpfnav69.html',
   './manifest.json',
-  './icon.png'
+  './manifest-port.json',
+  './icon.png',
+  './icon-port.svg'
 ];
 
 // ติดตั้ง Service Worker

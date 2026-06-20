@@ -19,6 +19,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --bg: #0d1117; --bg2: #161b22;
@@ -149,6 +150,16 @@
               <div><span id="val-pl-pct" style="font-size: 11px; font-weight:600;">0.00%</span></div>
             </div>
             <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); color:var(--text); border:1px solid var(--border);" onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
+          </div>
+          
+          <!-- Portfolio Growth Chart -->
+          <div id="chart-container" style="display:none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+              <div style="font-size: 11px; color: var(--muted);">กราฟมูลค่าพอร์ต (จากที่บันทึกไว้)</div>
+            </div>
+            <div style="width:100%; height:120px; position:relative;">
+              <canvas id="portChart"></canvas>
+            </div>
           </div>
         </div>
 
@@ -442,6 +453,61 @@ function initDashboard() {
         }
       }
     }
+    // Render Chart
+    const chartDataDates = [];
+    const chartDataValues = [];
+    const chartSnaps = [...snaps].reverse();
+    
+    let finalSnaps = chartSnaps;
+    if (chartSnaps.length > 60) {
+      const step = Math.ceil(chartSnaps.length / 60);
+      finalSnaps = chartSnaps.filter((s, i) => i % step === 0 || i === chartSnaps.length - 1);
+    }
+    
+    finalSnaps.forEach(s => {
+      const d = new Date(s.date);
+      chartDataDates.push(`${d.getDate()}/${d.getMonth()+1}`);
+      chartDataValues.push(s.value);
+    });
+
+    if (chartDataDates.length > 1 && window.Chart) {
+      document.getElementById('chart-container').style.display = 'block';
+      const ctx = document.getElementById('portChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartDataDates,
+          datasets: [{
+            label: 'มูลค่าพอร์ต',
+            data: chartDataValues,
+            borderColor: '#58a6ff',
+            backgroundColor: 'rgba(88, 166, 255, 0.1)',
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) { return formatMoney(context.raw) + ' ฿'; }
+              }
+            }
+          },
+          scales: {
+            x: { display: true, grid: { display: false, drawBorder: false }, ticks: { color: '#8b949e', font: { size: 9 }, maxTicksLimit: 6 } },
+            y: { display: false, min: Math.min(...chartDataValues) * 0.99, max: Math.max(...chartDataValues) * 1.01 }
+          },
+          interaction: { intersect: false, mode: 'index' },
+        }
+      });
+    }
   }
 
   // Render Trade Logs
@@ -476,15 +542,18 @@ function initDashboard() {
           
           let bestIdx = -1;
           let minDiff = Infinity;
-          allData.dates.forEach((d, idx) => {
+          const searchDates = allData.fullDates || allData.dates;
+          searchDates.forEach((d, idx) => {
             const diff = Math.abs(new Date(d) - tDate);
             if (diff < minDiff && diff < 1000 * 60 * 60 * 24 * 30) { minDiff = diff; bestIdx = idx; }
           });
           
           if (bestIdx >= 0) {
-            const navOldThen = oldPlanData.data[bestIdx];
+            const oldDataArr = oldPlanData.fullData || oldPlanData.data;
+            const newDataArr = newPlanData.fullData || newPlanData.data;
+            const navOldThen = oldDataArr[bestIdx];
             const navOldNow = oldPlanData.data[oldPlanData.data.length - 1];
-            const navNewThen = newPlanData.data[bestIdx];
+            const navNewThen = newDataArr[bestIdx];
             const navNewNow = newPlanData.data[newPlanData.data.length - 1];
             
             if (navOldThen && navOldNow && navNewThen && navNewNow) {
@@ -562,6 +631,35 @@ function initDashboard() {
   }
 }
 
+// Auth Helper
+function getDeviceId() {
+  let id = localStorage.getItem('gpf_device_id');
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).substr(2, 9) + '_' + new Date().getTime();
+    localStorage.setItem('gpf_device_id', id);
+  }
+  return id;
+}
+
+async function apiCall(payload) {
+  payload.deviceId = getDeviceId();
+  const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+  const result = await res.json();
+  if (result.error === "Unauthorized_Device") {
+    const pin = prompt("🚨 อุปกรณ์นี้ยังไม่ได้รับอนุญาต (Unauthorized Device)\nกรุณากรอกรหัส PIN 4 หลักเพื่อลงทะเบียนเครื่องนี้:");
+    if (!pin) throw new Error("Canceled by user");
+    const regRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) }).then(r=>r.json());
+    if (regRes.success) {
+      alert("✅ ลงทะเบียนเครื่องสำเร็จ! กำลังทำรายการต่อ...");
+      return apiCall(payload);
+    } else {
+      throw new Error("ลงทะเบียนไม่สำเร็จ: " + regRes.error);
+    }
+  }
+  if (result.error) throw new Error(result.error);
+  return result;
+}
+
 // Post Functions
 async function postData(payload, btnId) {
   const btn = document.getElementById(btnId);
@@ -570,21 +668,17 @@ async function postData(payload, btnId) {
   btn.textContent = "กำลังบันทึก...";
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    const result = await res.json();
+    const result = await apiCall(payload);
     if(result.success) {
       alert("บันทึกสำเร็จ! (กำลังโหลดข้อมูลใหม่)");
       // Clear cache to force reload
       localStorage.removeItem("gpfnav_cache");
       location.reload();
-    } else {
-      alert("Error: " + result.error);
     }
   } catch(e) {
-    alert("การเชื่อมต่อมีปัญหา อาจเกิดจากเบราว์เซอร์บล็อค หรือ Apps Script ยังไม่อนุญาต POST");
+    if (e.message !== "Canceled by user") {
+      alert("Error: " + e.message);
+    }
   }
   
   btn.disabled = false;
@@ -604,7 +698,7 @@ function saveContrib() {
   postData({ action: 'add_contrib', date, amount, note }, 'btn-save-contrib');
 }
 
-function saveSnapshot() {
+async function saveSnapshot() {
   const valStr = document.getElementById('val-current').textContent.replace(/,/g, '');
   const costStr = document.getElementById('val-cost').textContent.replace(/,/g, '');
   const totalValue = parseFloat(valStr) || 0;
@@ -614,30 +708,28 @@ function saveSnapshot() {
   const btn = document.getElementById('btn-snapshot');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
   
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({
+  try {
+    const res = await apiCall({
       action: 'save_snapshot',
       value: totalValue,
       cost: totalCost,
       profit: totalValue - totalCost,
       profitPct: ((totalValue - totalCost) / totalCost) * 100
-    })
-  }).then(r => r.json()).then(res => {
+    });
     if(res.success) {
       alert('บันทึกยอดพอร์ตวันนี้สำเร็จแล้ว! 🎉');
       window.location.reload();
     } else if(res.error) {
       alert("ไม่สามารถบันทึกได้: " + res.error + "\n\nคุณพี่อย่าลืมกด 'การทำให้ใช้งานได้รายการใหม่ (New deployment)' ใน Apps Script นะครับ!");
-      btn.textContent = '📸 บันทึกยอดวันนี้'; btn.disabled = false;
+      btn.textContent = '📸 บันทึก'; btn.disabled = false;
     }
-  }).catch(e => {
-    alert("Error: " + e.message);
-    btn.textContent = '📸 บันทึกยอดวันนี้'; btn.disabled = false;
-  });
+  } catch(e) {
+    if (e.message !== "Canceled by user") alert("Error: " + e.message);
+    btn.textContent = '📸 บันทึก'; btn.disabled = false;
+  }
 }
 
-function saveUnit() {
+async function saveUnit() {
   const plan = document.getElementById('inp-plan').value;
   const units = document.getElementById('inp-units').value;
   const cost = document.getElementById('inp-cost').value;
@@ -646,15 +738,16 @@ function saveUnit() {
   const btn = document.getElementById('btn-save-unit');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
   
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({ action: 'update_unit', plan: plan, units: units, cost: cost })
-  }).then(r => r.json()).then(res => {
+  const payload = { action: 'update_unit', plan: plan, units: units };
+  if (cost.trim() !== '') payload.cost = cost;
+  
+  try {
+    const res = await apiCall(payload);
     if(res.success) window.location.reload();
-  }).catch(e => {
-    alert("Error: " + e.message);
+  } catch(e) {
+    if (e.message !== "Canceled by user") alert("Error: " + e.message);
     btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
-  });
+  }
 }
 
 function switchTab(tab) {
@@ -750,13 +843,15 @@ async function saveSmartRebalance() {
     for (let b of buyers) {
       if (b.amt < 0.01 || sellRemain < 0.01) continue;
       const amountToMove = Math.min(sellRemain, b.amt);
+      const pctStr = ((amountToMove / totalVal) * 100).toFixed(1).replace('.0', '');
       trades.push({
         action: 'add_trade',
         date: dateStr,
         oldPlan: s.plan,
         newPlan: b.plan,
         amount: amountToMove.toFixed(2),
-        realized: ''
+        realized: '',
+        note: `Rebalance: โยก ${pctStr}% ของพอร์ตรวม ไปเข้า ${b.plan}`
       });
       sellRemain -= amountToMove;
       b.amt -= amountToMove;
@@ -774,16 +869,12 @@ async function saveSmartRebalance() {
   
   try {
     for (const t of trades) {
-      await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(t),
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-      });
+      await apiCall(t);
     }
     alert('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
     location.reload();
   } catch(e) {
-    alert(e.message);
+    if (e.message !== "Canceled by user") alert(e.message);
   }
   btn.innerText = 'วิเคราะห์และบันทึก';
   btn.disabled = false;
@@ -795,16 +886,11 @@ async function seedData() {
   btn.disabled = true;
   
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'seed_data' }),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-    });
-    const data = await res.json();
+    const data = await apiCall({ action: 'seed_data' });
     if (data.error) throw new Error(data.error);
     alert('นำเข้าข้อมูลประวัติทั้งหมดสำเร็จ! 🎉 รีเฟรชหน้าเว็บ 1 รอบ แล้วกดสร้าง Statement ได้เลยครับ');
   } catch(e) {
-    alert('Error: ' + e.message);
+    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
   }
   
   btn.innerText = '1. นำเข้าข้อมูลประวัติทั้งหมดลง MyPort (กดครั้งเดียว)';
@@ -817,23 +903,18 @@ async function exportStatement() {
   btn.disabled = true;
   
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'export_statement' }),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-    });
-    const data = await res.json();
+    const data = await apiCall({ action: 'export_statement' });
     if (data.error) throw new Error(data.error);
     alert('สร้าง Statement สำเร็จ! เปิดดู Google Sheet แท็บ Statement ได้เลยครับ 🎉');
   } catch(e) {
-    alert('Error: ' + e.message);
+    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
   }
   
   btn.innerText = '📥 สร้าง Sheet Statement ตอนนี้เลย';
   btn.disabled = false;
 }
 
-function saveTrade() {
+async function saveTrade() {
   const date = document.getElementById('inp-trade-date').value;
   const oldPlan = document.getElementById('inp-trade-old').value;
   const newPlan = document.getElementById('inp-trade-new').value;
@@ -846,9 +927,8 @@ function saveTrade() {
   const btn = document.getElementById('btn-save-trade');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
   
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({
+  try {
+    const res = await apiCall({
       action: 'add_trade',
       date: date,
       oldPlan: oldPlan,
@@ -856,27 +936,53 @@ function saveTrade() {
       amount: amt,
       realized: real,
       note: note
-    })
-  }).then(r => r.json()).then(res => {
+    });
     if(res.success) window.location.reload();
-  }).catch(e => {
-    alert("Error: " + e.message);
+  } catch(e) {
+    if (e.message !== "Canceled by user") alert("Error: " + e.message);
     btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
-  });
+  }
+}
+
+function showAuthDialog() {
+  const pin = prompt("🚨 อุปกรณ์นี้ยังไม่ได้รับอนุญาต (Unauthorized Device)\nกรุณากรอกรหัส PIN 4 หลักเพื่อลงทะเบียนเครื่องนี้:");
+  if (!pin) return;
+  fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) })
+    .then(r=>r.json()).then(res => {
+      if (res.success) {
+        alert("✅ ลงทะเบียนเครื่องสำเร็จ! กำลังโหลดข้อมูล...");
+        location.reload();
+      } else {
+        alert("❌ " + res.error);
+      }
+    }).catch(e => alert("Error: " + e.message));
 }
 
 // Fetch Initial Data
 // Note: We bypass local cache to get fresh MyPort updates
-fetch(GAS_URL + "?action=data&t=" + new Date().getTime())
+const loadTimeout = setTimeout(() => {
+  const loader = document.getElementById('loader');
+  if (loader && loader.style.display !== 'none') {
+    loader.innerHTML = `โหลดข้อมูลนานกว่าปกติ อาจเกิดจากอินเทอร์เน็ตหรือเซิร์ฟเวอร์ กบข. ตอบกลับช้า<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+  }
+}, 15000);
+
+fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDeviceId())
   .then(r => r.json())
   .then(data => {
+    clearTimeout(loadTimeout);
+    if (data.error === "Unauthorized_Device") {
+      document.getElementById('loader').innerHTML = `อุปกรณ์นี้ยังไม่ได้รับอนุญาต<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="showAuthDialog()">🔑 เข้าสู่ระบบ</button>`;
+      return;
+    }
     allData = data;
     document.getElementById('loader').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
     initDashboard();
   })
   .catch(e => {
-    document.getElementById('loader').textContent = "เกิดข้อผิดพลาดในการโหลดข้อมูล: " + e.message;
+    clearTimeout(loadTimeout);
+    document.getElementById('loader').innerHTML = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${e.message}<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
   });
 
 </script>

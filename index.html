@@ -858,7 +858,7 @@ let currentMinTs   = null;  // sync กับ range ที่เลือก
 // ─────────────────────────────────────────
 // INIT — โหลดข้อมูลเมื่อหน้าพร้อม
 // ─────────────────────────────────────────
-const CACHE_KEY = 'gpf_nav_cache_v2';
+const CACHE_KEY = 'gpf_nav_cache_v3';
 const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 ชั่วโมง (NAV อัพเดทวันละครั้ง)
 
 window.addEventListener('load', () => {
@@ -873,7 +873,9 @@ window.addEventListener('load', () => {
   fetch(GAS_URL)
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
     .then(data => {
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+      if (!data.error) {
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+      }
       onDataLoaded(data);
     })
     .catch(e => showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message));

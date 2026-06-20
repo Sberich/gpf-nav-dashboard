@@ -1076,8 +1076,8 @@ fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDev
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('Service Worker ลงทะเบียนสำเร็จ', reg))
+    navigator.serviceWorker.register('service-worker.js?v=port')
+      .then(reg => console.log('SW (Port) registered', reg))
       .catch(err => console.error('Service Worker ลงทะเบียนล้มเหลว', err));
   });
 }

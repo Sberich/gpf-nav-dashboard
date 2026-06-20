@@ -144,12 +144,12 @@
 
           <!-- Main PnL (Bottom) -->
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:baseline; gap:8px;">
-              <div class="card-title" style="margin-bottom:0; font-size:11px;">กำไรสุทธิ</div>
-              <div class="card-val" id="val-pl" style="font-size:16px; line-height:1.2;">0.00</div>
-              <div><span id="val-pl-pct" style="font-size: 11px; font-weight:600;">0.00%</span></div>
+            <div style="display:flex; align-items:baseline; gap:6px;">
+              <div class="card-title" style="margin-bottom:0; font-size:9px;">กำไรสุทธิ</div>
+              <div class="card-val" id="val-pl" style="font-size:13px; line-height:1.2;">0.00</div>
+              <div><span id="val-pl-pct" style="font-size:9px; font-weight:600;">0.00%</span></div>
             </div>
-            <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); color:var(--text); border:1px solid var(--border);" onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
+            <button class="btn" style="width:auto; padding:4px 8px; font-size:9px; background:var(--bg3); color:var(--text); border:1px solid var(--border);" onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
           </div>
           
           <!-- Portfolio Growth Chart -->
@@ -419,12 +419,19 @@ function initDashboard() {
             plHtml = `<div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>`;
           }
           breakdownEl.innerHTML += `
-            <div class="table-row" style="align-items: flex-start;">
-              <div style="display:flex; gap:8px;">
+            <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
+              <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
                 <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
-                <div>${u.plan} <br><span style="color:#8b949e;font-size:11px;">${u.units.toLocaleString()} หน่วย</span>${plHtml}</div>
+                <div style="flex:1; min-width:0;">
+                  <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-0.3px;">${u.plan}</div>
+                  <div style="color:#8b949e;font-size:11px;">${u.units.toLocaleString()} หน่วย</div>
+                  ${plHtml}
+                </div>
               </div>
-              <div style="text-align:right;">${formatMoney(val)} ฿<br><span style="color:#58a6ff;font-size:11px;">@${lastNav.toFixed(4)}</span></div>
+              <div style="text-align:right; flex-shrink:0;">
+                <div>${formatMoney(val)} ฿</div>
+                <div style="color:#58a6ff;font-size:11px;">@${lastNav.toFixed(4)}</div>
+              </div>
             </div>
           `;
         }

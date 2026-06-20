@@ -9,8 +9,8 @@
   <title>GPF NAV Dashboard</title>
   
   <!-- โค้ด PWA & Mobile Settings ที่เพิ่มเข้ามาใหม่ -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#161b22">
+  <link rel="manifest" href="manifest.json?v=2">
+  <meta name="theme-color" id="meta-theme-color" content="#161b22">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GPF NAV">
@@ -34,6 +34,17 @@
       --accent: #388bfd;
       --up:     #3fb950;
       --down:   #f85149;
+    }
+    [data-theme="light"] {
+      --bg:     #f6f8fa;
+      --bg2:    #ffffff;
+      --bg3:    #f3f4f6;
+      --border: #d0d7de;
+      --text:   #24292f;
+      --muted:  #57606a;
+      --accent: #0969da;
+      --up:     #1a7f37;
+      --down:   #d1242f;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -617,7 +628,16 @@
   </style>
   <!-- Flatpickr CSS (Dark Theme) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  <link rel="stylesheet" id="flatpickr-theme" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  <script>
+    // โหลดธีมเบื้องต้น
+    try {
+      const savedTheme = localStorage.getItem('gpf_theme');
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    } catch(e) {}
+  </script>
 </head>
 <body>
 
@@ -655,6 +675,7 @@
     </div>
   </div>
   <div class="header-right">
+    <button id="theme-toggle" onclick="toggleTheme()" style="background:transparent; border:none; color:var(--text); cursor:pointer; font-size:16px; margin-right:8px;" title="สลับโหมดหน้าจอ">☀️</button>
     <div id="last-update">กำลังโหลด...</div>
     <div class="mode-toggle">
       <button class="mode-btn active" id="btn-nav" onclick="setMode('nav')">NAV จริง</button>
@@ -884,6 +905,16 @@ window.addEventListener('load', () => {
 function onDataLoaded(data) {
   if (data.error) { showError(data.error); return; }
   allData = data;
+  
+  if (data.visitCount) {
+    let count = data.visitCount;
+    let v = Math.floor(count / 10000) + 1;
+    let rem = (count % 10000).toString().padStart(4, '0');
+    let verStr = `v${v}.${rem}`;
+    if(document.getElementById('global-visit-count')) document.getElementById('global-visit-count').textContent = verStr;
+    if(document.getElementById('dev-visit-count')) document.getElementById('dev-visit-count').textContent = verStr;
+  }
+
   // แปลง dates → timestamps ครั้งเดียว ไม่ต้องทำซ้ำใน getBaseValue
   dateTimestamps = allData.dates.map(d => new Date(d).getTime());
   allData.plans.forEach(p => hidden.add(p.key));
@@ -1861,39 +1892,45 @@ document.addEventListener('keydown', function(e) {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
+    navigator.serviceWorker.register('service-worker.js?v=nav')
       .then(reg => console.log('Service Worker ลงทะเบียนสำเร็จ', reg))
       .catch(err => console.error('Service Worker ลงทะเบียนไม่สำเร็จ', err));
   });
 }
 </script>
   <script>
-// โค้ดนับสถิติรวมทุกคน (Global) แบบแอบซ่อนเป็นเลขเวอร์ชัน
-fetch('https://api.counterapi.dev/v1/gpfnav_dashboard/visits/up')
-  .then(res => res.json())
-  .then(data => {
-    let count = data.count || 1;
-    // คำนวณ: ทุกๆ 10,000 ครั้ง ให้ +1 เวอร์ชันหน้า
-    let v = Math.floor(count / 10000) + 1;
-    // เลขหลังทศนิยม 4 หลัก (เติม 0 ข้างหน้าให้เต็ม)
-    let rem = (count % 10000).toString().padStart(4, '0');
+  // ─────────────────────────────────────────
+  // THEME TOGGLE LOGIC
+  // ─────────────────────────────────────────
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    const btn = document.getElementById('theme-toggle');
+    if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+    const metaTheme = document.getElementById('meta-theme-color');
+    if (metaTheme) metaTheme.content = next === 'dark' ? '#161b22' : '#ffffff';
+    try { localStorage.setItem('gpf_theme', next); } catch(e) {}
     
-    document.getElementById('global-visit-count').textContent = `v${v}.${rem}`;
-    if (document.getElementById('dev-visit-count')) {
-      document.getElementById('dev-visit-count').textContent = `v${v}.${rem}`;
+    const fpTheme = document.getElementById('flatpickr-theme');
+    if(fpTheme) {
+      fpTheme.href = next === 'dark' 
+        ? 'https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css'
+        : 'https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/light.css';
     }
-  })
-  .catch(err => {
-    // ถ้าเน็ตช้าหรือโดนบล็อก ให้แสดงเนียนๆ เป็น v1.0001 แทน
-    document.getElementById('global-visit-count').textContent = `v1.0001`;
-    if (document.getElementById('dev-visit-count')) {
-      document.getElementById('dev-visit-count').textContent = `v1.0001`;
+
+    if (chart) {
+      chart.updateOptions({ theme: { mode: next } });
     }
-  });
+  }
 
   // ─────────────────────────────────────────
   // INIT FLATPICKR (ปฏิทิน พ.ศ.)
   // ─────────────────────────────────────────
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+<script>
   document.addEventListener('DOMContentLoaded', function() {
     const updateYearToThai = (instance) => {
       if (!instance.currentYearElement) return;
@@ -1933,9 +1970,5 @@ fetch('https://api.counterapi.dev/v1/gpfnav_dashboard/visits/up')
 
 
 </script>
-
-<!-- Flatpickr JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 </body>
 </html>

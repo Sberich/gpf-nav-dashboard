@@ -164,6 +164,19 @@
         </div>
 
         <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600;">สัดส่วนแผนที่ถือครอง (My Plans)</div>
+        
+        <!-- Donut Chart Container -->
+        <div id="donut-container" class="card" style="display:none; padding: 8px 0; margin-bottom: 12px; justify-content:center; align-items:center; position:relative;">
+          <div style="width:140px; height:140px;">
+            <canvas id="donutChart"></canvas>
+          </div>
+          <!-- Center Text Overlay -->
+          <div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none;">
+            <span style="font-size:10px; color:var(--muted);">พอร์ตปัจจุบัน</span>
+            <span id="donut-center-val" style="font-size:13px; font-weight:bold; color:var(--text);">0 ฿</span>
+          </div>
+        </div>
+        
         <div id="plan-breakdown" class="card" style="padding: 0 12px; margin-bottom: 16px;">
           <!-- Plan rows injected here -->
         </div>
@@ -379,6 +392,10 @@ function initDashboard() {
   if(port.units.length === 0) {
     breakdownEl.innerHTML = '<div class="table-row" style="color:#8b949e">ยังไม่มีข้อมูลแผน (โปรดอัปเดตจำนวนหน่วยด้านล่าง)</div>';
   } else {
+    const donutLabels = [];
+    const donutData = [];
+    const donutColors = [];
+
     port.units.forEach(u => {
       // Find latest NAV for this plan
       const pData = allData.plans.find(x => x.label === u.plan || x.key === u.plan);
@@ -386,6 +403,12 @@ function initDashboard() {
         const lastNav = pData.data[pData.data.length - 1];
         const val = u.units * lastNav;
         totalValue += val;
+        
+        if (val > 0) {
+          donutLabels.push(u.plan);
+          donutData.push(val);
+          donutColors.push(pData.color || '#58a6ff');
+        }
         
         if (u.units > 0) {
           let plHtml = '';
@@ -396,14 +419,59 @@ function initDashboard() {
             plHtml = `<div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>`;
           }
           breakdownEl.innerHTML += `
-            <div class="table-row">
-              <div>${u.plan} <br><span style="color:#8b949e;font-size:11px;">${u.units.toLocaleString()} หน่วย</span>${plHtml}</div>
+            <div class="table-row" style="align-items: flex-start;">
+              <div style="display:flex; gap:8px;">
+                <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
+                <div>${u.plan} <br><span style="color:#8b949e;font-size:11px;">${u.units.toLocaleString()} หน่วย</span>${plHtml}</div>
+              </div>
               <div style="text-align:right;">${formatMoney(val)} ฿<br><span style="color:#58a6ff;font-size:11px;">@${lastNav.toFixed(4)}</span></div>
             </div>
           `;
         }
       }
     });
+
+    if (donutData.length > 0 && window.Chart) {
+      document.getElementById('donut-container').style.display = 'flex';
+      document.getElementById('donut-center-val').innerText = formatMoney(totalValue);
+      const ctx = document.getElementById('donutChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: donutLabels,
+          datasets: [{
+            data: donutData,
+            backgroundColor: donutColors,
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              displayColors: false,
+              backgroundColor: 'rgba(22, 27, 34, 0.9)',
+              borderColor: '#30363d',
+              borderWidth: 1,
+              padding: 8,
+              bodyFont: { size: 14, weight: 'bold', family: "'Sarabun', sans-serif" },
+              callbacks: {
+                title: function() { return null; },
+                label: function(context) { 
+                  const val = context.raw;
+                  const pct = ((val / totalValue) * 100).toFixed(1);
+                  return `${pct}%`; 
+                }
+              }
+            }
+          }
+        }
+      });
+    }
   }
 
   const plBaht = totalValue - totalCost;
@@ -471,7 +539,8 @@ function initDashboard() {
     });
 
     if (chartDataDates.length > 1 && window.Chart) {
-      document.getElementById('chart-container').style.display = 'block';
+      // ปิดการแสดงผลกราฟชั่วคราวตามที่ผู้ใช้ต้องการ
+      // document.getElementById('chart-container').style.display = 'block';
       const ctx = document.getElementById('portChart').getContext('2d');
       new Chart(ctx, {
         type: 'line',

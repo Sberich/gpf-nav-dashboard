@@ -120,23 +120,23 @@
           </div>
         </div>
 
-        <div class="card" style="margin-bottom: 12px; padding: 12px; display:flex; flex-direction:column; gap:8px;">
+        <div class="card" style="margin-bottom: 12px; padding: 8px 12px; display:flex; flex-direction:column; gap:6px;">
           <!-- Snapshots List (Top) -->
           <div style="display:flex; flex-direction:column; width:100%;">
-            <div id="snap-1d" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:4px 0; border-bottom:1px dashed #30363d;">
-              <span style="color:#8b949e;">1D</span><span style="font-weight:600; color:#8b949e;">-</span>
+            <div id="snap-1d" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
+              <span style="color:var(--muted);">1D</span><span style="font-weight:600; color:var(--muted);">-</span>
             </div>
-            <div id="snap-1w" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:4px 0; border-bottom:1px dashed #30363d;">
-              <span style="color:#8b949e;">1W</span><span style="font-weight:600; color:#8b949e;">-</span>
+            <div id="snap-1w" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
+              <span style="color:var(--muted);">1W</span><span style="font-weight:600; color:var(--muted);">-</span>
             </div>
-            <div id="snap-1m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:4px 0; border-bottom:1px dashed #30363d;">
-              <span style="color:#8b949e;">1M</span><span style="font-weight:600; color:#8b949e;">-</span>
+            <div id="snap-1m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
+              <span style="color:var(--muted);">1M</span><span style="font-weight:600; color:var(--muted);">-</span>
             </div>
-            <div id="snap-3m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:4px 0; border-bottom:1px dashed #30363d;">
-              <span style="color:#8b949e;">3M</span><span style="font-weight:600; color:#8b949e;">-</span>
+            <div id="snap-3m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
+              <span style="color:var(--muted);">3M</span><span style="font-weight:600; color:var(--muted);">-</span>
             </div>
-            <div id="snap-6m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px; padding:4px 0;">
-              <span style="color:#8b949e;">6M</span><span style="font-weight:600; color:#8b949e;">-</span>
+            <div id="snap-6m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0;">
+              <span style="color:var(--muted);">6M</span><span style="font-weight:600; color:var(--muted);">-</span>
             </div>
           </div>
 
@@ -166,14 +166,14 @@
         <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600;">สัดส่วนแผนที่ถือครอง (My Plans)</div>
         
         <!-- Donut Chart Container -->
-        <div id="donut-container" class="card" style="display:none; padding: 8px 0; margin-bottom: 12px; justify-content:center; align-items:center; position:relative;">
-          <div style="width:140px; height:140px;">
+        <div id="donut-container" class="card" style="display:none; padding: 12px; margin-bottom: 12px; justify-content:center; align-items:center; position:relative;">
+          <div style="width:160px; height:160px;">
             <canvas id="donutChart"></canvas>
           </div>
           <!-- Center Text Overlay -->
           <div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none;">
             <span style="font-size:10px; color:var(--muted);">พอร์ตปัจจุบัน</span>
-            <span id="donut-center-val" style="font-size:13px; font-weight:bold; color:var(--text);">0 ฿</span>
+            <span id="donut-center-val" style="font-size:14px; font-weight:bold; color:var(--text);">0 ฿</span>
           </div>
         </div>
         
@@ -515,9 +515,9 @@ function initDashboard() {
           let sign = '';
           if (profitDiff > 0.01) { color = '#4caf50'; sign = '+'; }
           else if (profitDiff < -0.01) { color = '#f44336'; }
-          el.innerHTML = `<span style="color:#8b949e; margin-right:4px;">${p.toUpperCase()}</span> <div><span style="color:${color}; font-size:18px; font-weight:700; margin-right:6px;">${sign}${formatMoney(profitDiff)}฿</span><span style="color:${color}; font-size:12px; opacity:0.8; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
+          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <div><span style="color:${color}; font-size:14px; font-weight:700; margin-right:4px;">${sign}${formatMoney(profitDiff)}฿</span><span style="color:${color}; font-size:11px; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
         } else {
-          el.innerHTML = `<span style="color:#8b949e; margin-right:4px;">${p.toUpperCase()}</span> <span style="color:#8b949e;">-</span>`;
+          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <span style="color:var(--muted); font-weight:600;">-</span>`;
         }
       }
     }
@@ -715,15 +715,9 @@ async function apiCall(payload) {
   const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
   const result = await res.json();
   if (result.error === "Unauthorized_Device") {
-    const pin = prompt("🚨 อุปกรณ์นี้ยังไม่ได้รับอนุญาต\nกรุณากรอกรหัส เพื่อเข้าใช้งาน:");
-    if (!pin) throw new Error("Canceled by user");
-    const regRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) }).then(r=>r.json());
-    if (regRes.success) {
-      alert("✅ ลงทะเบียนเครื่องสำเร็จ! กำลังทำรายการต่อ...");
-      return apiCall(payload);
-    } else {
-      throw new Error("ลงทะเบียนไม่สำเร็จ: " + regRes.error);
-    }
+    alert("🔒 อุปกรณ์นี้ไม่ได้รับอนุญาตหรือเซสชันหมดอายุ ระบบจะทำการโหลดใหม่");
+    location.reload();
+    throw new Error("Unauthorized");
   }
   if (result.error) throw new Error(result.error);
   return result;
@@ -1013,18 +1007,25 @@ async function saveTrade() {
   }
 }
 
-function showAuthDialog() {
-  const pin = prompt("🚨 อุปกรณ์นี้ยังไม่ได้รับอนุญาต\nกรุณากรอกรหัส เพื่อเข้าใช้งาน:");
+function submitAuth() {
+  const pin = document.getElementById('auth-pin').value;
   if (!pin) return;
+  const btn = document.querySelector('#loader .btn');
+  btn.innerText = 'กำลังตรวจ...'; btn.disabled = true;
   fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) })
     .then(r=>r.json()).then(res => {
       if (res.success) {
-        alert("✅ ลงทะเบียนเครื่องสำเร็จ! กำลังโหลดข้อมูล...");
+        document.getElementById('loader').innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px;"><div style="color:#4caf50; font-size:32px;">✅</div><div style="font-size:16px; font-weight:600;">เข้าสู่ระบบสำเร็จ</div><div style="font-size:12px; color:var(--muted);">กำลังโหลดข้อมูล...</div></div>`;
         location.reload();
       } else {
-        alert("❌ " + res.error);
+        alert("❌ รหัส PIN ไม่ถูกต้อง");
+        btn.innerText = 'ยืนยัน'; btn.disabled = false;
+        document.getElementById('auth-pin').value = '';
       }
-    }).catch(e => alert("Error: " + e.message));
+    }).catch(e => {
+      alert("Error: " + e.message);
+      btn.innerText = 'ยืนยัน'; btn.disabled = false;
+    });
 }
 
 // Fetch Initial Data
@@ -1041,7 +1042,15 @@ fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDev
   .then(data => {
     clearTimeout(loadTimeout);
     if (data.error === "Unauthorized_Device") {
-      document.getElementById('loader').innerHTML = `อุปกรณ์นี้ยังไม่ได้รับอนุญาต<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="showAuthDialog()">🔑 เข้าสู่ระบบ</button>`;
+      document.getElementById('loader').innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; padding: 20px;">
+          <div style="font-size:32px;">🔒</div>
+          <div style="font-size:16px; font-weight:600; color:var(--text);">GPF NAV Dashboard</div>
+          <div style="font-size:13px; color:var(--muted);">ระบุตัวตนเพื่อเข้าใช้งานอุปกรณ์นี้</div>
+          <input type="password" id="auth-pin" placeholder="PIN" maxlength="4" style="text-align:center; letter-spacing:8px; font-size:24px; width:140px; padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); outline:none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#58a6ff'" onblur="this.style.borderColor='var(--border)'">
+          <button class="btn" style="width:140px; padding:10px 0; font-size:14px;" onclick="submitAuth()">ยืนยัน</button>
+        </div>
+      `;
       return;
     }
     allData = data;

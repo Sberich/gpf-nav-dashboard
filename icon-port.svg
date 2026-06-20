@@ -9,7 +9,11 @@
     </filter>
   </defs>
   <rect width="100" height="100" rx="20" fill="#0d1117"/>
-  <!-- Portfolio Briefcase / Graph symbol -->
-  <path d="M25 65 L45 35 L65 45 L85 15" fill="none" stroke="#ff6b6b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
-  <circle cx="85" cy="15" r="8" fill="#ff6b6b" filter="url(#glow)"/>
+  <!-- Handle -->
+  <path d="M40 35 L40 25 C40 20 60 20 60 25 L60 35" fill="none" stroke="#58a6ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <!-- Body -->
+  <rect x="20" y="35" width="60" height="45" rx="8" fill="none" stroke="#58a6ff" stroke-width="6" stroke-linejoin="round" filter="url(#glow)"/>
+  <!-- Flap/Lock -->
+  <path d="M20 50 L80 50" fill="none" stroke="#58a6ff" stroke-width="6" stroke-linecap="round" filter="url(#glow)"/>
+  <rect x="45" y="45" width="10" height="10" rx="3" fill="#58a6ff" filter="url(#glow)"/>
 </svg>

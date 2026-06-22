@@ -516,7 +516,13 @@ function initDashboard() {
       const el = document.getElementById('snap-' + p);
       if (el) {
         if (snap) {
-          const profitDiff = plBaht - snap.profit;
+          let safeSnapProfit = snap.profit;
+          // Failsafe: if the snapshot was saved with 0 cost (making profit = value),
+          // we recalculate its real profit using the current totalCost to avoid massive negative drops.
+          if (snap.cost === 0 && totalCost > 0) {
+             safeSnapProfit = snap.value - totalCost;
+          }
+          const profitDiff = plBaht - safeSnapProfit;
           const pctDiff = snap.value > 0 ? (profitDiff / snap.value) * 100 : 0;
           let color = '#8b949e';
           let sign = '';

@@ -1144,7 +1144,7 @@ async function postData(payload, btnId) {
     if(result.success) {
       alert("บันทึกสำเร็จ! (กำลังโหลดข้อมูลใหม่)");
       // Clear cache to force reload
-      localStorage.removeItem("gpfnav_cache");
+      localStorage.removeItem("gpfnav_data_v3");
       location.reload();
     }
   } catch(e) {
@@ -1215,7 +1215,10 @@ async function saveUnit() {
   
   try {
     const res = await apiCall(payload);
-    if(res.success) window.location.reload();
+    if(res.success) {
+      localStorage.removeItem("gpfnav_data_v3");
+      window.location.reload();
+    }
   } catch(e) {
     if (e.message !== "Canceled by user") alert("Error: " + e.message);
     btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
@@ -1344,6 +1347,7 @@ async function saveSmartRebalance() {
       await apiCall(t);
     }
     alert('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
+    localStorage.removeItem("gpfnav_data_v3");
     location.reload();
   } catch(e) {
     if (e.message !== "Canceled by user") alert(e.message);
@@ -1409,7 +1413,10 @@ async function saveTrade() {
       realized: real,
       note: note
     });
-    if(res.success) window.location.reload();
+    if(res.success) {
+      localStorage.removeItem("gpfnav_data_v3");
+      window.location.reload();
+    }
   } catch(e) {
     if (e.message !== "Canceled by user") alert("Error: " + e.message);
     btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
@@ -1438,13 +1445,34 @@ function submitAuth() {
 }
 
 // Fetch Initial Data
-// Note: We bypass local cache to get fresh MyPort updates
+let isInitialLoad = true;
+
+const cachedData = localStorage.getItem('gpfnav_data_v3');
+if (cachedData) {
+  try {
+    allData = JSON.parse(cachedData);
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    initDashboard();
+    restorePins();
+    isInitialLoad = false;
+  } catch(e) {
+    localStorage.removeItem('gpfnav_data_v3');
+  }
+}
+
 const loadTimeout = setTimeout(() => {
-  const loader = document.getElementById('loader');
-  if (loader && loader.style.display !== 'none') {
-    loader.innerHTML = `โหลดข้อมูลนานกว่าปกติ อาจเกิดจากอินเทอร์เน็ตหรือเซิร์ฟเวอร์ กบข. ตอบกลับช้า<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+  if (isInitialLoad) {
+    const loader = document.getElementById('loader');
+    if (loader && loader.style.display !== 'none') {
+      loader.innerHTML = `โหลดข้อมูลนานกว่าปกติ อาจเกิดจากอินเทอร์เน็ตหรือเซิร์ฟเวอร์ กบข. ตอบกลับช้า<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+    }
   }
 }, 15000);
+
+if (!isInitialLoad) {
+  document.getElementById('update-date-text').innerHTML = '<span style="color:#f39c12">กำลังเช็คข้อมูลล่าสุด...</span>';
+}
 
 fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDeviceId())
   .then(r => r.json())
@@ -1462,15 +1490,48 @@ fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDev
       `;
       return;
     }
-    allData = data;
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
-    initDashboard();
-    restorePins();
+    
+    // Check if data changed
+    const newDataStr = JSON.stringify(data);
+    const dataChanged = cachedData !== newDataStr;
+    
+    localStorage.setItem('gpfnav_data_v3', newDataStr);
+    
+    if (isInitialLoad) {
+      allData = data;
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      initDashboard();
+      restorePins();
+    } else {
+      if (dataChanged) {
+        document.getElementById('update-date-text').innerHTML = '<span style="color:#4caf50; cursor:pointer; text-decoration:underline;" onclick="location.reload()">✨ ข้อมูลใหม่มาแล้ว (คลิกเพื่อรีเฟรช)</span>';
+      } else {
+        // Just restore the normal date text
+        const dStr = allData.endDate || '';
+        const d = new Date(dStr);
+        let formatted = dStr;
+        if (!isNaN(d.getTime())) {
+          formatted = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+        }
+        document.getElementById('update-date-text').innerHTML = `ข้อมูลล่าสุด: ${formatted}`;
+      }
+    }
   })
   .catch(e => {
     clearTimeout(loadTimeout);
-    document.getElementById('loader').innerHTML = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${e.message}<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+    if (isInitialLoad) {
+      document.getElementById('loader').innerHTML = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${e.message}<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+    } else {
+      // Just restore the normal date text if background fetch fails
+      const dStr = allData.endDate || '';
+      const d = new Date(dStr);
+      let formatted = dStr;
+      if (!isNaN(d.getTime())) {
+        formatted = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+      }
+      document.getElementById('update-date-text').innerHTML = `ข้อมูลล่าสุด: ${formatted} <span style="color:#f44336">(ออฟไลน์)</span>`;
+    }
   });
 
 // Pin Functions

@@ -67,12 +67,23 @@
     }
     .input:focus { outline: none; border-color: #388bfd; }
     .btn {
-      width: 100%; padding: 8px; border-radius: 5px; border: none;
-      background: #238636; color: #fff; font-size: 13px; font-weight: 600; font-family: inherit;
-      cursor: pointer; transition: 0.2s;
+      width: 100%; padding: 12px; border-radius: 8px; border: none;
+      background: #238636; color: #fff; font-size: 14px; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
-    .btn:hover { background: #2ea043; }
-    .btn:disabled { background: #1c4428; color: #8b949e; cursor: not-allowed; }
+    .btn:hover { background: #2ea043; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+    .btn:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .btn:disabled { background: #1c4428; color: #8b949e; cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    details > summary { transition: background 0.2s; }
+    details > summary:hover { background: rgba(255,255,255,0.05); }
+    details[open] > summary { background: rgba(88, 166, 255, 0.1); }
+    details[open] > summary .toggle-icon { transform: rotate(180deg); }
+    .toggle-icon { transition: transform 0.3s; display: inline-block; font-size: 10px; }
+    .pin-btn { cursor: pointer; opacity: 0.3; transition: 0.2s; font-size: 14px; user-select: none; }
+    .pin-btn:hover { opacity: 0.8; transform: scale(1.1); }
+    .pin-btn.active { opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.8)); }
 
     #loader { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
     .back-btn {
@@ -184,6 +195,104 @@
       </div>
     </div>
 
+    <!-- Admin: Mock Port -->
+    <details class="box" style="cursor:pointer; border-left: 4px solid #58a6ff;" id="mockport-box">
+      <summary class="header" style="outline:none; padding:12px;">
+        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:14px;">
+          <span><span style="margin-right:6px;">🧪</span><span>พอร์ตจำลอง 1</span></span>
+          <span>
+            <span class="pin-btn" onclick="togglePin(event, 'mockport-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
+            <span style="font-size:11px; color:#8b949e; font-weight:normal; margin-left:6px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+          </span>
+        </div>
+      </summary>
+      <div class="body" style="cursor:default; padding:12px;">
+        <div id="mock-view" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
+            <div>
+              <div style="font-size:11px; color:var(--muted);">มูลค่าปัจจุบัน</div>
+              <div id="mock-val" style="font-size:20px; font-weight:700; color:var(--text); line-height:1.2;">0.00 ฿</div>
+              <div id="mock-pl" style="font-size:12px; font-weight:600;">+0.00 ฿ (0.00%)</div>
+            </div>
+            <button class="btn" style="width:auto; padding:4px 10px; font-size:11px; background:var(--bg3); border:1px solid var(--border);" onclick="toggleMockEdit()">⚙️ ตั้งค่า</button>
+          </div>
+          <div id="mock-breakdown" style="margin-top:12px;"></div>
+        </div>
+        
+        <div id="mock-edit">
+          <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">ตั้งค่าเริ่มจำลองพอร์ต</div>
+          <div class="grid-2" style="gap:8px;">
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label" style="font-size:11px; margin-bottom:4px;">วันที่เริ่ม</label>
+              <input type="text" id="inp-mock-date" class="input" placeholder="DD/MM/YYYY" style="padding:6px 8px; font-size:12px;">
+            </div>
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label" style="font-size:11px; margin-bottom:4px;">เงินลงทุน (฿)</label>
+              <input type="number" id="inp-mock-capital" class="input" placeholder="100000" style="padding:6px 8px; font-size:12px;">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label class="form-label" style="font-size:11px; margin-bottom:4px;">สัดส่วนแผน (%)</label>
+            <div id="mock-plan-list"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <button class="btn" style="width:auto; padding:4px 8px; font-size:11px; background:transparent; border:1px solid var(--border); color:var(--text);" onclick="addMockPlanRow()">+ เพิ่มแผน</button>
+              <div id="mock-plan-sum" style="font-size:11px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
+            </div>
+          </div>
+          <button id="btn-save-mock" class="btn" style="background:#58a6ff; color:#0d1117; margin-top:8px; padding:6px; font-size:13px;" onclick="saveMockPort()">บันทึกพอร์ต 1</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Admin: Mock Port 2 -->
+    <details class="box" style="cursor:pointer; border-left: 4px solid #e34c26;" id="mockport-box-2">
+      <summary class="header" style="outline:none; padding:12px;">
+        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:14px;">
+          <span><span style="margin-right:6px;">🧪</span><span>พอร์ตจำลอง 2</span></span>
+          <span>
+            <span class="pin-btn" onclick="togglePin(event, 'mockport-box-2')" title="ปักหมุดเปิดค้างไว้">📌</span>
+            <span style="font-size:11px; color:#8b949e; font-weight:normal; margin-left:6px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+          </span>
+        </div>
+      </summary>
+      <div class="body" style="cursor:default; padding:12px;">
+        <div id="mock-view-2" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
+            <div>
+              <div style="font-size:11px; color:var(--muted);">มูลค่าปัจจุบัน</div>
+              <div id="mock-val-2" style="font-size:20px; font-weight:700; color:var(--text); line-height:1.2;">0.00 ฿</div>
+              <div id="mock-pl-2" style="font-size:12px; font-weight:600;">+0.00 ฿ (0.00%)</div>
+            </div>
+            <button class="btn" style="width:auto; padding:4px 10px; font-size:11px; background:var(--bg3); border:1px solid var(--border);" onclick="toggleMockEdit('-2')">⚙️ ตั้งค่า</button>
+          </div>
+          <div id="mock-breakdown-2" style="margin-top:12px;"></div>
+        </div>
+        
+        <div id="mock-edit-2">
+          <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">ตั้งค่าเริ่มจำลองพอร์ต</div>
+          <div class="grid-2" style="gap:8px;">
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label" style="font-size:11px; margin-bottom:4px;">วันที่เริ่ม</label>
+              <input type="text" id="inp-mock-date-2" class="input" placeholder="DD/MM/YYYY" style="padding:6px 8px; font-size:12px;">
+            </div>
+            <div class="form-group" style="margin-bottom:8px;">
+              <label class="form-label" style="font-size:11px; margin-bottom:4px;">เงินลงทุน (฿)</label>
+              <input type="number" id="inp-mock-capital-2" class="input" placeholder="100000" style="padding:6px 8px; font-size:12px;">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label class="form-label" style="font-size:11px; margin-bottom:4px;">สัดส่วนแผน (%)</label>
+            <div id="mock-plan-list-2"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <button class="btn" style="width:auto; padding:4px 8px; font-size:11px; background:transparent; border:1px solid var(--border); color:var(--text);" onclick="addMockPlanRow('-2')">+ เพิ่มแผน</button>
+              <div id="mock-plan-sum-2" style="font-size:11px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
+            </div>
+          </div>
+          <button id="btn-save-mock-2" class="btn" style="background:#e34c26; color:#0d1117; margin-top:8px; padding:6px; font-size:13px;" onclick="saveMockPort('-2')">บันทึกพอร์ต 2</button>
+        </div>
+      </div>
+    </details>
+
     <!-- Trade History & What-If -->
     <div class="box">
       <div class="header">
@@ -197,11 +306,17 @@
     </div>
 
     <!-- Admin: Add Contribution -->
-    <div class="box">
-      <div class="header">
-        <div class="title"><span>💸</span><span>บันทึกเงินนำส่ง (Add Contribution)</span></div>
-      </div>
-      <div class="body">
+    <details class="box" style="cursor:pointer; border-left: 4px solid #2ea043;" id="contrib-box">
+      <summary class="header" style="outline:none;">
+        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+          <span><span style="margin-right:8px;">💸</span><span>บันทึกเงินนำส่ง (Add Contribution)</span></span>
+          <span>
+            <span class="pin-btn" onclick="togglePin(event, 'contrib-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+          </span>
+        </div>
+      </summary>
+      <div class="body" style="cursor:default;">
         <div class="grid-2">
           <div class="form-group">
             <label class="form-label">เดือน/ปี (เช่น 05/2024)</label>
@@ -218,15 +333,20 @@
         </div>
         <button id="btn-save-contrib" class="btn" onclick="saveContrib()">บันทึกลงชีต</button>
       </div>
-    </div>
+    </details>
 
     <!-- Admin: Add Trade -->
-    <div class="box">
-      <div class="header">
-        <div class="title"><span>📝</span><span>บันทึกการเปลี่ยนแผน (Log Switch)</span></div>
-      </div>
-      <div class="body">
-        
+    <details class="box" style="cursor:pointer; border-left: 4px solid #d29922;" id="trade-box">
+      <summary class="header" style="outline:none;">
+        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+          <span><span style="margin-right:8px;">📝</span><span>บันทึกการเปลี่ยนแผน (Log Switch)</span></span>
+          <span>
+            <span class="pin-btn" onclick="togglePin(event, 'trade-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+          </span>
+        </div>
+      </summary>
+      <div class="body" style="cursor:default;">
         <!-- Tabs -->
         <div style="display:flex; margin-bottom: 16px; border-bottom: 1px solid #30363d;">
           <div id="tab-simple" style="padding: 8px 16px; cursor: pointer; color:#8b949e;" onclick="switchTab('simple')">แบบปกติ (A ➔ B)</div>
@@ -294,16 +414,18 @@
           </div>
           <button id="btn-save-smart" class="btn" style="background:#238636; margin-top:16px;" onclick="saveSmartRebalance()">วิเคราะห์และบันทึก</button>
         </div>
-
       </div>
-    </div>
+    </details>
 
     <!-- Admin: Update Units -->
-    <details class="box" style="cursor:pointer;">
+    <details class="box" style="cursor:pointer; border-left: 4px solid #f48225;" id="update-box">
       <summary class="header" style="outline:none;">
-        <div class="title" style="display:flex; justify-content:space-between; width:100%;">
-          <span><span>🔄</span><span>อัปเดตจำนวนหน่วย (Update Units)</span></span>
-          <span style="font-size:12px; color:#8b949e; font-weight:normal;">คลิกเพื่อเปิด/ปิด ▼</span>
+        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+          <span><span style="margin-right:8px;">🔄</span><span>อัปเดตจำนวนหน่วย (Update Units)</span></span>
+          <span>
+            <span class="pin-btn" onclick="togglePin(event, 'update-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+          </span>
         </div>
       </summary>
       <div class="body" style="cursor:default;">
@@ -326,11 +448,14 @@
     </details>
 
     <!-- Admin: Reports -->
-    <details class="box" style="cursor:pointer;">
+    <details class="box" style="cursor:pointer; border-left: 4px solid #8957e5;" id="report-box">
       <summary class="header" style="outline:none;">
-        <div class="title" style="display:flex; justify-content:space-between; width:100%;">
-          <span><span>📊</span><span>สร้างรายงาน (Reports)</span></span>
-          <span style="font-size:12px; color:#8b949e; font-weight:normal;">คลิกเพื่อเปิด/ปิด ▼</span>
+        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+          <span><span style="margin-right:8px;">📊</span><span>สร้างรายงาน (Reports)</span></span>
+          <span>
+            <span class="pin-btn" onclick="togglePin(event, 'report-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+          </span>
         </div>
       </summary>
       <div class="body" style="cursor:default;">
@@ -347,6 +472,270 @@
 // Use the original GAS_URL endpoint
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
 let allData = null;
+
+// --- Mock Port Logic ---
+function addMockPlanRow(suffix = '', planName = '', pct = '') {
+  const div = document.createElement('div');
+  div.style.display = 'flex';
+  div.style.gap = '8px';
+  div.style.marginBottom = '8px';
+  
+  let selectHtml = '<option value="">-- เลือกแผน --</option>';
+  const sortedPlans = [...allData.plans].sort((a,b) => a.label.localeCompare(b.label));
+  sortedPlans.forEach(p => {
+    selectHtml += `<option value="${p.label}" ${planName === p.label ? 'selected' : ''}>${p.label}</option>`;
+  });
+  
+  div.innerHTML = `
+    <select class="input mock-plan-sel${suffix}" style="flex:1; min-width:0; text-overflow:ellipsis;">${selectHtml}</select>
+    <input type="number" class="input mock-plan-pct${suffix}" placeholder="%" style="width:60px; flex-shrink:0;" value="${pct}" oninput="calcMockSum('${suffix}')">
+    <button class="btn" style="width:auto; background:transparent; border:1px solid #f44336; color:#f44336; padding:0 12px; flex-shrink:0;" onclick="this.parentElement.remove(); calcMockSum('${suffix}')">X</button>
+  `;
+  document.getElementById('mock-plan-list' + suffix).appendChild(div);
+  calcMockSum(suffix);
+}
+
+function calcMockSum(suffix = '') {
+  let sum = 0;
+  document.querySelectorAll('.mock-plan-pct' + suffix).forEach(el => {
+    sum += parseFloat(el.value) || 0;
+  });
+  const sumEl = document.getElementById('mock-plan-sum' + suffix);
+  sumEl.innerText = `รวม: ${sum}%`;
+  sumEl.style.color = sum === 100 ? '#4caf50' : '#f44336';
+  return sum;
+}
+
+function toggleMockEdit(suffix = '') {
+  document.getElementById('mock-view' + suffix).style.display = 'none';
+  document.getElementById('mock-edit' + suffix).style.display = 'block';
+}
+
+async function saveMockPort(suffix = '') {
+  const dateStr = document.getElementById('inp-mock-date' + suffix).value;
+  const capital = parseFloat(document.getElementById('inp-mock-capital' + suffix).value);
+  if (!dateStr || !capital) return alert('กรุณาระบุวันที่และเงินต้น');
+  
+  const sum = calcMockSum(suffix);
+  if (sum !== 100) return alert('สัดส่วนแผนต้องรวมกันให้ได้ 100% พอดี');
+  
+  const allocations = {};
+  const rows = document.getElementById('mock-plan-list' + suffix).children;
+  for (let i = 0; i < rows.length; i++) {
+    const sel = rows[i].querySelector('.mock-plan-sel' + suffix).value;
+    const pct = parseFloat(rows[i].querySelector('.mock-plan-pct' + suffix).value);
+    if (!sel || !pct) return alert('กรุณาระบุแผนและ % ให้ครบ');
+    allocations[sel] = (allocations[sel] || 0) + pct;
+  }
+  
+  let parts = dateStr.split('/');
+  if (parts.length !== 3) return alert('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY');
+  let year = parseInt(parts[2], 10);
+  if (year > 2500) year -= 543;
+  const targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
+  
+  const btn = document.getElementById('btn-save-mock' + suffix);
+  btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
+
+  if (suffix === '-2') {
+    const p2Data = { startDate: targetTime, startCapital: capital, allocations: allocations };
+    localStorage.setItem('gpf_mock_port-2', JSON.stringify(p2Data));
+    allData['mockPort-2'] = p2Data;
+    btn.innerText = '✅ บันทึกสำเร็จ!';
+    setTimeout(() => {
+      btn.innerText = 'บันทึกพอร์ตจำลอง';
+      btn.disabled = false;
+      renderMockPort(allData['mockPort-2'], '-2');
+    }, 800);
+    return;
+  }
+  
+  try {
+    const res = await apiCall({
+      action: 'save_mock_port',
+      portIndex: suffix,
+      startDate: targetTime,
+      startCapital: capital,
+      allocations: allocations
+    });
+    if (res.success) {
+      // Update local state instantly without page reload!
+      allData.mockPort = {
+        startDate: targetTime,
+        startCapital: capital,
+        allocations: allocations
+      };
+      btn.innerText = '✅ บันทึกสำเร็จ!';
+      setTimeout(() => {
+        btn.innerText = 'บันทึกพอร์ตจำลอง';
+        btn.disabled = false;
+        renderMockPort(allData.mockPort);
+      }, 800);
+    }
+  } catch (e) {
+    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
+    btn.innerText = 'บันทึกพอร์ตจำลอง'; btn.disabled = false;
+  }
+}
+
+function renderMockPort(mockData, suffix = '') {
+  if (!mockData || !mockData.startDate) {
+    document.getElementById('mock-edit' + suffix).style.display = 'block';
+    document.getElementById('mock-view' + suffix).style.display = 'none';
+    if (document.getElementById('mock-plan-list' + suffix).children.length === 0) {
+      addMockPlanRow(suffix);
+    }
+    const d = new Date();
+    document.getElementById('inp-mock-date' + suffix).value = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
+    return;
+  }
+  
+  document.getElementById('mock-edit' + suffix).style.display = 'none';
+  document.getElementById('mock-view' + suffix).style.display = 'block';
+  
+  document.getElementById('inp-mock-capital' + suffix).value = mockData.startCapital;
+  const d = new Date(mockData.startDate);
+  document.getElementById('inp-mock-date' + suffix).value = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
+  document.getElementById('mock-plan-list' + suffix).innerHTML = '';
+  Object.keys(mockData.allocations).forEach(plan => {
+    addMockPlanRow(suffix, plan, mockData.allocations[plan]);
+  });
+  
+  let totalMockValue = 0;
+  let breakdownHtml = '';
+  const searchDates = allData.fullDates || allData.dates;
+  
+  let closestIdx = 0;
+  let minDiff = Infinity;
+  searchDates.forEach((dStr, idx) => {
+    const diff = Math.abs(new Date(dStr).getTime() - mockData.startDate);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIdx = idx;
+    }
+  });
+
+  const breakdownEl = document.getElementById('mock-breakdown' + suffix);
+  breakdownEl.innerHTML = '';
+  
+  const port = allData.myPort;
+  let validContribs = [];
+  if (port && port.contribs) {
+    port.contribs.forEach(c => {
+      const parts = c.date.split('/');
+      if (parts.length === 2) {
+        let year = parseInt(parts[1]);
+        if (year > 2500) year -= 543;
+        const cTime = new Date(`${year}-${parts[0]}-25`).getTime();
+        if (cTime > mockData.startDate) {
+          validContribs.push({ amount: c.amount, time: cTime });
+        }
+      }
+    });
+  }
+
+  let totalContribAmt = 0;
+  validContribs.forEach(c => totalContribAmt += c.amount);
+
+  let totalAllocatedPct = 0;
+  Object.keys(mockData.allocations).forEach(plan => {
+    const pct = mockData.allocations[plan];
+    totalAllocatedPct += pct;
+    const initialCapital = mockData.startCapital * (pct / 100);
+    const pData = allData.plans.find(x => x.label === plan || x.key === plan);
+    
+    if (pData && (pData.fullData || pData.data).length > 0) {
+      const dataArr = pData.fullData || pData.data;
+      const startNav = dataArr[closestIdx] || dataArr[dataArr.length - 1];
+      const lastNav = dataArr[dataArr.length - 1];
+      
+      let mockUnits = initialCapital / startNav;
+      let planContribAmt = 0;
+
+      validContribs.forEach(c => {
+        let cIdx = 0;
+        let cMinDiff = Infinity;
+        searchDates.forEach((dStr, idx) => {
+          const diff = Math.abs(new Date(dStr).getTime() - c.time);
+          if (diff < cMinDiff) { cMinDiff = diff; cIdx = idx; }
+        });
+        const cNav = dataArr[cIdx] || dataArr[dataArr.length - 1];
+        const cAmt = c.amount * (pct / 100);
+        mockUnits += cAmt / cNav;
+        planContribAmt += cAmt;
+      });
+
+      const val = mockUnits * lastNav;
+      totalMockValue += val;
+      
+      const totalCostForPlan = initialCapital + planContribAmt;
+      const planPl = val - totalCostForPlan;
+      const planPlPct = totalCostForPlan > 0 ? (planPl / totalCostForPlan) * 100 : 0;
+      const color = planPl >= 0 ? '#4caf50' : '#f44336';
+      
+      let contribText = planContribAmt > 0 ? ` + เงินนำส่งใหม่ ${formatMoney(planContribAmt)} ฿` : '';
+
+      breakdownHtml += `
+        <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
+          <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
+            <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
+            <div style="flex:1; min-width:0;">
+              <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-0.3px;">
+                ${plan}
+                <span style="font-size:10px; color:var(--muted); font-weight:normal; margin-left:4px;">(เริ่ม ${new Date(searchDates[closestIdx]).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })})</span>
+              </div>
+              <div style="color:#8b949e;font-size:11px;">${mockUnits.toLocaleString(undefined, {maximumFractionDigits:4})} หน่วย (เงินต้นเริ่ม @${startNav.toFixed(4)}${contribText})</div>
+              <div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>
+            </div>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div>${formatMoney(val)} ฿</div>
+            <div style="color:#58a6ff;font-size:11px;">@${lastNav.toFixed(4)}</div>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  const unallocatedPct = Math.max(0, 100 - totalAllocatedPct);
+  if (unallocatedPct > 0.01) {
+    const unallocatedCapital = mockData.startCapital * (unallocatedPct / 100);
+    let unallocatedContrib = 0;
+    validContribs.forEach(c => unallocatedContrib += c.amount * (unallocatedPct / 100));
+    const unallocatedCash = unallocatedCapital + unallocatedContrib;
+    
+    totalMockValue += unallocatedCash;
+    let contribText = unallocatedContrib > 0 ? ` + เงินนำส่งใหม่ ${formatMoney(unallocatedContrib)} ฿` : '';
+    
+    breakdownHtml += `
+      <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
+        <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
+          <div style="width:10px; height:10px; border-radius:50%; background-color:#8b949e; margin-top:5px; flex-shrink:0;"></div>
+          <div style="flex:1; min-width:0;">
+            <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-0.3px;">เงินสด (ส่วนที่ไม่ได้เลือกแผน ${unallocatedPct.toFixed(0)}%)</div>
+            <div style="color:#8b949e;font-size:11px;">(เงินต้น ${formatMoney(unallocatedCapital)}${contribText})</div>
+          </div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div>${formatMoney(unallocatedCash)} ฿</div>
+        </div>
+      </div>
+    `;
+  }
+  
+  breakdownEl.innerHTML = breakdownHtml;
+  
+  let titleHtml = `<div style="font-size:11px; color:var(--muted);">มูลค่าพอร์ตจำลอง (รวมเงินนำส่งสะสม ${formatMoney(totalContribAmt)} ฿)</div>`;
+  document.getElementById('mock-val' + suffix).previousElementSibling.outerHTML = titleHtml;
+  document.getElementById('mock-val' + suffix).innerText = formatMoney(totalMockValue) + ' ฿';
+  
+  const totalCost = mockData.startCapital + totalContribAmt;
+  
+  const totalPl = totalMockValue - totalCost;
+  const totalPlPct = totalCost > 0 ? (totalPl / totalCost) * 100 : 0;
+  const plColor = totalPl >= 0 ? '#4caf50' : '#f44336';
+  document.getElementById('mock-pl' + suffix).innerHTML = `<span style="color:${plColor}">${totalPl >= 0 ? '+' : ''}${formatMoney(totalPl)} ฿ (${totalPl >= 0 ? '+' : ''}${totalPlPct.toFixed(2)}%)</span>`;
+}
 
 function formatMoney(num) {
   return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -711,6 +1100,13 @@ function initDashboard() {
       });
     }
   }
+  renderMockPort(allData.mockPort);
+  
+  const mockPort2Raw = localStorage.getItem('gpf_mock_port-2');
+  if (mockPort2Raw) {
+    allData['mockPort-2'] = JSON.parse(mockPort2Raw);
+  }
+  renderMockPort(allData['mockPort-2'], '-2');
 }
 
 // Auth Helper
@@ -1070,11 +1466,43 @@ fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDev
     document.getElementById('loader').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
     initDashboard();
+    restorePins();
   })
   .catch(e => {
     clearTimeout(loadTimeout);
     document.getElementById('loader').innerHTML = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${e.message}<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
   });
+
+// Pin Functions
+function togglePin(e, boxId) {
+  e.preventDefault();
+  e.stopPropagation();
+  let pinned = JSON.parse(localStorage.getItem('gpf_pinned_boxes') || '[]');
+  const idx = pinned.indexOf(boxId);
+  const btn = e.currentTarget;
+  if (idx >= 0) {
+    pinned.splice(idx, 1);
+    btn.classList.remove('active');
+  } else {
+    pinned.push(boxId);
+    btn.classList.add('active');
+    const box = document.getElementById(boxId);
+    if (box) box.open = true;
+  }
+  localStorage.setItem('gpf_pinned_boxes', JSON.stringify(pinned));
+}
+
+function restorePins() {
+  let pinned = JSON.parse(localStorage.getItem('gpf_pinned_boxes') || '[]');
+  pinned.forEach(boxId => {
+    const box = document.getElementById(boxId);
+    if (box) {
+      box.open = true;
+      const btn = box.querySelector('.pin-btn');
+      if (btn) btn.classList.add('active');
+    }
+  });
+}
 
 </script>
 

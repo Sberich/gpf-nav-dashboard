@@ -239,7 +239,10 @@
               <div id="mock-plan-sum" style="font-size:12px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
-          <button id="btn-save-mock" class="btn" style="background:#58a6ff; color:#0d1117; margin-top:8px; padding:6px; font-size:13px;" onclick="saveMockPort()">บันทึกพอร์ต 1</button>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <button id="btn-clear-mock" class="btn" style="flex:1; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:6px; font-size:13px;" onclick="clearMockPort('')">🗑️ ล้างค่า</button>
+            <button id="btn-save-mock" class="btn" style="flex:2; background:#58a6ff; color:#0d1117; padding:6px; font-size:13px;" onclick="saveMockPort()">บันทึกพอร์ต 1</button>
+          </div>
         </div>
       </div>
     </details>
@@ -288,7 +291,10 @@
               <div id="mock-plan-sum-2" style="font-size:12px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
-          <button id="btn-save-mock-2" class="btn" style="background:#e34c26; color:#0d1117; margin-top:8px; padding:6px; font-size:13px;" onclick="saveMockPort('-2')">บันทึกพอร์ต 2</button>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <button id="btn-clear-mock-2" class="btn" style="flex:1; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:6px; font-size:13px;" onclick="clearMockPort('-2')">🗑️ ล้างค่า</button>
+            <button id="btn-save-mock-2" class="btn" style="flex:2; background:#e34c26; color:#0d1117; padding:6px; font-size:13px;" onclick="saveMockPort('-2')">บันทึกพอร์ต 2</button>
+          </div>
         </div>
       </div>
     </details>
@@ -580,7 +586,35 @@ async function saveMockPort(suffix = '') {
     }
   } catch (e) {
     if (e.message !== "Canceled by user") alert('Error: ' + e.message);
-    btn.innerText = 'บันทึกพอร์ตจำลอง'; btn.disabled = false;
+    btn.innerText = suffix === '-2' ? 'บันทึกพอร์ต 2' : 'บันทึกพอร์ต 1'; 
+    btn.disabled = false;
+  }
+}
+
+async function clearMockPort(suffix = '') {
+  if(!confirm('ต้องการล้างข้อมูลพอร์ตจำลองนี้ใช่หรือไม่?')) return;
+  const btn = document.getElementById('btn-clear-mock' + suffix);
+  btn.innerText = 'กำลังล้าง...'; btn.disabled = true;
+  
+  try {
+    const res = await apiCall({
+      action: 'clear_mock_port',
+      portIndex: suffix
+    });
+    if (res.success) {
+      if (suffix === '-2') {
+        allData['mockPort-2'] = null;
+        localStorage.removeItem('gpf_mock_port-2');
+      } else {
+        allData.mockPort = null;
+      }
+      localStorage.removeItem("gpfnav_data_v3");
+      alert('ล้างข้อมูลสำเร็จ!');
+      location.reload();
+    }
+  } catch (e) {
+    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
+    btn.innerText = '🗑️ ล้างค่า'; btn.disabled = false;
   }
 }
 

@@ -224,7 +224,7 @@
           <div class="grid-2" style="gap:8px;">
             <div class="form-group" style="margin-bottom:8px;">
               <label class="form-label" style="font-size:11px; margin-bottom:4px;">วันที่เริ่ม</label>
-              <input type="text" id="inp-mock-date" class="input" placeholder="DD/MM/YYYY" style="padding:6px 8px; font-size:12px;">
+              <input type="date" id="inp-mock-date" class="input" style="padding:6px 8px; font-size:12px;">
             </div>
             <div class="form-group" style="margin-bottom:8px;">
               <label class="form-label" style="font-size:11px; margin-bottom:4px;">เงินลงทุน (฿)</label>
@@ -273,7 +273,7 @@
           <div class="grid-2" style="gap:8px;">
             <div class="form-group" style="margin-bottom:8px;">
               <label class="form-label" style="font-size:11px; margin-bottom:4px;">วันที่เริ่ม</label>
-              <input type="text" id="inp-mock-date-2" class="input" placeholder="DD/MM/YYYY" style="padding:6px 8px; font-size:12px;">
+              <input type="date" id="inp-mock-date-2" class="input" style="padding:6px 8px; font-size:12px;">
             </div>
             <div class="form-group" style="margin-bottom:8px;">
               <label class="form-label" style="font-size:11px; margin-bottom:4px;">เงินลงทุน (฿)</label>
@@ -528,12 +528,20 @@ async function saveMockPort(suffix = '') {
     allocations[sel] = (allocations[sel] || 0) + pct;
   }
   
-  let parts = dateStr.split('/');
-  if (parts.length !== 3) return alert('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY');
-  let year = parseInt(parts[2], 10);
-  if (year > 2500) year -= 543;
-  const targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
-  
+  let targetTime;
+  if (dateStr.includes('-')) {
+    let parts = dateStr.split('-');
+    let year = parseInt(parts[0], 10);
+    // If user somehow enters Buddhist year directly into date picker (rare but possible)
+    if (year > 2500) year -= 543;
+    targetTime = new Date(`${year}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
+  } else {
+    let parts = dateStr.split('/');
+    if (parts.length !== 3) return alert('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY หรือเลือกจากปฏิทิน');
+    let year = parseInt(parts[2], 10);
+    if (year > 2500) year -= 543;
+    targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
+  }
   const btn = document.getElementById('btn-save-mock' + suffix);
   btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
 
@@ -590,7 +598,7 @@ function renderMockPort(mockData, suffix = '') {
       addMockPlanRow(suffix);
     }
     const d = new Date();
-    document.getElementById('inp-mock-date' + suffix).value = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
+    document.getElementById('inp-mock-date' + suffix).value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     return;
   }
   
@@ -599,7 +607,7 @@ function renderMockPort(mockData, suffix = '') {
   
   document.getElementById('inp-mock-capital' + suffix).value = mockData.startCapital;
   const d = new Date(mockData.startDate);
-  document.getElementById('inp-mock-date' + suffix).value = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
+  document.getElementById('inp-mock-date' + suffix).value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   document.getElementById('mock-plan-list' + suffix).innerHTML = '';
   Object.keys(mockData.allocations).forEach(plan => {
     addMockPlanRow(suffix, plan, mockData.allocations[plan]);

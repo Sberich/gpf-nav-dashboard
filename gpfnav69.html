@@ -545,19 +545,7 @@ async function saveMockPort(suffix = '') {
   const btn = document.getElementById('btn-save-mock' + suffix);
   btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
 
-  if (suffix === '-2') {
-    const p2Data = { startDate: targetTime, startCapital: capital, allocations: allocations };
-    localStorage.setItem('gpf_mock_port-2', JSON.stringify(p2Data));
-    allData['mockPort-2'] = p2Data;
-    btn.innerText = '✅ บันทึกสำเร็จ!';
-    setTimeout(() => {
-      btn.innerText = 'บันทึกพอร์ตจำลอง';
-      btn.disabled = false;
-      renderMockPort(allData['mockPort-2'], '-2');
-    }, 800);
-    return;
-  }
-  
+  // Both Mock Port 1 and 2 will now save to the cloud database
   try {
     const res = await apiCall({
       action: 'save_mock_port',
@@ -568,11 +556,17 @@ async function saveMockPort(suffix = '') {
     });
     if (res.success) {
       // Update local state instantly without page reload!
-      allData.mockPort = {
+      const pData = {
         startDate: targetTime,
         startCapital: capital,
         allocations: allocations
       };
+      if (suffix === '-2') {
+        allData['mockPort-2'] = pData;
+        localStorage.setItem('gpf_mock_port-2', JSON.stringify(pData));
+      } else {
+        allData.mockPort = pData;
+      }
       
       // Clear main cache so next reload fetches latest from server
       localStorage.removeItem("gpfnav_data_v3");
@@ -581,7 +575,7 @@ async function saveMockPort(suffix = '') {
       setTimeout(() => {
         btn.innerText = 'บันทึกพอร์ตจำลอง';
         btn.disabled = false;
-        renderMockPort(allData.mockPort);
+        renderMockPort(pData, suffix);
       }, 800);
     }
   } catch (e) {

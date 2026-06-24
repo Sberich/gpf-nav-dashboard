@@ -234,9 +234,9 @@
           <div class="form-group" style="margin-bottom:8px;">
             <label class="form-label" style="font-size:11px; margin-bottom:4px;">สัดส่วนแผน (%)</label>
             <div id="mock-plan-list"></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-              <button class="btn" style="width:auto; padding:4px 8px; font-size:11px; background:transparent; border:1px solid var(--border); color:var(--text);" onclick="addMockPlanRow()">+ เพิ่มแผน</button>
-              <div id="mock-plan-sum" style="font-size:11px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+              <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); border:1px solid var(--border); color:var(--text); border-radius:15px;" onclick="addMockPlanRow()">+ เพิ่มแผน</button>
+              <div id="mock-plan-sum" style="font-size:12px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
           <button id="btn-save-mock" class="btn" style="background:#58a6ff; color:#0d1117; margin-top:8px; padding:6px; font-size:13px;" onclick="saveMockPort()">บันทึกพอร์ต 1</button>
@@ -283,9 +283,9 @@
           <div class="form-group" style="margin-bottom:8px;">
             <label class="form-label" style="font-size:11px; margin-bottom:4px;">สัดส่วนแผน (%)</label>
             <div id="mock-plan-list-2"></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-              <button class="btn" style="width:auto; padding:4px 8px; font-size:11px; background:transparent; border:1px solid var(--border); color:var(--text);" onclick="addMockPlanRow('-2')">+ เพิ่มแผน</button>
-              <div id="mock-plan-sum-2" style="font-size:11px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+              <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); border:1px solid var(--border); color:var(--text); border-radius:15px;" onclick="addMockPlanRow('-2')">+ เพิ่มแผน</button>
+              <div id="mock-plan-sum-2" style="font-size:12px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
           <button id="btn-save-mock-2" class="btn" style="background:#e34c26; color:#0d1117; margin-top:8px; padding:6px; font-size:13px;" onclick="saveMockPort('-2')">บันทึกพอร์ต 2</button>
@@ -487,9 +487,9 @@ function addMockPlanRow(suffix = '', planName = '', pct = '') {
   });
   
   div.innerHTML = `
-    <select class="input mock-plan-sel${suffix}" style="flex:1; min-width:0; text-overflow:ellipsis;">${selectHtml}</select>
-    <input type="number" class="input mock-plan-pct${suffix}" placeholder="%" style="width:60px; flex-shrink:0;" value="${pct}" oninput="calcMockSum('${suffix}')">
-    <button class="btn" style="width:auto; background:transparent; border:1px solid #f44336; color:#f44336; padding:0 12px; flex-shrink:0;" onclick="this.parentElement.remove(); calcMockSum('${suffix}')">X</button>
+    <select class="input mock-plan-sel${suffix}" style="flex:1; min-width:0; text-overflow:ellipsis; height:34px;">${selectHtml}</select>
+    <input type="number" class="input mock-plan-pct${suffix}" placeholder="%" style="width:60px; flex-shrink:0; height:34px;" value="${pct}" oninput="calcMockSum('${suffix}')">
+    <button class="btn" style="width:34px; height:34px; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:0; flex-shrink:0; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px;" onclick="this.parentElement.remove(); calcMockSum('${suffix}')">×</button>
   `;
   document.getElementById('mock-plan-list' + suffix).appendChild(div);
   calcMockSum(suffix);

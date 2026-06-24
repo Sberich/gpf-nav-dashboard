@@ -565,6 +565,10 @@ async function saveMockPort(suffix = '') {
         startCapital: capital,
         allocations: allocations
       };
+      
+      // Clear main cache so next reload fetches latest from server
+      localStorage.removeItem("gpfnav_data_v3");
+      
       btn.innerText = '✅ บันทึกสำเร็จ!';
       setTimeout(() => {
         btn.innerText = 'บันทึกพอร์ตจำลอง';

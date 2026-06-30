@@ -103,6 +103,33 @@
     @keyframes gradient-scroll {
       to { background-position: 200% center; }
     }
+    .custom-toast {
+      position: absolute;
+      background: rgba(35, 134, 54, 0.95);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255,255,255,0.1);
+      white-space: nowrap;
+    }
+    .custom-toast.error { background: rgba(248, 81, 73, 0.95); }
+    .custom-toast.btn-toast { transform: translateY(10px) scale(0.95); }
+    .custom-toast.btn-toast.show { opacity: 1; transform: translateY(0) scale(1); }
+    .custom-toast.global-toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translate(-50%, 20px) scale(0.95);
+    }
+    .custom-toast.global-toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
   </style>
 </head>
 <body>
@@ -520,17 +547,17 @@ function toggleMockEdit(suffix = '') {
 async function saveMockPort(suffix = '') {
   const dateStr = document.getElementById('inp-mock-date' + suffix).value;
   const capital = parseFloat(document.getElementById('inp-mock-capital' + suffix).value);
-  if (!dateStr || !capital) return alert('กรุณาระบุวันที่และเงินต้น');
+  if (!dateStr || !capital) return showToast('กรุณาระบุวันที่และเงินต้น', null, 'error');
   
   const sum = calcMockSum(suffix);
-  if (sum !== 100) return alert('สัดส่วนแผนต้องรวมกันให้ได้ 100% พอดี');
+  if (sum !== 100) return showToast('สัดส่วนแผนต้องรวมกันให้ได้ 100% พอดี', null, 'error');
   
   const allocations = {};
   const rows = document.getElementById('mock-plan-list' + suffix).children;
   for (let i = 0; i < rows.length; i++) {
     const sel = rows[i].querySelector('.mock-plan-sel' + suffix).value;
     const pct = parseFloat(rows[i].querySelector('.mock-plan-pct' + suffix).value);
-    if (!sel || !pct) return alert('กรุณาระบุแผนและ % ให้ครบ');
+    if (!sel || !pct) return showToast('กรุณาระบุแผนและ % ให้ครบ', null, 'error');
     allocations[sel] = (allocations[sel] || 0) + pct;
   }
   
@@ -543,7 +570,7 @@ async function saveMockPort(suffix = '') {
     targetTime = new Date(`${year}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
   } else {
     let parts = dateStr.split('/');
-    if (parts.length !== 3) return alert('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY หรือเลือกจากปฏิทิน');
+    if (parts.length !== 3) return showToast('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY หรือเลือกจากปฏิทิน', null, 'error');
     let year = parseInt(parts[2], 10);
     if (year > 2500) year -= 543;
     targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
@@ -585,7 +612,7 @@ async function saveMockPort(suffix = '') {
       }, 800);
     }
   } catch (e) {
-    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
+    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
     btn.innerText = suffix === '-2' ? 'บันทึกพอร์ต 2' : 'บันทึกพอร์ต 1'; 
     btn.disabled = false;
   }
@@ -609,11 +636,11 @@ async function clearMockPort(suffix = '') {
         allData.mockPort = null;
       }
       localStorage.removeItem("gpfnav_data_v3");
-      alert('ล้างข้อมูลสำเร็จ!');
+      showToast('ล้างข้อมูลสำเร็จ!');
       location.reload();
     }
   } catch (e) {
-    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
+    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
     btn.innerText = '🗑️ ล้างค่า'; btn.disabled = false;
   }
 }
@@ -1164,7 +1191,7 @@ async function apiCall(payload) {
   const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
   const result = await res.json();
   if (result.error === "Unauthorized_Device") {
-    alert("🔒 อุปกรณ์นี้ไม่ได้รับอนุญาตหรือเซสชันหมดอายุ ระบบจะทำการโหลดใหม่");
+    showToast("🔒 อุปกรณ์นี้ไม่ได้รับอนุญาตหรือเซสชันหมดอายุ ระบบจะทำการโหลดใหม่", null, 'error');
     location.reload();
     throw new Error("Unauthorized");
   }
@@ -1173,28 +1200,65 @@ async function apiCall(payload) {
 }
 
 // Post Functions
+function showToast(msg, btnId, type = 'success') {
+  document.querySelectorAll('.custom-toast').forEach(t => t.remove());
+  const toast = document.createElement('div');
+  toast.innerText = msg;
+  let btn = null;
+  if (btnId) btn = typeof btnId === 'string' ? document.getElementById(btnId) : btnId;
+
+  if (btn) {
+    toast.className = `custom-toast btn-toast ${type === 'error' ? 'error' : ''}`;
+    document.body.appendChild(toast);
+    const rect = btn.getBoundingClientRect();
+    const scrollY = window.scrollY || window.pageYOffset;
+    const scrollX = window.scrollX || window.pageXOffset;
+    
+    requestAnimationFrame(() => {
+      const tRect = toast.getBoundingClientRect();
+      const top = rect.top + scrollY - tRect.height - 12;
+      const left = rect.left + scrollX + (rect.width / 2) - (tRect.width / 2);
+      toast.style.top = top + 'px';
+      toast.style.left = left + 'px';
+      toast.classList.add('show');
+    });
+  } else {
+    toast.className = `custom-toast global-toast ${type === 'error' ? 'error' : ''}`;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+  }
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
 async function postData(payload, btnId) {
   const btn = document.getElementById(btnId);
   const origText = btn.textContent;
   btn.disabled = true;
   btn.textContent = "กำลังบันทึก...";
+  let success = false;
 
   try {
     const result = await apiCall(payload);
     if(result.success) {
-      alert("บันทึกสำเร็จ! (กำลังโหลดข้อมูลใหม่)");
-      // Clear cache to force reload
+      success = true;
+      showToast("บันทึกสำเร็จ! (กำลังอัปเดต...)", btnId);
       localStorage.removeItem("gpfnav_data_v3");
-      location.reload();
+      setTimeout(() => location.reload(), 1500);
     }
   } catch(e) {
     if (e.message !== "Canceled by user") {
-      alert("Error: " + e.message);
+      showToast("Error: " + e.message, btnId, 'error');
     }
   }
   
-  btn.disabled = false;
-  btn.textContent = origText;
+  if (!success) {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
 }
 
 function saveContrib() {
@@ -1203,7 +1267,7 @@ function saveContrib() {
   const note = document.getElementById('inp-note').value.trim();
   
   if(!date || isNaN(amount)) {
-    alert("กรุณากรอกเดือน/ปี และยอดเงินให้ถูกต้อง");
+    showToast("กรุณากรอกเดือน/ปี และยอดเงินให้ถูกต้อง", null, 'error');
     return;
   }
   
@@ -1216,7 +1280,7 @@ async function saveSnapshot() {
   const totalValue = parseFloat(valStr) || 0;
   const totalCost = parseFloat(costStr) || 0;
   
-  if (totalValue <= 0) return alert('รอโหลดข้อมูลให้เสร็จก่อนครับ');
+  if (totalValue <= 0) return showToast('รอโหลดข้อมูลให้เสร็จก่อนครับ', null, 'error');
   const btn = document.getElementById('btn-snapshot');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
   
@@ -1229,14 +1293,14 @@ async function saveSnapshot() {
       profitPct: ((totalValue - totalCost) / totalCost) * 100
     });
     if(res.success) {
-      alert('บันทึกยอดพอร์ตวันนี้สำเร็จแล้ว! 🎉');
+      showToast('บันทึกยอดพอร์ตวันนี้สำเร็จแล้ว! 🎉', 'btn-snapshot');
       window.location.reload();
     } else if(res.error) {
-      alert("ไม่สามารถบันทึกได้: " + res.error + "\n\nคุณพี่อย่าลืมกด 'การทำให้ใช้งานได้รายการใหม่ (New deployment)' ใน Apps Script นะครับ!");
+      showToast("ไม่สามารถบันทึกได้: " + res.error + "\n\nคุณพี่อย่าลืมกด 'การทำให้ใช้งานได้รายการใหม่ (New deployment)' ใน Apps Script นะครับ!", 'btn-snapshot', 'error');
       btn.textContent = '📸 บันทึก'; btn.disabled = false;
     }
   } catch(e) {
-    if (e.message !== "Canceled by user") alert("Error: " + e.message);
+    if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
     btn.textContent = '📸 บันทึก'; btn.disabled = false;
   }
 }
@@ -1245,7 +1309,7 @@ async function saveUnit() {
   const plan = document.getElementById('inp-plan').value;
   const units = document.getElementById('inp-units').value;
   const cost = document.getElementById('inp-cost').value;
-  if(!plan || !units) return alert('กรอกข้อมูลแผนและจำนวนหน่วยให้ครบ');
+  if(!plan || !units) return showToast('กรอกข้อมูลแผนและจำนวนหน่วยให้ครบ', null, 'error');
   
   const btn = document.getElementById('btn-save-unit');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
@@ -1260,7 +1324,7 @@ async function saveUnit() {
       window.location.reload();
     }
   } catch(e) {
-    if (e.message !== "Canceled by user") alert("Error: " + e.message);
+    if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
     btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
   }
 }
@@ -1312,7 +1376,7 @@ function calcSmartSum(type) {
 async function saveSmartRebalance() {
   const dateStr = document.getElementById('inp-smart-date').value;
   const totalVal = parseFloat(document.getElementById('inp-smart-total').value);
-  if (!dateStr || !totalVal) return alert('กรุณากรอกวันที่และมูลค่าพอร์ตให้ครบ');
+  if (!dateStr || !totalVal) return showToast('กรุณากรอกวันที่และมูลค่าพอร์ตให้ครบ', null, 'error');
   
   const bList = document.querySelectorAll('.smart-before-plan');
   const bPct = document.querySelectorAll('.smart-before-pct');
@@ -1334,7 +1398,7 @@ async function saveSmartRebalance() {
     if(pct > 0) { aSum += pct; afterMap[plan] = (afterMap[plan]||0) + pct; }
   }
   
-  if (bSum !== 100 || aSum !== 100) return alert('สัดส่วนก่อนย้ายและหลังย้าย ต้องรวมให้ได้ 100% พอดีครับ');
+  if (bSum !== 100 || aSum !== 100) return showToast('สัดส่วนก่อนย้ายและหลังย้าย ต้องรวมให้ได้ 100% พอดีครับ', null, 'error');
   
   const allPlans = new Set([...Object.keys(beforeMap), ...Object.keys(afterMap)]);
   const sellers = []; 
@@ -1373,7 +1437,7 @@ async function saveSmartRebalance() {
     }
   }
   
-  if(trades.length === 0) return alert('ไม่มีการเปลี่ยนแปลงสัดส่วน');
+  if(trades.length === 0) return showToast('ไม่มีการเปลี่ยนแปลงสัดส่วน', null, 'error');
   
   const conf = confirm(`ระบบจะสร้างรายการสับเปลี่ยนอัตโนมัติ ${trades.length} รายการ:\n` + trades.map(t => `${t.oldPlan} ➔ ${t.newPlan} (${formatMoney(parseFloat(t.amount))} ฿)`).join('\n') + `\n\nยืนยันหรือไม่?`);
   if(!conf) return;
@@ -1386,11 +1450,11 @@ async function saveSmartRebalance() {
     for (const t of trades) {
       await apiCall(t);
     }
-    alert('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
+    showToast('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
     localStorage.removeItem("gpfnav_data_v3");
     location.reload();
   } catch(e) {
-    if (e.message !== "Canceled by user") alert(e.message);
+    if (e.message !== "Canceled by user") showToast(e.message, null, 'error');
   }
   btn.innerText = 'วิเคราะห์และบันทึก';
   btn.disabled = false;
@@ -1404,9 +1468,9 @@ async function seedData() {
   try {
     const data = await apiCall({ action: 'seed_data' });
     if (data.error) throw new Error(data.error);
-    alert('นำเข้าข้อมูลประวัติทั้งหมดสำเร็จ! 🎉 รีเฟรชหน้าเว็บ 1 รอบ แล้วกดสร้าง Statement ได้เลยครับ');
+    showToast('นำเข้าข้อมูลประวัติทั้งหมดสำเร็จ! 🎉 รีเฟรชหน้าเว็บ 1 รอบ แล้วกดสร้าง Statement ได้เลยครับ');
   } catch(e) {
-    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
+    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
   }
   
   btn.innerText = '1. นำเข้าข้อมูลประวัติทั้งหมดลง MyPort (กดครั้งเดียว)';
@@ -1421,9 +1485,9 @@ async function exportStatement() {
   try {
     const data = await apiCall({ action: 'export_statement' });
     if (data.error) throw new Error(data.error);
-    alert('สร้าง Statement สำเร็จ! เปิดดู Google Sheet แท็บ Statement ได้เลยครับ 🎉');
+    showToast('สร้าง Statement สำเร็จ! เปิดดู Google Sheet แท็บ Statement ได้เลยครับ 🎉');
   } catch(e) {
-    if (e.message !== "Canceled by user") alert('Error: ' + e.message);
+    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
   }
   
   btn.innerText = '📥 สร้าง Sheet Statement ตอนนี้เลย';
@@ -1438,7 +1502,7 @@ async function saveTrade() {
   const real = document.getElementById('inp-trade-realized').value;
   const note = document.getElementById('inp-trade-note').value;
   
-  if(!date || !oldPlan || !newPlan || !amt) return alert('กรอกข้อมูลให้ครบ');
+  if(!date || !oldPlan || !newPlan || !amt) return showToast('กรอกข้อมูลให้ครบ', null, 'error');
   
   const btn = document.getElementById('btn-save-trade');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
@@ -1458,7 +1522,7 @@ async function saveTrade() {
       window.location.reload();
     }
   } catch(e) {
-    if (e.message !== "Canceled by user") alert("Error: " + e.message);
+    if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
     btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
   }
 }
@@ -1474,12 +1538,12 @@ function submitAuth() {
         document.getElementById('loader').innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px;"><div style="color:#4caf50; font-size:32px;">✅</div><div style="font-size:16px; font-weight:600;">เข้าสู่ระบบสำเร็จ</div><div style="font-size:12px; color:var(--muted);">กำลังโหลดข้อมูล...</div></div>`;
         location.reload();
       } else {
-        alert("❌ รหัส PIN ไม่ถูกต้อง");
+        showToast("❌ รหัส PIN ไม่ถูกต้อง", null, 'error');
         btn.innerText = 'ยืนยัน'; btn.disabled = false;
         document.getElementById('auth-pin').value = '';
       }
     }).catch(e => {
-      alert("Error: " + e.message);
+      showToast("Error: " + e.message, null, 'error');
       btn.innerText = 'ยืนยัน'; btn.disabled = false;
     });
 }

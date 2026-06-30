@@ -751,7 +751,7 @@ function renderMockPort(mockData, suffix = '') {
                 ${plan}
                 <span style="font-size:10px; color:var(--muted); font-weight:normal; margin-left:4px;">(เริ่ม ${new Date(searchDates[closestIdx]).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })})</span>
               </div>
-              <div style="color:#8b949e;font-size:11px;">${mockUnits.toLocaleString(undefined, {maximumFractionDigits:4})} หน่วย (เงินต้นเริ่ม @${startNav.toFixed(4)}${contribText})</div>
+              <div style="color:#8b949e;font-size:11px;">${mockUnits.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} หน่วย (เงินต้นเริ่ม @${startNav.toFixed(4)}${contribText})</div>
               <div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>
             </div>
           </div>
@@ -880,7 +880,7 @@ function initDashboard() {
                 <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
                 <div style="flex:1; min-width:0;">
                   <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-0.3px;">${u.plan}</div>
-                  <div style="color:#8b949e;font-size:11px;">${u.units.toLocaleString()} หน่วย</div>
+                  <div style="color:#8b949e;font-size:11px;">${u.units.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} หน่วย</div>
                   ${plHtml}
                 </div>
               </div>

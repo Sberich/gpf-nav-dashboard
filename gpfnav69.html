@@ -13,8 +13,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="My Port">
   
-  <!-- Glowing Neon Briefcase Favicon (Transparent Background, Max Size) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='12 12 76 76'><defs><filter id='g' x='-20%25' y='-20%25' width='140%25' height='140%25'><feGaussianBlur stdDeviation='3' result='b'/><feMerge><feMergeNode in='b'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><path d='M40 35 L40 25 C40 20 60 20 60 25 L60 35' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' filter='url(%23g)'/><rect x='20' y='35' width='60' height='45' rx='8' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linejoin='round' filter='url(%23g)'/><path d='M20 50 L80 50' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linecap='round' filter='url(%23g)'/><rect x='45' y='45' width='10' height='10' rx='3' fill='%2358a6ff' filter='url(%23g)'/></svg>">
+  <!-- Glowing Neon Briefcase Favicon (Sleek Dark Mode) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='n' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%230ea5e9'/><stop offset='100%25' stop-color='%233b82f6'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='%23111827'/><rect x='10' y='38' width='80' height='52' rx='12' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linejoin='round'/><path d='M34 38 L34 22 C34 12 66 12 66 22 L66 38' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linecap='round'/><path d='M24 64 C40 80 60 80 76 64' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linecap='round'/><circle cx='76' cy='64' r='6' fill='%23ffffff'/></svg>">
   <link rel="apple-touch-icon" href="icon-port-Copy.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,7 +43,10 @@
       display: flex; justify-content: space-between; align-items: center;
       background: rgba(255,255,255,0.02);
     }
-    .title { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .title { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; min-width: 0; width: 100%; }
+    .title > span:first-child { display: flex; align-items: center; min-width: 0; overflow: hidden; }
+    .title > span:first-child > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .title > span:last-child { flex-shrink: 0; white-space: nowrap; }
     .body { padding: 12px 16px; }
     
     .badge { padding: 4px 8px; border-radius: 12px; display: inline-block; font-weight: 600; }
@@ -329,7 +332,7 @@
     <!-- Trade History & What-If -->
     <div class="box">
       <div class="header">
-        <div class="title"><span>🔮</span><span>ประวัติและวิเคราะห์การเปลี่ยนแผน (What-If)</span></div>
+        <div class="title"><span><span style="margin-right:8px;">🔮</span><span>ประวัติและวิเคราะห์การเปลี่ยนแผน (What-If)</span></span></div>
       </div>
       <div class="body">
         <div id="trade-history-list" style="display:flex; flex-direction:column; gap:12px;">

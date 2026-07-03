@@ -19,7 +19,7 @@
 
   <!-- จบส่วน PWA -->
 
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js" defer></script>
   <style>
     /* ════════════════════════════════════════
        BASE VARIABLES & RESET
@@ -193,8 +193,6 @@
       padding: 7px 14px; border-right: 1px solid var(--border);
       min-width: 115px; flex-shrink: 0;
     }
-    .stat-card:first-child,
-    .stat-card:nth-child(4) { display: none; }
     .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
     .stat-val   { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .stat-sub   { font-size: 9px; color: var(--muted); margin-top: 1px; }
@@ -719,11 +717,6 @@
   <div id="chart-wrap">
     <div id="stats-bar">
       <div class="stat-card">
-        <div class="stat-label">ข้อมูลตั้งแต่</div>
-        <div class="stat-val" id="s-start">—</div>
-        <div class="stat-sub" id="s-rows">—</div>
-      </div>
-      <div class="stat-card">
         <div class="stat-label">ข้อมูลล่าสุด</div>
         <div class="stat-val" id="s-end">—</div>
         <div class="stat-sub">วันทำการล่าสุด</div>
@@ -732,11 +725,6 @@
         <div class="stat-label" id="s-plan-label">—</div>
         <div class="stat-val" id="s-plan-nav">—</div>
         <div class="stat-sub" id="s-plan-chg">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">จำนวนแผน</div>
-        <div class="stat-val" id="s-count">—</div>
-        <div class="stat-sub">แผนที่แสดงอยู่</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">ดีสุดวันนี้</div>
@@ -808,7 +796,7 @@
         <!-- Port A -->
         <div class="cmp-port" id="cmp-port-a">
           <div class="cmp-port-header">
-            <span class="cmp-port-label" style="color:#388bfd;">Port A</span>
+            <span class="cmp-port-label" style="color:#388bfd;">พอร์ตเดิม ก่อนเปลี่ยน</span>
             <span class="cmp-port-sum" id="cmp-a-sum" style="color:#8b949e;">รวม 0%</span>
           </div>
           <div class="cmp-date-row">
@@ -825,7 +813,7 @@
         <!-- Port B -->
         <div class="cmp-port" id="cmp-port-b">
           <div class="cmp-port-header">
-            <span class="cmp-port-label" style="color:#FF9800;">Port B</span>
+            <span class="cmp-port-label" style="color:#FF9800;">พอร์ตใหม่ หลังเปลี่ยน</span>
             <span class="cmp-port-sum" id="cmp-b-sum" style="color:#8b949e;">รวม 0%</span>
           </div>
           <div class="cmp-date-row">
@@ -891,15 +879,26 @@ window.addEventListener('load', () => {
     }
   } catch(e) {}
 
+  const loadTimeout = setTimeout(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);"><div class="error-title" style="margin-bottom:8px;">⚠️ โหลดนานผิดปกติ</div><div style="font-size:13px; margin-bottom:16px;">อาจเกิดจากการเชื่อมต่อขัดข้อง หรือ Server ทำงานช้า</div><button onclick="location.reload()" style="padding:8px 20px; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-size:13px; cursor:pointer;">🔄 ลองโหลดใหม่</button></div>';
+    }
+  }, 15000);
+
   fetch(GAS_URL)
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
     .then(data => {
+      clearTimeout(loadTimeout);
       if (!data.error) {
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
       }
       onDataLoaded(data);
     })
-    .catch(e => showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message));
+    .catch(e => {
+      clearTimeout(loadTimeout);
+      showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message);
+    });
 });
 
 function onDataLoaded(data) {
@@ -1060,8 +1059,7 @@ function toggleAll(show) {
 }
 
 function updateVisibleCount() {
-  document.getElementById('s-count').textContent =
-    allData.plans.filter(p => !hidden.has(p.key)).length;
+  // Deprecated: Count stat-card removed
 }
 
 // ─────────────────────────────────────────
@@ -1231,10 +1229,7 @@ const fmtDate = s => {
 };
 
 function updateStats() {
-  document.getElementById('s-start').textContent     = fmtDate(allData.startDate);
   document.getElementById('s-end').textContent       = fmtDate(allData.endDate);
-  document.getElementById('s-rows').textContent      = `${allData.totalRows.toLocaleString()} วันทำการ`;
-  document.getElementById('s-count').textContent     = 0;
   document.getElementById('last-update').textContent = `อัปเดต: ${fmtDate(allData.endDate)}`;
 
   // default range 6M

@@ -12,7 +12,18 @@ const URLS_TO_CACHE = [
 // ติดตั้ง Service Worker
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(URLS_TO_CACHE))
+    caches.open(CACHE_NAME).then(cache => {
+      // ใช้ Promise.allSettled หรือแคชทีละไฟล์ เพื่อไม่ให้ล้มเหลวทั้งหมดถ้าพังแค่ไฟล์เดียว
+      return Promise.allSettled(
+        URLS_TO_CACHE.map(url => {
+          return fetch(new Request(url, { cache: 'reload' }))
+            .then(response => {
+              if (response.ok) return cache.put(url, response);
+            })
+            .catch(err => console.warn('Cache failed for:', url, err));
+        })
+      );
+    })
   );
   self.skipWaiting();
 });
@@ -37,7 +48,8 @@ self.addEventListener('fetch', event => {
     fetch(event.request)
       .then(response => {
         // ถ้าโหลดจากเน็ตสำเร็จ ให้เซฟลง Cache อัปเดตของใหม่ด้วย
-        if (response && response.status === 200 && response.type === 'basic') {
+        // ยอมรับ response.status 200 หรือแบบ opaque (CDN) 
+        if (response && (response.status === 200 || response.type === 'opaque')) {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);

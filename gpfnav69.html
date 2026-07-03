@@ -15,7 +15,7 @@
   
   <!-- Glowing Neon Briefcase Favicon (Transparent Background, Max Size) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='12 12 76 76'><defs><filter id='g' x='-20%25' y='-20%25' width='140%25' height='140%25'><feGaussianBlur stdDeviation='3' result='b'/><feMerge><feMergeNode in='b'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><path d='M40 35 L40 25 C40 20 60 20 60 25 L60 35' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' filter='url(%23g)'/><rect x='20' y='35' width='60' height='45' rx='8' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linejoin='round' filter='url(%23g)'/><path d='M20 50 L80 50' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linecap='round' filter='url(%23g)'/><rect x='45' y='45' width='10' height='10' rx='3' fill='%2358a6ff' filter='url(%23g)'/></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='12 12 76 76'><path d='M40 35 L40 25 C40 20 60 20 60 25 L60 35' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/><rect x='20' y='35' width='60' height='45' rx='8' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linejoin='round'/><path d='M20 50 L80 50' fill='none' stroke='%2358a6ff' stroke-width='6' stroke-linecap='round'/><rect x='45' y='45' width='10' height='10' rx='3' fill='%2358a6ff'/></svg>">
+  <link rel="apple-touch-icon" href="icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -502,6 +502,7 @@
 </div>
 
 <script>
+function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
 // Use the original GAS_URL endpoint
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
 let allData = null;
@@ -566,13 +567,13 @@ async function saveMockPort(suffix = '') {
     let parts = dateStr.split('-');
     let year = parseInt(parts[0], 10);
     // If user somehow enters Buddhist year directly into date picker (rare but possible)
-    if (year > 2500) year -= 543;
+    year = toGregorianYear(year);
     targetTime = new Date(`${year}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
   } else {
     let parts = dateStr.split('/');
     if (parts.length !== 3) return showToast('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY หรือเลือกจากปฏิทิน', null, 'error');
     let year = parseInt(parts[2], 10);
-    if (year > 2500) year -= 543;
+    year = toGregorianYear(year);
     targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
   }
   const btn = document.getElementById('btn-save-mock' + suffix);
@@ -692,7 +693,7 @@ function renderMockPort(mockData, suffix = '') {
       const parts = c.date.split('/');
       if (parts.length === 2) {
         let year = parseInt(parts[1]);
-        if (year > 2500) year -= 543;
+        year = toGregorianYear(year);
         const cTime = new Date(`${year}-${parts[0]}-25`).getTime();
         if (cTime > mockData.startDate) {
           validContribs.push({ amount: c.amount, time: cTime });
@@ -939,6 +940,9 @@ function initDashboard() {
 
   const plBaht = totalValue - totalCost;
   const plPct = totalCost > 0 ? (plBaht / totalCost) * 100 : 0;
+
+  window.globalTotalValue = totalValue;
+  window.globalTotalCost = totalCost;
 
   document.getElementById('val-cost').textContent = formatMoney(totalCost);
   document.getElementById('val-current').textContent = formatMoney(totalValue);
@@ -1275,10 +1279,8 @@ function saveContrib() {
 }
 
 async function saveSnapshot() {
-  const valStr = document.getElementById('val-current').textContent.replace(/,/g, '');
-  const costStr = document.getElementById('val-cost').textContent.replace(/,/g, '');
-  const totalValue = parseFloat(valStr) || 0;
-  const totalCost = parseFloat(costStr) || 0;
+  const totalValue = window.globalTotalValue || 0;
+  const totalCost = window.globalTotalCost || 0;
   
   if (totalValue <= 0) return showToast('รอโหลดข้อมูลให้เสร็จก่อนครับ', null, 'error');
   const btn = document.getElementById('btn-snapshot');

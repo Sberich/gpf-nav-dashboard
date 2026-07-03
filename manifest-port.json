@@ -1,9 +1,9 @@
 {
   "name": "GPF Portfolio",
   "short_name": "GPF Port",
-  "id": "/gpf-portfolio-app",
+  "id": "/gpf-portfolio-app-v2",
   "scope": "./",
-  "start_url": "./gpfnav69.html?pwa=1",
+  "start_url": "./gpfnav69.html?pwa=2",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#161b22",

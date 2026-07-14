@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0d1117">
+  <title>GPF Robo-Advisor | AI Wealth Planner</title>
+  <meta name="description" content="ระบบผู้ช่วยอัจฉริยะวางแผนการลงทุน กบข. วิเคราะห์พอร์ต คาดการณ์เงินเกษียณด้วย AI">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #0f1629;
+      --surface: rgba(255,255,255,0.03);
+      --surface2: rgba(255,255,255,0.06);
+      --surface3: rgba(255,255,255,0.09);
+      --blur: blur(20px);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-g: rgba(59,130,246,0.4);
+      --accent: #8b5cf6;
+      --accent-g: rgba(139,92,246,0.3);
+      --green: #10b981;
+      --green-g: rgba(16,185,129,0.15);
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --pink: #ec4899;
+      --cyan: #06b6d4;
+      --border: rgba(255,255,255,0.08);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Prompt','Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
+      background-image:radial-gradient(ellipse at 10% 20%,rgba(59,130,246,0.08),transparent 50%),radial-gradient(ellipse at 90% 80%,rgba(139,92,246,0.08),transparent 50%);
+      background-attachment:fixed}
+    .container{max-width:1400px;margin:0 auto;padding:1.5rem}
+    
+    /* Glass */
+    .glass{background:var(--surface);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:all .3s}
+    .glass:hover{border-color:rgba(255,255,255,0.12)}
+    
+    /* Header */
+    header{text-align:center;margin-bottom:2rem;animation:fadeIn .8s}
+    h1{font-family:'Outfit';font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.3rem}
+    .subtitle{color:var(--muted);font-size:1rem}
+    
+    /* Navigation */
+    .nav-btn{display:inline-flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;padding:.6rem 1rem;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);transition:all .3s;margin-bottom:1.5rem}
+    .nav-btn:hover{color:var(--text);transform:translateX(-3px)}
+    
+    /* Grid Layouts */
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    @media(max-width:1024px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:768px){h1{font-size:2rem}}
+    
+    /* Section Headers */
+    .section-title{font-family:'Outfit';font-size:1.3rem;font-weight:600;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem;color:#fff}
+    .section-title i{font-size:1.1rem}
+    .section-title .badge{background:linear-gradient(135deg,var(--primary),var(--accent));padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:500;letter-spacing:.5px}
+    
+    /* Forms */
+    .form-group{margin-bottom:1.2rem}
+    .form-group label{display:block;margin-bottom:.4rem;font-weight:500;color:var(--muted);font-size:.9rem}
+    input,select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.85rem 1rem;border-radius:var(--radius-sm);font-family:'Prompt';font-size:.95rem;transition:all .3s}
+    input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-g)}
+    option{background:var(--bg);color:var(--text)}
+    
+    /* Buttons */
+    .btn{border:none;padding:.85rem 1.5rem;font-size:1rem;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;font-family:'Prompt';transition:all .3s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;width:100%;justify-content:center;box-shadow:0 4px 20px var(--primary-g)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px var(--primary-g)}
+    .btn-sm{padding:.5rem 1rem;font-size:.85rem}
+    
+    /* Tables */
+    .data-table{width:100%;border-collapse:collapse;font-size:.85rem}
+    .data-table th{text-align:left;padding:.7rem .6rem;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+    .data-table td{padding:.65rem .6rem;border-bottom:1px solid rgba(255,255,255,0.03);white-space:nowrap}
+    .data-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .data-table .positive{color:var(--green)}
+    .data-table .negative{color:var(--red)}
+    .plan-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+    .tag{padding:2px 8px;border-radius:6px;font-size:.7rem;font-weight:600}
+    .tag-mix{background:rgba(16,185,129,0.15);color:var(--green)}
+    .tag-lock{background:rgba(239,68,68,0.15);color:var(--red)}
+    
+    /* Result Cards */
+    .result-card{text-align:center;padding:2rem;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);position:relative;overflow:hidden}
+    .result-card::before{content:'';position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(139,92,246,0.1),transparent 60%);animation:spin 12s linear infinite;z-index:0}
+    .result-card>*{position:relative;z-index:1}
+    .plan-name{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#34d399,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    
+    /* Stat Boxes */
+    .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;text-align:center;border:1px solid var(--border)}
+    .stat-box .stat-label{font-size:.75rem;color:var(--muted);margin-bottom:.3rem}
+    .stat-box .stat-value{font-size:1.3rem;font-weight:700;font-family:'Outfit'}
+    
+    /* Allocation Bar */
+    .alloc-bar{height:32px;border-radius:16px;overflow:hidden;display:flex;margin:1rem 0;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)}
+    .alloc-segment{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);transition:width .8s ease}
+    .alloc-legend{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+    .alloc-legend-item{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted)}
+    .alloc-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    
+    /* Charts */
+    .chart-area{width:100%;height:280px;background:rgba(0,0,0,0.15);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.04);position:relative;overflow:hidden}
+    .fan-chart{width:100%;height:100%}
+    
+    /* Heatmap */
+    .heatmap-grid{display:grid;gap:2px;font-size:.65rem}
+    .heatmap-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:4px;font-weight:600;transition:transform .2s}
+    .heatmap-cell:hover{transform:scale(1.1);z-index:2}
+    .heatmap-label{font-size:.6rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px;display:flex;align-items:center}
+    
+    /* Loading */
+    #loading{position:fixed;inset:0;background:rgba(10,14,26,0.92);backdrop-filter:blur(15px);z-index:9999;display:none;flex-direction:column;justify-content:center;align-items:center}
+    .loader{width:50px;height:50px;border:3px solid rgba(255,255,255,0.08);border-radius:50%;border-top-color:var(--primary);animation:spin 1s ease-in-out infinite;margin-bottom:1rem}
+    #loadingText{font-size:1rem;color:var(--primary);letter-spacing:1px;font-weight:500}
+    .progress-bar{width:280px;height:4px;background:rgba(255,255,255,0.08);border-radius:4px;margin-top:1rem;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:4px;width:0%;transition:width .5s}
+    
+    /* Animations */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+    .animate-in{animation:fadeIn .6s ease-out both}
+    .delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}.delay-4{animation-delay:.4s}
+    
+    /* Tabs */
+    .tabs{display:flex;gap:4px;background:var(--surface);border-radius:var(--radius-sm);padding:4px;margin-bottom:1.5rem;overflow-x:auto}
+    .tab{padding:.6rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);transition:all .3s;white-space:nowrap;border:none;background:transparent;font-family:'Prompt'}
+    .tab.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:0 2px 10px var(--primary-g)}
+    .tab:hover:not(.active){color:var(--text);background:var(--surface2)}
+    .tab-content{display:none}.tab-content.active{display:block}
+    
+    /* Monte Carlo Fan */
+    .mc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.8rem;margin-top:1rem}
+    .mc-stat{background:var(--surface2);border-radius:8px;padding:.8rem;text-align:center}
+    .mc-stat .label{font-size:.7rem;color:var(--muted)}
+    .mc-stat .value{font-size:1.1rem;font-weight:700;font-family:'Outfit'}
+    
+    /* Canvas container */
+    .canvas-wrap{position:relative;width:100%;height:280px}
+    .canvas-wrap canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+    
+    /* Responsive table wrapper */
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    
+    /* Tooltips for allocation */
+    .alloc-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem .8rem;border-radius:8px;margin-bottom:4px;transition:background .2s}
+    .alloc-row:hover{background:var(--surface2)}
+    .alloc-row .plan-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+    .alloc-row .plan-info span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem}
+    .alloc-row .pct{font-family:'Outfit';font-weight:700;font-size:1rem;min-width:50px;text-align:right}
+    
+    /* Table Sorting */
+    .data-table th i { font-size: 0.8em; margin-left: 4px; opacity: 0.3; transition: all 0.2s; }
+    .data-table th:hover i { opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div id="loading">
+    <div class="loader"></div>
+    <div id="loadingText">INITIALIZING AI ENGINE...</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="container">
+    <a href="index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> กลับสู่ Dashboard หลัก</a>
+    
+    <header>
+      <h1><i class="fa-solid fa-microchip"></i> GPF Robo-Advisor</h1>
+      <p class="subtitle">ระบบผู้ช่วยอัจฉริยะ วิเคราะห์พอร์ต วางแผนการลงทุน และคาดการณ์เงินเกษียณ กบข.</p>
+    </header>
+
+    <!-- === TAB NAVIGATION === -->
+    <div class="tabs" id="mainTabs">
+      <button class="tab active" onclick="switchMainTab('input')"><i class="fa-solid fa-sliders"></i> ข้อมูลผู้ใช้</button>
+      <button class="tab" onclick="switchMainTab('metrics')"><i class="fa-solid fa-chart-bar"></i> Risk Metrics ทุกแผน</button>
+      <button class="tab" onclick="switchMainTab('recommend')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI แนะนำ</button>
+      <button class="tab" onclick="switchMainTab('montecarlo')"><i class="fa-solid fa-chart-area"></i> Monte Carlo</button>
+      <button class="tab" onclick="switchMainTab('correlation')"><i class="fa-solid fa-table-cells"></i> Correlation</button>
+    </div>
+
+    <!-- ═══════ TAB 1: USER INPUT ═══════ -->
+    <div class="tab-content active" id="tab-input">
+      <div class="grid-2">
+        <div class="glass animate-in">
+          <div class="section-title"><i class="fa-solid fa-user-gear" style="color:var(--primary)"></i> ข้อมูลส่วนตัว</div>
+          <form id="roboForm" onsubmit="event.preventDefault(); runFullAnalysis();">
+            <div class="form-group">
+              <label><i class="fa-regular fa-user"></i> อายุปัจจุบัน (ปี)</label>
+              <input type="number" id="currentAge" required min="20" max="59" placeholder="เช่น 35">
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-wallet"></i> ยอดเงิน กบข. ปัจจุบัน (บาท)</label>
+              <input type="number" id="currentBalance" required min="0" placeholder="กำลังโหลด..." readonly>
+              <small style="color:var(--muted);font-size:.75rem">*ดึงอัตโนมัติจากฐานข้อมูล หรือกรอกเอง</small>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-money-bill-trend-up"></i> เงินสมทบรายเดือน (บาท)</label>
+              <input type="number" id="monthlyContribution" required min="0" placeholder="ยอดหักสะสม+สมทบ/เดือน">
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-compass"></i> สไตล์การลงทุน (Investment Style)</label>
+              <select id="investmentStyle" required>
+                <option value="strategic">🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</option>
+                <option value="tactical">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><i class="fa-solid fa-temperature-half"></i> ระดับความเสี่ยงที่รับได้ (Max Drawdown)</label>
+              <select id="riskTolerance" required>
+                <option value="" disabled selected>เลือกระดับความเสี่ยง</option>
+                <option value="5">🟢 ต่ำมาก (รับขาดทุนได้ ≤ 5%)</option>
+                <option value="10">🔵 ต่ำ (รับขาดทุนได้ ≤ 10%)</option>
+                <option value="20">🟡 ปานกลาง (รับขาดทุนได้ ≤ 20%)</option>
+                <option value="35">🟠 สูง (รับขาดทุนได้ ≤ 35%)</option>
+                <option value="50">🔴 สูงมาก (รับขาดทุนได้ > 35% เน้นเติบโต)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:.5rem">
+              <i class="fa-solid fa-microchip"></i> วิเคราะห์ด้วย AI (ครบ 4 Phase)
+            </button>
+          </form>
+        </div>
+
+        <div class="glass animate-in delay-1">
+          <div class="section-title"><i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> กฎสัดส่วน กบข.</div>
+          <div style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">
+            <p style="margin-bottom:.8rem">กบข. กำหนดให้สมาชิกเลือกแผนลงทุนได้ 2 แบบ:</p>
+            <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:.8rem;margin-bottom:.8rem">
+              <div style="font-weight:600;color:var(--red);margin-bottom:.3rem"><i class="fa-solid fa-lock"></i> แผนบังคับลง 100%</div>
+              <div style="font-size:.8rem">เกษียณสบายใจ, วายุภักษ์, พื้นฐานทั่วไป, เชิงรุก 20/35/65/75, ชะรีอะฮ์</div>
+            </div>
+            <div style="background:var(--green-g);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:.8rem">
+              <div style="font-weight:600;color:var(--green);margin-bottom:.3rem"><i class="fa-solid fa-shuffle"></i> แผนผสมกันได้ (รวม = 100%)</div>
+              <div style="font-size:.8rem">อสังหาฯ, เงินฝาก, ตราสารหนี้, หุ้นไทย, ทองคำ, หุ้นต่างประเทศ, ตราสารหนี้ต่างประเทศ</div>
+            </div>
+          </div>
+          <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-robot" style="color:var(--cyan)"></i> สมการที่ระบบใช้</div>
+          <div style="font-size:.8rem;color:var(--muted);line-height:1.8">
+            <div>📐 <b style="color:var(--text)">Markowitz MPT</b> — Efficient Frontier</div>
+            <div>🏦 <b style="color:var(--text)">Black-Litterman</b> — Goldman Sachs Model</div>
+            <div>⚖️ <b style="color:var(--text)">Risk Parity</b> — Bridgewater / Ray Dalio</div>
+            <div>🎲 <b style="color:var(--text)">Monte Carlo</b> — 10,000 Simulations (GBM)</div>
+            <div>📉 <b style="color:var(--text)">CVaR / MDD</b> — Tail Risk Analysis</div>
+            <div>📈 <b style="color:var(--text)">Glide Path</b> — Vanguard / Fidelity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TAB 2: RISK METRICS ═══════ -->
+    <div class="tab-content" id="tab-metrics">
+      <div class="glass animate-in">
+        <div class="section-title"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> ตาราง Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge">LIVE DATA</span></div>
+        <div class="table-wrap">
+          <table class="data-table" id="metricsTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable('name')" style="cursor:pointer" title="เรียงตามชื่อแผน">แผนลงทุน <i class="fa-solid fa-sort" id="sort-name"></i></th>
+                <th>ประเภท</th>
+                <th onclick="sortTable('cagr')" style="cursor:pointer" title="เรียงตามผลตอบแทน">CAGR (%/ปี) <i class="fa-solid fa-sort" id="sort-cagr"></i></th>
+                <th onclick="sortTable('vol')" style="cursor:pointer" title="เรียงตามความผันผวน">Volatility (σ) <i class="fa-solid fa-sort" id="sort-vol"></i></th>
+                <th onclick="sortTable('sharpe')" style="cursor:pointer" title="เรียงตามความคุ้มค่าความเสี่ยง">Sharpe Ratio <i class="fa-solid fa-sort" id="sort-sharpe"></i></th>
+                <th onclick="sortTable('mdd')" style="cursor:pointer" title="เรียงตามโอกาสขาดทุนสูงสุด">Max Drawdown <i class="fa-solid fa-sort" id="sort-mdd"></i></th>
+                <th onclick="sortTable('cvar')" style="cursor:pointer" title="เรียงตามความเสี่ยงหาง">CVaR 95% <i class="fa-solid fa-sort" id="sort-cvar"></i></th>
+                <th onclick="sortTable('score')" style="cursor:pointer" title="เรียงตามคะแนนรวม">Score <i class="fa-solid fa-sort-down" id="sort-score" style="opacity:1"></i></th>
+              </tr>
+            </thead>
+            <tbody id="metricsBody">
+              <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">กรุณากดปุ่ม "วิเคราะห์ด้วย AI" เพื่อคำนวณ</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TAB 3: AI RECOMMENDATION ═══════ -->
+    <div class="tab-content" id="tab-recommend">
+      <div class="grid-2">
+        <div class="glass animate-in">
+          <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i> AI แนะนำสัดส่วนที่เหมาะสม</div>
+          <div class="result-card" id="recCard">
+            <div id="recTitle" style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>
+            <div class="plan-name" id="recPlanName" style="margin:.5rem 0">—</div>
+            <div style="font-size:.9rem;margin-top:.5rem">
+              <span style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i> CAGR คาดหวัง: <b id="recCagr">—</b>%/ปี</span>
+              &nbsp;&nbsp;
+              <span style="color:var(--yellow)"><i class="fa-solid fa-triangle-exclamation"></i> MDD: <b id="recMdd">—</b>%</span>
+            </div>
+            <div style="font-size:.85rem;color:var(--muted);margin-top:.3rem">
+              Sharpe: <b id="recSharpe">—</b> &nbsp;|&nbsp; CVaR₉₅: <b id="recCvar">—</b>%
+            </div>
+          </div>
+          
+          <!-- Allocation Breakdown -->
+          <div id="allocSection" style="margin-top:1.5rem">
+            <div style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.8rem"><i class="fa-solid fa-chart-pie" style="color:var(--pink)"></i> สัดส่วนที่แนะนำ</div>
+            <div class="alloc-bar" id="allocBar"></div>
+            <div id="allocBreakdown"></div>
+          </div>
+        </div>
+
+        <div class="glass animate-in delay-1">
+          <div class="section-title"><i class="fa-solid fa-scale-balanced" style="color:var(--green)"></i> เปรียบเทียบ 3 โมเดล</div>
+          <div class="grid-3" id="modelComparison" style="margin-bottom:1.5rem">
+            <!-- Filled by JS -->
+          </div>
+          
+          <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-calculator" style="color:var(--cyan)"></i> คาดการณ์เงินเกษียณ</div>
+          <div class="grid-2" style="gap:.8rem" id="retirementStats">
+            <div class="stat-box">
+              <div class="stat-label">ยอดปัจจุบัน</div>
+              <div class="stat-value" id="statCurrent" style="color:var(--text)">—</div>
+            </div>
+            <div class="stat-box" style="border-color:rgba(139,92,246,0.3)">
+              <div class="stat-label">คาดการณ์ ณ อายุ 60 (Median)</div>
+              <div class="stat-value" id="statFuture" style="color:var(--accent)">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TAB 4: MONTE CARLO ═══════ -->
+    <div class="tab-content" id="tab-montecarlo">
+      <div class="glass animate-in">
+        <div class="section-title"><i class="fa-solid fa-chart-area" style="color:var(--pink)"></i> Monte Carlo Simulation <span class="badge">10,000 PATHS</span></div>
+        <div class="canvas-wrap" id="fanChartWrap">
+          <canvas id="fanChart"></canvas>
+        </div>
+        <div class="mc-stats" id="mcStats">
+          <div class="mc-stat"><div class="label">สถานการณ์ร้ายสุด (P10)</div><div class="value" id="mcP10" style="color:var(--red)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีระวัง (P25)</div><div class="value" id="mcP25" style="color:var(--yellow)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีกลาง (P50)</div><div class="value" id="mcP50" style="color:var(--green)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีดี (P75)</div><div class="value" id="mcP75" style="color:var(--cyan)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีดีมาก (P90)</div><div class="value" id="mcP90" style="color:var(--accent)">—</div></div>
+          <div class="mc-stat" style="border:1px solid rgba(16,185,129,0.3)"><div class="label">อัตราสำเร็จ</div><div class="value" id="mcSuccess" style="color:var(--green)">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ TAB 5: CORRELATION ═══════ -->
+    <div class="tab-content" id="tab-correlation">
+      <div class="glass animate-in">
+        <div class="section-title"><i class="fa-solid fa-table-cells" style="color:var(--cyan)"></i> Correlation Heatmap (ความสัมพันธ์ระหว่างแผน)</div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem">ค่าใกล้ <span style="color:#ef4444">+1.0</span> = เคลื่อนไหวในทิศทางเดียวกัน | ค่าใกล้ <span style="color:#3b82f6">-1.0</span> = สวนทางกัน (กระจายความเสี่ยงได้ดี)</p>
+        <div id="heatmapContainer" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+  </div><!-- end container -->
+
+  <script>
+  // ══════════════════════════════════════════════════════════════
+  // GPF ROBO-ADVISOR — Full AI Engine
+  // ══════════════════════════════════════════════════════════════
+  
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
+  
+  // ── GPF Mixing Rules (จากรูปที่ กบข. กำหนด) ──
+  const LOCK_100_PLANS = [
+    'แผนเกษียณสบายใจ 2569', 'แผนกองทุนรวมวายุภักษ์', 'แผนลงทุนพื้นฐานทั่วไป',
+    'แผนเชิงรุก 20', 'แผนเชิงรุก 35', 'แผนเชิงรุก 65', 'แผนเชิงรุก 75',
+    'แผนการลงทุนตามหลักชะรีอะฮ์'
+  ];
+  const MIXABLE_PLANS = [
+    'แผนกองทุนอสังหาริมทรัพย์ไทย', 'แผนเงินฝากและตราสารหนี้ระยะสั้น',
+    'แผนตราสารหนี้', 'แผนหุ้นไทย', 'แผนทองคำ',
+    'แผนหุ้นต่างประเทศ', 'แผนตราสารหนี้ต่างประเทศ'
+  ];
+  
+  // Risk-free rate (Thai gov bond ~2.5%)
+  const RF = 0.025;
+  
+  // ── State ──
+  let allData = null;
+  let planMetrics = [];
+  let correlationMatrix = [];
+  let covarianceMatrix = [];
+  let analysisResult = null;
+  let currentSort = { col: 'score', asc: false };
+  
+  // ══════════════════════════════════════════
+  // UTILITY FUNCTIONS
+  // ══════════════════════════════════════════
+  function getDeviceId() {
+    let id = localStorage.getItem('gpf_device_id');
+    if (!id) { id = 'dev_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); localStorage.setItem('gpf_device_id', id); }
+    return id;
+  }
+  function fmt(n) { return Number(n).toLocaleString('th-TH', {maximumFractionDigits:0}); }
+  function fmtM(n) { // Format millions
+    if (n >= 1e6) return (n/1e6).toFixed(2) + ' ล้าน';
+    if (n >= 1e3) return fmt(n);
+    return n.toFixed(0);
+  }
+  function fmtPct(n, d=2) { return (n*100).toFixed(d) + '%'; }
+  
+  // ══════════════════════════════════════════
+  // PHASE 1: RISK METRICS ENGINE
+  // ══════════════════════════════════════════
+  
+  function calcLogReturns(navArray) {
+    const returns = [];
+    for (let i = 1; i < navArray.length; i++) {
+      if (navArray[i] > 0 && navArray[i-1] > 0) {
+        returns.push(Math.log(navArray[i] / navArray[i-1]));
+      }
+    }
+    return returns;
+  }
+  
+  function calcCAGR(navArray, datesArray) {
+    if (!navArray || navArray.length < 2) return 0;
+    const start = navArray[0], end = navArray[navArray.length-1];
+    if (start <= 0) return 0;
+    const d0 = new Date(datesArray[0]), d1 = new Date(datesArray[datesArray.length-1]);
+    const years = (d1 - d0) / (365.25 * 24 * 3600000);
+    if (years <= 0) return 0;
+    return Math.pow(end / start, 1 / years) - 1;
+  }
+  
+  function calcVolatility(returns) {
+    if (returns.length < 2) return 0;
+    const mean = returns.reduce((a,b) => a+b, 0) / returns.length;
+    const variance = returns.reduce((a,r) => a + (r-mean)**2, 0) / (returns.length - 1);
+    return Math.sqrt(variance) * Math.sqrt(252); // Annualized
+  }
+  
+  function calcMaxDrawdown(navArray) {
+    let peak = navArray[0], maxDD = 0;
+    for (let i = 1; i < navArray.length; i++) {
+      if (navArray[i] > peak) peak = navArray[i];
+      const dd = (peak - navArray[i]) / peak;
+      if (dd > maxDD) maxDD = dd;
+    }
+    return -maxDD;
+  }
+  
+  function calcCVaR95(returns) {
+    if (returns.length < 20) return 0;
+    const sorted = [...returns].sort((a,b) => a-b);
+    const cutoff = Math.floor(sorted.length * 0.05);
+    if (cutoff === 0) return sorted[0] * Math.sqrt(252);
+    let sum = 0;
+    for (let i = 0; i < cutoff; i++) sum += sorted[i];
+    return (sum / cutoff) * Math.sqrt(252);
+  }
+  
+  function calcSharpe(cagr, vol) {
+    if (vol === 0) return 0;
+    return (cagr - RF) / vol;
+  }
+  
+  function calcScore(cagr, vol, mdd, sharpe) {
+    // Composite score: weighted combination
+    const normalizedSharpe = Math.max(0, Math.min(sharpe, 3)) / 3;
+    const normalizedMDD = 1 - Math.min(Math.abs(mdd), 1);
+    const normalizedCAGR = Math.max(0, Math.min(cagr, 0.3)) / 0.3;
+    return ((normalizedSharpe * 0.4) + (normalizedMDD * 0.3) + (normalizedCAGR * 0.3)) * 100;
+  }
+  
+  function calcCovMatrix(allReturns) {
+    const n = allReturns.length;
+    const matrix = Array.from({length:n}, () => Array(n).fill(0));
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j <= i; j++) {
+        const ri = allReturns[i], rj = allReturns[j];
+        const meanI = ri.reduce((a,b) => a+b, 0) / ri.length;
+        const meanJ = rj.reduce((a,b) => a+b, 0) / rj.length;
+        const len = Math.min(ri.length, rj.length);
+        let cov = 0;
+        for (let k = 0; k < len; k++) cov += (ri[k] - meanI) * (rj[k] - meanJ);
+        cov = (cov / (len - 1)) * 252;
+        matrix[i][j] = cov;
+        matrix[j][i] = cov;
+      }
+    }
+    return matrix;
+  }
+  
+  function calcCorrelation(allReturns) {
+    const n = allReturns.length;
+    const matrix = Array.from({length:n}, () => Array(n).fill(0));
+    const vols = allReturns.map(r => calcVolatility(r));
+    const cov = calcCovMatrix(allReturns);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (vols[i] > 0 && vols[j] > 0) {
+          matrix[i][j] = cov[i][j] / (vols[i] * vols[j]);
+        } else {
+          matrix[i][j] = (i === j) ? 1 : 0;
+        }
+      }
+    }
+    return matrix;
+  }
+  
+  function computeAllMetrics(data) {
+    const metrics = [];
+    const allReturns = [];
+    const dates = data.fullDates || data.dates;
+    
+    data.plans.forEach(plan => {
+      const nav = plan.fullData || plan.data;
+      if (!nav || nav.length < 10) { allReturns.push([]); return; }
+      
+      const returns = calcLogReturns(nav);
+      allReturns.push(returns);
+      
+      const cagr = calcCAGR(nav, dates);
+      const vol = calcVolatility(returns);
+      const mdd = calcMaxDrawdown(nav);
+      const cvar = calcCVaR95(returns);
+      const sharpe = calcSharpe(cagr, vol);
+      const score = calcScore(cagr, vol, mdd, sharpe);
+      const isMixable = MIXABLE_PLANS.includes(plan.key);
+      
+      metrics.push({
+        name: plan.key, color: plan.color,
+        cagr, vol, mdd, cvar, sharpe, score,
+        isMixable, isLock100: LOCK_100_PLANS.includes(plan.key),
+        nav, returns
+      });
+    });
+    
+    correlationMatrix = calcCorrelation(allReturns);
+    covarianceMatrix = calcCovMatrix(allReturns);
+    return metrics;
+  }
+  
+  // ══════════════════════════════════════════
+  // PHASE 2: AI RECOMMENDATION ENGINE
+  // ══════════════════════════════════════════
+  
+  // 2A. Glide Path — equity % by age
+  function getEquityTarget(age) {
+    if (age <= 35) return 0.85;
+    if (age <= 40) return 0.75;
+    if (age <= 45) return 0.65;
+    if (age <= 50) return 0.55;
+    if (age <= 55) return 0.40;
+    return 0.25;
+  }
+  
+  // 2B. Risk Parity Weights (for mixable plans only)
+  function riskParityWeights(indices, covMat) {
+    const n = indices.length;
+    if (n === 0) return [];
+    let w = Array(n).fill(1/n);
+    
+    for (let iter = 0; iter < 500; iter++) {
+      let sigmaP = 0;
+      for (let i = 0; i < n; i++)
+        for (let j = 0; j < n; j++)
+          sigmaP += w[i] * w[j] * covMat[indices[i]][indices[j]];
+      sigmaP = Math.sqrt(Math.max(sigmaP, 1e-12));
+      
+      const rc = Array(n).fill(0);
+      for (let i = 0; i < n; i++) {
+        let sw = 0;
+        for (let j = 0; j < n; j++) sw += covMat[indices[i]][indices[j]] * w[j];
+        rc[i] = w[i] * sw / sigmaP;
+      }
+      
+      const target = sigmaP / n;
+      for (let i = 0; i < n; i++) {
+        if (rc[i] > 1e-12) w[i] *= target / rc[i];
+        else w[i] = 1/n;
+      }
+      const sum = w.reduce((a,b) => a+b, 0);
+      w = w.map(x => Math.max(x/sum, 0));
+    }
+    return w;
+  }
+  
+  // 2C. Momentum-based Black-Litterman Views (Auto)
+  function momentumViews(metrics) {
+    // Use 3-month momentum as views
+    const views = [];
+    metrics.forEach((m, i) => {
+      if (m.nav.length > 63) {
+        const recent = m.nav.slice(-63);
+        const mom = (recent[recent.length-1] / recent[0]) - 1;
+        views.push({ index: i, momentum: mom, annualized: mom * 4 });
+      }
+    });
+    return views;
+  }
+  
+  // 2D. Main Recommendation Logic
+  function generateRecommendation(age, riskTolerance, balance, monthly, style) {
+    if (style === 'tactical') {
+      return generateTacticalRecommendation(age, riskTolerance, balance, monthly);
+    }
+    
+    const equityTarget = getEquityTarget(age);
+    const maxDD = riskTolerance / 100;
+    const yearsToRetire = Math.max(1, 60 - age);
+    
+    // Strategy 1: Best single 100%-lock plan
+    const eligibleLock = planMetrics
+      .filter(m => m.isLock100 && Math.abs(m.mdd) <= maxDD && m.nav.length > 10)
+      .sort((a,b) => b.sharpe - a.sharpe);
+    
+    // Strategy 2: Best mixable portfolio (Risk Parity + Momentum tilt)
+    const eligibleMix = planMetrics
+      .filter(m => m.isMixable && m.nav.length > 10);
+    
+    let mixAllocation = null;
+    let mixMetrics = null;
+    
+    if (eligibleMix.length >= 2) {
+      const mixIndices = eligibleMix.map(m => planMetrics.indexOf(m));
+      let baseWeights = riskParityWeights(mixIndices, covarianceMatrix);
+      
+      // Apply momentum tilt (Black-Litterman lite)
+      const views = momentumViews(planMetrics);
+      const momScores = mixIndices.map(idx => {
+        const v = views.find(vv => vv.index === idx);
+        return v ? v.momentum : 0;
+      });
+      
+      // Tilt: increase weights for positive momentum, decrease for negative
+      const tiltStrength = 0.3;
+      const maxMom = Math.max(...momScores.map(Math.abs), 0.01);
+      let tiltedWeights = baseWeights.map((w, i) => {
+        const tilt = 1 + tiltStrength * (momScores[i] / maxMom);
+        return w * Math.max(tilt, 0.1);
+      });
+      const tiltSum = tiltedWeights.reduce((a,b) => a+b, 0);
+      tiltedWeights = tiltedWeights.map(w => w / tiltSum);
+      
+      // Apply equity/bond target from Glide Path
+      // Classify mixable: equity-like vs bond-like
+      const equityLike = ['แผนหุ้นไทย', 'แผนหุ้นต่างประเทศ', 'แผนกองทุนอสังหาริมทรัพย์ไทย', 'แผนทองคำ'];
+      let equityW = 0, bondW = 0;
+      tiltedWeights.forEach((w, i) => {
+        if (equityLike.includes(eligibleMix[i].name)) equityW += w;
+        else bondW += w;
+      });
+      
+      if (equityW > 0 && bondW > 0) {
+        const eqScale = equityTarget / equityW;
+        const bdScale = (1 - equityTarget) / bondW;
+        tiltedWeights = tiltedWeights.map((w, i) => {
+          if (equityLike.includes(eligibleMix[i].name)) return w * eqScale;
+          return w * bdScale;
+        });
+        const finalSum = tiltedWeights.reduce((a,b) => a+b, 0);
+        tiltedWeights = tiltedWeights.map(w => w / finalSum);
+      }
+      
+      // Filter out very small allocations < 3%
+      tiltedWeights = tiltedWeights.map(w => w < 0.03 ? 0 : w);
+      const cleanSum = tiltedWeights.reduce((a,b) => a+b, 0);
+      if (cleanSum > 0) tiltedWeights = tiltedWeights.map(w => w / cleanSum);
+      
+      // Calculate portfolio metrics
+      let portCAGR = 0, portVol2 = 0;
+      for (let i = 0; i < tiltedWeights.length; i++) {
+        portCAGR += tiltedWeights[i] * eligibleMix[i].cagr;
+        for (let j = 0; j < tiltedWeights.length; j++) {
+          portVol2 += tiltedWeights[i] * tiltedWeights[j] * covarianceMatrix[mixIndices[i]][mixIndices[j]];
+        }
+      }
+      const portVol = Math.sqrt(Math.max(portVol2, 0));
+      const portSharpe = calcSharpe(portCAGR, portVol);
+      
+      // Estimate portfolio MDD (weighted average — approximation)
+      let portMDD = 0;
+      tiltedWeights.forEach((w, i) => portMDD += w * eligibleMix[i].mdd);
+      
+      // CVaR (weighted)
+      let portCVaR = 0;
+      tiltedWeights.forEach((w, i) => portCVaR += w * eligibleMix[i].cvar);
+      
+      mixAllocation = eligibleMix.map((m, i) => ({
+        name: m.name, color: m.color, weight: tiltedWeights[i],
+        cagr: m.cagr, vol: m.vol, mdd: m.mdd
+      })).filter(a => a.weight > 0).sort((a,b) => b.weight - a.weight);
+      
+      mixMetrics = { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: portSharpe, cvar: portCVaR };
+    }
+    
+    // Choose best strategy
+    const bestLock = eligibleLock.length > 0 ? eligibleLock[0] : null;
+    
+    let recommendation;
+    if (mixMetrics && bestLock) {
+      // Compare Sharpe ratios
+      if (mixMetrics.sharpe > bestLock.sharpe * 1.05) {
+        recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'แผนผสม AI Optimized' };
+      } else {
+        recommendation = { type: 'single', plan: bestLock, label: bestLock.name };
+      }
+    } else if (mixMetrics) {
+      recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'แผนผสม AI Optimized' };
+    } else if (bestLock) {
+      recommendation = { type: 'single', plan: bestLock, label: bestLock.name };
+    } else {
+      recommendation = { type: 'single', plan: planMetrics[0], label: 'แผนตราสารหนี้ (Default Safe)' };
+    }
+    
+    // Also generate Model A/B/C for comparison
+    const models = generateThreeModels(age, riskTolerance);
+    recommendation.models = models;
+    recommendation.yearsToRetire = yearsToRetire;
+    
+    return recommendation;
+  }
+  
+  function generateThreeModels(age, riskTolerance) {
+    const models = [];
+    const riskLevels = [
+      { name: 'เชิงรุก', emoji: '🔥', eqTarget: 0.80, maxMDD: 0.40 },
+      { name: 'สมดุล', emoji: '⚖️', eqTarget: 0.55, maxMDD: 0.20 },
+      { name: 'มั่นคง', emoji: '🛡️', eqTarget: 0.30, maxMDD: 0.10 }
+    ];
+    
+    riskLevels.forEach(rl => {
+      const eligible = planMetrics.filter(m => m.isMixable && Math.abs(m.mdd) <= rl.maxMDD && m.nav.length > 10);
+      if (eligible.length < 1) {
+        models.push({ ...rl, cagr: 0, vol: 0, mdd: 0, sharpe: 0 });
+        return;
+      }
+      let cagr = eligible.reduce((a,m) => a + m.cagr, 0) / eligible.length;
+      let vol = eligible.reduce((a,m) => a + m.vol, 0) / eligible.length;
+      let mdd = eligible.reduce((a,m) => a + m.mdd, 0) / eligible.length;
+      let sharpe = calcSharpe(cagr, vol);
+      models.push({ ...rl, cagr, vol, mdd, sharpe });
+    });
+    
+    return models;
+  }
+  
+  // Helper: Relative Strength Index (RSI)
+  function calcRSI(navArray, period = 14) {
+    if (navArray.length <= period) return 50;
+    let gains = 0, losses = 0;
+    for (let i = 0; i < period; i++) {
+      let diff = navArray[i+1] - navArray[i];
+      if (diff >= 0) gains += diff;
+      else losses -= diff;
+    }
+    let avgGain = gains / period;
+    let avgLoss = losses / period;
+    for (let i = period + 1; i < navArray.length; i++) {
+      let diff = navArray[i] - navArray[i-1];
+      let currentGain = diff >= 0 ? diff : 0;
+      let currentLoss = diff < 0 ? -diff : 0;
+      avgGain = ((avgGain * (period - 1)) + currentGain) / period;
+      avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;
+    }
+    if (avgLoss === 0) return 100;
+    return 100 - (100 / (1 + (avgGain / avgLoss)));
+  }
+
+  // 2E. Tactical Momentum Recommendation
+  function generateTacticalRecommendation(age, riskTolerance, balance, monthly) {
+    const yearsToRetire = Math.max(1, 60 - age);
+    const LOOKBACK = 42; // ~2 months (trading days)
+    
+    const momentumScores = [];
+    planMetrics.forEach((m, i) => {
+      if (m.nav.length > LOOKBACK) {
+        const recent = m.nav.slice(-LOOKBACK);
+        let mom = (recent[recent.length-1] / recent[0]) - 1;
+        
+        const rsi = calcRSI(m.nav, 14);
+        let isOB = false;
+        if (rsi > 70 && mom > 0) {
+          isOB = true;
+          let penalty = rsi > 80 ? 0.7 : 0.4;
+          mom = mom * (1 - penalty);
+        }
+        
+        momentumScores.push({ plan: m, momentum: mom, rawMomentum: (recent[recent.length-1] / recent[0]) - 1, rsi: rsi, isOB: isOB, index: i });
+      }
+    });
+    
+    const mixable = momentumScores.filter(m => m.plan.isMixable);
+    const lock100 = momentumScores.filter(m => m.plan.isLock100);
+    
+    mixable.sort((a,b) => b.momentum - a.momentum);
+    lock100.sort((a,b) => b.momentum - a.momentum);
+    
+    const bestMixable = mixable[0];
+    const bestLock = lock100[0];
+    
+    let isRiskOff = false;
+    let bestScore = Math.max(bestMixable ? bestMixable.momentum : -999, bestLock ? bestLock.momentum : -999);
+    
+    // Absolute Momentum Rule (If market is negative/flat over 2 months, go to safety)
+    if (bestScore <= 0.002) isRiskOff = true;
+    
+    let recommendation;
+    if (isRiskOff) {
+      const safePlan = planMetrics.find(p => p.name.includes("เงินฝาก")) || planMetrics.find(p => p.name.includes("ตราสารหนี้")) || planMetrics[0];
+      recommendation = { 
+        type: 'single', plan: safePlan, label: safePlan.name, 
+        isTactical: true, tacticalMsg: "⚠️ RISK-OFF: ตลาดช่วง 2 เดือนซบเซา/ติดลบ แนะนำพักเงินในสินทรัพย์ปลอดภัย" 
+      };
+    } else {
+      if (bestLock && bestLock.momentum > (bestMixable ? bestMixable.momentum : -999)) {
+        const obText = bestLock.isOB ? `<br><span style="color:var(--red);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-fire"></i> <b>ระวัง (RSI=${bestLock.rsi.toFixed(1)}):</b> แผนนี้ขึ้นแรงจนตึงตัว (Overbought) แนะนำให้ทยอยซื้อ/แบ่งไม้เข้า</span>` : `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> ความร้อนแรง (RSI) ปัจจุบัน: ${bestLock.rsi.toFixed(1)}/100</span>`;
+        recommendation = { 
+          type: 'single', plan: bestLock.plan, label: bestLock.plan.name, 
+          isTactical: true, tacticalMsg: `🚀 RISK-ON: แรงซื้อ (Momentum) ${(bestLock.rawMomentum*100).toFixed(2)}%${obText}`
+        };
+      } else {
+        const topPositive = mixable.filter(m => m.momentum > 0).slice(0, 2);
+        if (topPositive.length === 1) {
+          const obText = topPositive[0].isOB ? `<br><span style="color:var(--red);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-fire"></i> <b>ระวัง (RSI=${topPositive[0].rsi.toFixed(1)}):</b> ราคาวิ่งขึ้นแรงมาก (Overbought) ทยอยเข้าหรือรอราคาย่อตัว</span>` : `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> ความร้อนแรง (RSI) ปัจจุบัน: ${topPositive[0].rsi.toFixed(1)}/100</span>`;
+          recommendation = {
+            type: 'mix',
+            allocation: [{ name: topPositive[0].plan.name, color: topPositive[0].plan.color, weight: 1.0, cagr: topPositive[0].plan.cagr, vol: topPositive[0].plan.vol, mdd: topPositive[0].plan.mdd }],
+            metrics: topPositive[0].plan,
+            label: topPositive[0].plan.name,
+            isTactical: true, tacticalMsg: `🚀 RISK-ON: แรงซื้อโดดเด่นสุด (${(topPositive[0].rawMomentum*100).toFixed(2)}%)${obText}`
+          };
+        } else {
+          const sumMom = topPositive.reduce((a,b) => a + b.momentum, 0);
+          const alloc = topPositive.map(m => ({
+            name: m.plan.name, color: m.plan.color, weight: m.momentum / sumMom, cagr: m.plan.cagr, vol: m.plan.vol, mdd: m.plan.mdd
+          }));
+          let portCAGR = 0, portMDD = 0, portVol = 0, portCVaR = 0;
+          alloc.forEach(a => { portCAGR += a.weight * a.cagr; portMDD += a.weight * a.mdd; portVol += a.weight * a.vol; portCVaR += a.weight * (a.cvar||0); });
+          
+          const hasOB = topPositive.some(m => m.isOB);
+          // Show RSI of the highest momentum asset in the mix
+          const bestMixedRsi = topPositive[0].rsi.toFixed(1);
+          const obText = hasOB ? `<br><span style="color:var(--red);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-fire"></i> <b>ระวัง (RSI=${bestMixedRsi}):</b> สินทรัพย์พุ่งตึงตัว (Overbought) แนะนำให้ทยอยแบ่งไม้เข้า</span>` : `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> ความร้อนแรง (RSI) เฉลี่ย: ${bestMixedRsi}/100</span>`;
+          recommendation = {
+            type: 'mix', allocation: alloc,
+            metrics: { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: calcSharpe(portCAGR, portVol), cvar: portCVaR },
+            label: "แผนผสม Tactical Momentum",
+            isTactical: true, tacticalMsg: `🚀 RISK-ON: กระจายน้ำหนักตามความแรงเทรนด์ 2 เดือนล่าสุด${obText}`
+          };
+        }
+      }
+    }
+    
+    recommendation.models = generateThreeModels(age, riskTolerance);
+    recommendation.yearsToRetire = yearsToRetire;
+    return recommendation;
+  }
+  
+  // ══════════════════════════════════════════
+  // PHASE 3: MONTE CARLO SIMULATION
+  // ══════════════════════════════════════════
+  
+  function monteCarloSim(balance, monthly, years, mu, sigma, numSims = 10000) {
+    const paths = [];
+    for (let s = 0; s < numSims; s++) {
+      let bal = balance;
+      const path = [bal];
+      for (let y = 0; y < years; y++) {
+        // Box-Muller
+        const u1 = Math.random(), u2 = Math.random();
+        const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        const r = Math.exp((mu - sigma*sigma/2) + sigma * z);
+        bal = bal * r + (monthly * 12);
+        path.push(Math.max(bal, 0));
+      }
+      paths.push(path);
+    }
+    
+    // Extract percentiles per year
+    const result = { years: years + 1, p10: [], p25: [], p50: [], p75: [], p90: [] };
+    for (let y = 0; y <= years; y++) {
+      const vals = paths.map(p => p[y]).sort((a,b) => a-b);
+      result.p10.push(vals[Math.floor(numSims * 0.10)]);
+      result.p25.push(vals[Math.floor(numSims * 0.25)]);
+      result.p50.push(vals[Math.floor(numSims * 0.50)]);
+      result.p75.push(vals[Math.floor(numSims * 0.75)]);
+      result.p90.push(vals[Math.floor(numSims * 0.90)]);
+    }
+    
+    result.successRate = paths.filter(p => p[p.length-1] > balance).length / numSims;
+    return result;
+  }
+  
+  // ══════════════════════════════════════════
+  // PHASE 4: RENDERING
+  // ══════════════════════════════════════════
+  
+  function sortTable(col) {
+    if (currentSort.col === col) {
+      currentSort.asc = !currentSort.asc;
+    } else {
+      currentSort.col = col;
+      currentSort.asc = (col === 'name') ? true : false;
+    }
+    
+    document.querySelectorAll('th i.fa-solid').forEach(el => {
+      el.className = 'fa-solid fa-sort';
+      el.style.opacity = '0.3';
+    });
+    
+    const icon = document.getElementById('sort-' + col);
+    if (icon) {
+      icon.className = currentSort.asc ? 'fa-solid fa-sort-up' : 'fa-solid fa-sort-down';
+      icon.style.opacity = '1';
+    }
+    
+    renderMetricsTable();
+  }
+  
+  function renderMetricsTable() {
+    const tbody = document.getElementById('metricsBody');
+    const sorted = [...planMetrics].sort((a,b) => {
+      let valA = a[currentSort.col];
+      let valB = b[currentSort.col];
+      
+      if (currentSort.col === 'name') {
+        return currentSort.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      }
+      
+      if (valA < valB) return currentSort.asc ? -1 : 1;
+      if (valA > valB) return currentSort.asc ? 1 : -1;
+      return 0;
+    });
+    
+    tbody.innerHTML = sorted.map(m => {
+      const tagClass = m.isMixable ? 'tag-mix' : 'tag-lock';
+      const tagText = m.isMixable ? 'ผสมได้' : '100%';
+      const cagrClass = m.cagr >= 0 ? 'positive' : 'negative';
+      const mddClass = 'negative';
+      const scoreColor = m.score >= 70 ? 'var(--green)' : m.score >= 40 ? 'var(--yellow)' : 'var(--red)';
+      
+      return `<tr>
+        <td><span class="plan-dot" style="background:${m.color}"></span>${m.name}</td>
+        <td><span class="tag ${tagClass}">${tagText}</span></td>
+        <td class="${cagrClass}">${(m.cagr*100).toFixed(2)}%</td>
+        <td>${(m.vol*100).toFixed(2)}%</td>
+        <td>${m.sharpe.toFixed(3)}</td>
+        <td class="${mddClass}">${(m.mdd*100).toFixed(2)}%</td>
+        <td class="${mddClass}">${(m.cvar*100).toFixed(2)}%</td>
+        <td style="color:${scoreColor};font-weight:700">${m.score.toFixed(1)}</td>
+      </tr>`;
+    }).join('');
+  }
+  
+  function renderRecommendation(rec, balance, monthly) {
+    const m = rec.type === 'mix' ? rec.metrics : rec.plan;
+    
+    const titleEl = document.getElementById('recTitle');
+    if (rec.isTactical) {
+      titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-bolt"></i> โหมดจับจังหวะตลาด (Tactical)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>`;
+    } else {
+      titleEl.innerHTML = `<div style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>`;
+    }
+    
+    document.getElementById('recPlanName').innerText = rec.label;
+    document.getElementById('recCagr').innerText = (m.cagr * 100).toFixed(2);
+    document.getElementById('recMdd').innerText = (m.mdd * 100).toFixed(2);
+    document.getElementById('recSharpe').innerText = m.sharpe.toFixed(3);
+    document.getElementById('recCvar').innerText = ((m.cvar || 0) * 100).toFixed(2);
+    document.getElementById('statCurrent').innerText = fmt(balance) + ' ฿';
+    
+    // Allocation bar
+    const bar = document.getElementById('allocBar');
+    const breakdown = document.getElementById('allocBreakdown');
+    
+    if (rec.type === 'mix' && rec.allocation) {
+      bar.innerHTML = rec.allocation.map(a => 
+        `<div class="alloc-segment" style="width:${(a.weight*100).toFixed(1)}%;background:${a.color}" title="${a.name}: ${(a.weight*100).toFixed(1)}%">${(a.weight*100).toFixed(0)}%</div>`
+      ).join('');
+      
+      breakdown.innerHTML = rec.allocation.map(a => `
+        <div class="alloc-row">
+          <div class="plan-info">
+            <span class="plan-dot" style="background:${a.color}"></span>
+            <span>${a.name}</span>
+          </div>
+          <div class="pct" style="color:${a.color}">${(a.weight*100).toFixed(1)}%</div>
+        </div>
+      `).join('');
+    } else {
+      bar.innerHTML = `<div class="alloc-segment" style="width:100%;background:${m.color || 'var(--primary)'}">${rec.label} 100%</div>`;
+      breakdown.innerHTML = `<div class="alloc-row"><div class="plan-info"><span>${rec.label}</span></div><div class="pct">100%</div></div>`;
+    }
+    
+    // Models comparison
+    const mc = document.getElementById('modelComparison');
+    if (rec.models) {
+      mc.innerHTML = rec.models.map(mod => `
+        <div class="stat-box" style="text-align:left">
+          <div style="font-size:1.2rem;margin-bottom:.3rem">${mod.emoji}</div>
+          <div style="font-weight:700;font-size:.95rem;margin-bottom:.5rem">${mod.name}</div>
+          <div style="font-size:.75rem;color:var(--muted)">
+            <div>CAGR: <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(2)}%</span></div>
+            <div>Vol: ${(mod.vol*100).toFixed(2)}%</div>
+            <div>MDD: <span class="negative">${(mod.mdd*100).toFixed(2)}%</span></div>
+            <div>Sharpe: ${mod.sharpe.toFixed(3)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Monte Carlo projection for median estimate
+    const years = rec.yearsToRetire;
+    let medianFV;
+    if (Math.abs(m.cagr) < 0.0001) {
+      medianFV = balance + (monthly * 12 * years);
+    } else {
+      medianFV = balance * Math.pow(1 + m.cagr, years) + monthly * 12 * ((Math.pow(1 + m.cagr, years) - 1) / m.cagr);
+    }
+    document.getElementById('statFuture').innerText = fmtM(medianFV) + ' ฿';
+  }
+  
+  function renderMonteCarlo(mcResult, age) {
+    const canvas = document.getElementById('fanChart');
+    const ctx = canvas.getContext('2d');
+    const wrap = document.getElementById('fanChartWrap');
+    const W = wrap.clientWidth || 800, H = 280;
+    canvas.width = W * 2; canvas.height = H * 2;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.scale(2, 2);
+    
+    const years = mcResult.years;
+    const allVals = [...mcResult.p10, ...mcResult.p90];
+    const maxVal = Math.max(...allVals);
+    const minVal = Math.min(...allVals);
+    const padL = 70, padR = 20, padT = 20, padB = 35;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+    
+    const xScale = (i) => padL + (i / (years - 1)) * chartW;
+    const yScale = (v) => padT + chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
+    
+    // Clear
+    ctx.clearRect(0, 0, W, H);
+    
+    // Fill bands
+    const bands = [
+      { top: 'p90', bot: 'p75', color: 'rgba(139,92,246,0.08)' },
+      { top: 'p75', bot: 'p50', color: 'rgba(59,130,246,0.12)' },
+      { top: 'p50', bot: 'p25', color: 'rgba(16,185,129,0.12)' },
+      { top: 'p25', bot: 'p10', color: 'rgba(245,158,11,0.08)' }
+    ];
+    
+    bands.forEach(b => {
+      ctx.beginPath();
+      for (let i = 0; i < years; i++) ctx.lineTo(xScale(i), yScale(mcResult[b.top][i]));
+      for (let i = years-1; i >= 0; i--) ctx.lineTo(xScale(i), yScale(mcResult[b.bot][i]));
+      ctx.closePath();
+      ctx.fillStyle = b.color;
+      ctx.fill();
+    });
+    
+    // Lines
+    const lines = [
+      { key: 'p90', color: '#8b5cf6', dash: [4,4], width: 1 },
+      { key: 'p75', color: '#3b82f6', dash: [4,4], width: 1 },
+      { key: 'p50', color: '#10b981', dash: [], width: 2.5 },
+      { key: 'p25', color: '#f59e0b', dash: [4,4], width: 1 },
+      { key: 'p10', color: '#ef4444', dash: [4,4], width: 1 }
+    ];
+    
+    lines.forEach(l => {
+      ctx.beginPath();
+      ctx.setLineDash(l.dash);
+      ctx.lineWidth = l.width;
+      ctx.strokeStyle = l.color;
+      for (let i = 0; i < years; i++) {
+        if (i === 0) ctx.moveTo(xScale(i), yScale(mcResult[l.key][i]));
+        else ctx.lineTo(xScale(i), yScale(mcResult[l.key][i]));
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    
+    // Y axis labels
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Outfit';
+    ctx.textAlign = 'right';
+    const yTicks = 5;
+    for (let i = 0; i <= yTicks; i++) {
+      const val = minVal + (maxVal - minVal) * (i / yTicks);
+      const y = yScale(val);
+      ctx.fillText(fmtM(val), padL - 8, y + 3);
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(padL, y);
+      ctx.lineTo(W - padR, y);
+      ctx.stroke();
+    }
+    
+    // X axis labels (age)
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#64748b';
+    const step = Math.max(1, Math.floor(years / 8));
+    for (let i = 0; i < years; i += step) {
+      ctx.fillText('อายุ ' + (age + i), xScale(i), H - 8);
+    }
+    ctx.fillText('อายุ 60', xScale(years - 1), H - 8);
+    
+    // Legend
+    ctx.font = '9px Prompt';
+    const legendItems = [
+      { label: 'P90 (ดีมาก)', color: '#8b5cf6' },
+      { label: 'P50 (กลาง)', color: '#10b981' },
+      { label: 'P10 (ร้ายสุด)', color: '#ef4444' }
+    ];
+    let lx = padL;
+    legendItems.forEach(li => {
+      ctx.fillStyle = li.color;
+      ctx.fillRect(lx, 6, 12, 3);
+      ctx.fillStyle = '#94a3b8';
+      ctx.textAlign = 'left';
+      ctx.fillText(li.label, lx + 16, 11);
+      lx += 90;
+    });
+    
+    // Stats
+    const last = years - 1;
+    document.getElementById('mcP10').innerText = fmtM(mcResult.p10[last]) + ' ฿';
+    document.getElementById('mcP25').innerText = fmtM(mcResult.p25[last]) + ' ฿';
+    document.getElementById('mcP50').innerText = fmtM(mcResult.p50[last]) + ' ฿';
+    document.getElementById('mcP75').innerText = fmtM(mcResult.p75[last]) + ' ฿';
+    document.getElementById('mcP90').innerText = fmtM(mcResult.p90[last]) + ' ฿';
+    document.getElementById('mcSuccess').innerText = (mcResult.successRate * 100).toFixed(1) + '%';
+  }
+  
+  function renderHeatmap() {
+    const container = document.getElementById('heatmapContainer');
+    const n = planMetrics.length;
+    if (n === 0) return;
+    
+    // Short names
+    const shortNames = planMetrics.map(m => {
+      let s = m.name.replace('แผน', '').replace('กองทุน', '').replace('การลงทุน', '').trim();
+      if (s.length > 12) s = s.substring(0, 12) + '…';
+      return s;
+    });
+    
+    const size = n + 1;
+    let html = `<div class="heatmap-grid" style="grid-template-columns: 80px repeat(${n}, 1fr); max-width: ${80 + n * 42}px">`;
+    
+    // Header row
+    html += `<div></div>`;
+    for (let j = 0; j < n; j++) {
+      html += `<div class="heatmap-label" style="writing-mode:vertical-rl;transform:rotate(180deg);height:80px;justify-content:flex-end;font-size:.55rem">${shortNames[j]}</div>`;
+    }
+    
+    // Data rows
+    for (let i = 0; i < n; i++) {
+      html += `<div class="heatmap-label" style="font-size:.6rem;text-align:right;padding-right:4px">${shortNames[i]}</div>`;
+      for (let j = 0; j < n; j++) {
+        const val = correlationMatrix[i][j];
+        const bg = corrColor(val);
+        const textColor = Math.abs(val) > 0.5 ? '#fff' : '#94a3b8';
+        html += `<div class="heatmap-cell" style="background:${bg};color:${textColor}" title="${planMetrics[i].name} ↔ ${planMetrics[j].name}: ${val.toFixed(3)}">${val.toFixed(2)}</div>`;
+      }
+    }
+    
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+  
+  function corrColor(val) {
+    // -1 (blue) → 0 (dark) → +1 (red)
+    if (val >= 0) {
+      const r = Math.round(50 + 189 * val);
+      const g = Math.round(30 + 38 * (1 - val));
+      const b = Math.round(30 + 38 * (1 - val));
+      return `rgb(${r},${g},${b})`;
+    } else {
+      const absV = Math.abs(val);
+      const r = Math.round(30 + 29 * (1 - absV));
+      const g = Math.round(50 + 80 * absV);
+      const b = Math.round(80 + 166 * absV);
+      return `rgb(${r},${g},${b})`;
+    }
+  }
+  
+  // ══════════════════════════════════════════
+  // TAB SWITCHING
+  // ══════════════════════════════════════════
+  function switchMainTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    
+    const tabs = document.querySelectorAll('.tab');
+    const names = ['input', 'metrics', 'recommend', 'montecarlo', 'correlation'];
+    const idx = names.indexOf(tabId);
+    if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
+  }
+  
+  // ══════════════════════════════════════════
+  // MAIN ANALYSIS FLOW
+  // ══════════════════════════════════════════
+  
+  async function loadGPFData() {
+    try {
+      document.getElementById('currentAge').value = 38;
+      const res = await fetch(GAS_URL + "?action=data&t=" + Date.now() + "&deviceId=" + getDeviceId());
+      allData = await res.json();
+      
+      if (allData.error === "Unauthorized_Device") {
+        const pin = prompt("⚠️ อุปกรณ์นี้ยังไม่เชื่อมต่อฐานข้อมูล กบข.\n\nกรุณากรอกรหัส PIN (6969) เพื่อยืนยันตัวตนและดึงข้อมูลพอร์ต/ยอดเงินอัตโนมัติ:");
+        if (pin) {
+          const regRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) });
+          const regData = await regRes.json();
+          if (regData.success) {
+            alert("✅ เชื่อมต่อสำเร็จ! กำลังโหลดข้อมูล...");
+            return loadGPFData();
+          } else {
+            alert("❌ รหัส PIN ไม่ถูกต้อง");
+          }
+        }
+        document.getElementById('currentBalance').removeAttribute('readonly');
+        document.getElementById('currentBalance').placeholder = "กรอกยอดเงิน กบข. ปัจจุบัน";
+        return;
+      }
+      
+      if (allData && allData.myPort) {
+        // Calculate balance from units × NAV
+        let bal = 0;
+        if (allData.myPort.units && allData.plans) {
+          allData.myPort.units.forEach(u => {
+            const p = allData.plans.find(x => x.label === u.plan || x.key === u.plan);
+            if (p) {
+              const nav = p.fullData || p.data;
+              if (nav && nav.length > 0) bal += u.units * nav[nav.length - 1];
+            }
+          });
+        }
+        if (bal > 0) {
+          document.getElementById('currentBalance').value = Math.floor(bal);
+          document.getElementById('currentBalance').removeAttribute('readonly');
+        }
+        
+        // Monthly contribution
+        if (allData.myPort.contribs && allData.myPort.contribs.length > 0) {
+          const last = allData.myPort.contribs[allData.myPort.contribs.length - 1];
+          if (last && last.amount) document.getElementById('monthlyContribution').value = last.amount;
+        } else {
+          document.getElementById('monthlyContribution').value = 5000;
+        }
+      }
+    } catch (e) {
+      console.error("Error loading GPF data:", e);
+      document.getElementById('currentBalance').removeAttribute('readonly');
+      document.getElementById('currentBalance').placeholder = "กรอกยอดเงิน กบข. ปัจจุบัน";
+    }
+  }
+  
+  async function runFullAnalysis() {
+    const age = parseInt(document.getElementById('currentAge').value);
+    const balance = parseFloat(document.getElementById('currentBalance').value);
+    const monthly = parseFloat(document.getElementById('monthlyContribution').value);
+    const risk = parseInt(document.getElementById('riskTolerance').value);
+    const style = document.getElementById('investmentStyle').value;
+    
+    if (isNaN(age) || isNaN(balance) || isNaN(monthly) || isNaN(risk)) return;
+    if (!allData || !allData.plans) { alert('กำลังโหลดข้อมูล กรุณารอสักครู่...'); return; }
+    
+    // Show loading
+    const loading = document.getElementById('loading');
+    const progress = document.getElementById('progressFill');
+    const loadText = document.getElementById('loadingText');
+    loading.style.display = 'flex';
+    
+    await delay(100);
+    loadText.innerText = 'PHASE 1: คำนวณ Risk Metrics ทุกแผน...';
+    progress.style.width = '15%';
+    await delay(300);
+    
+    // Phase 1
+    planMetrics = computeAllMetrics(allData);
+    progress.style.width = '35%';
+    loadText.innerText = 'PHASE 2: AI Optimization...';
+    await delay(400);
+    
+    // Phase 2
+    analysisResult = generateRecommendation(age, risk, balance, monthly, style);
+    progress.style.width = '55%';
+    loadText.innerText = 'PHASE 3: Monte Carlo Simulation (10,000 paths)...';
+    await delay(300);
+    
+    // Phase 3
+    const m = analysisResult.type === 'mix' ? analysisResult.metrics : analysisResult.plan;
+    const mcResult = monteCarloSim(balance, monthly, analysisResult.yearsToRetire, m.cagr, m.vol, 10000);
+    progress.style.width = '80%';
+    loadText.innerText = 'PHASE 4: สร้างกราฟและ Heatmap...';
+    await delay(300);
+    
+    // Phase 4: Render
+    renderMetricsTable();
+    renderRecommendation(analysisResult, balance, monthly);
+    renderMonteCarlo(mcResult, age);
+    renderHeatmap();
+    
+    progress.style.width = '100%';
+    loadText.innerText = 'COMPLETE ✓';
+    await delay(500);
+    loading.style.display = 'none';
+    
+    // Switch to Metrics tab
+    switchMainTab('metrics');
+  }
+  
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+  
+  // ── Init ──
+  window.onload = function() {
+    loadGPFData();
+  };
+  </script>
+</body>
+</html>

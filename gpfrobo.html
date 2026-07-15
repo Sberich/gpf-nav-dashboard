@@ -224,7 +224,7 @@
     <!-- ═══════ TAB 1: USER INPUT ═══════ -->
     <div class="tab-content active" id="tab-input">
       <div class="grid-2">
-        <div class="glass animate-in">
+        <div class="glass animate-in" style="z-index: 10; position: relative;">
           <div class="section-title"><i class="fa-solid fa-user-gear" style="color:var(--primary)"></i> ข้อมูลส่วนตัว</div>
           <form id="roboForm" onsubmit="event.preventDefault(); runFullAnalysis();">
             <div class="grid-2-mobile" style="margin-bottom:1.5rem">
@@ -315,7 +315,7 @@
     <!-- ═══════ TAB 2: RISK METRICS ═══════ -->
     <div class="tab-content" id="tab-metrics">
       <div class="glass animate-in">
-        <div class="section-title" style="font-size:clamp(0.85rem, 4vw, 1.3rem)"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge">LIVE DATA</span></div>
+        <div class="section-title" style="white-space:normal; line-height:1.4; font-size:clamp(0.85rem, 3.5vw, 1.3rem)"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge" style="display:inline-block">LIVE DATA</span></div>
         <div class="table-wrap">
           <table class="data-table" id="metricsTable">
             <thead>

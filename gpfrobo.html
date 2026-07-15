@@ -66,6 +66,7 @@
     
     /* Section Headers */
     .section-title{font-family:'Outfit';font-size:1.3rem;font-weight:600;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem;color:#fff}
+    @media(max-width:768px){.section-title{font-size:1.05rem;white-space:nowrap;letter-spacing:-0.2px}}
     .section-title i{font-size:1.1rem}
     .section-title .badge{background:linear-gradient(135deg,var(--primary),var(--accent));padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:500;letter-spacing:.5px}
     
@@ -81,6 +82,7 @@
     .btn{border:none;padding:.85rem 1.5rem;font-size:1rem;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;font-family:'Prompt';transition:all .3s;display:inline-flex;align-items:center;gap:.5rem}
     .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;width:100%;justify-content:center;box-shadow:0 4px 20px var(--primary-g)}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px var(--primary-g)}
+    @media(max-width:768px){.btn-primary{font-size:0.9rem;padding:0.75rem 1rem;white-space:nowrap}}
     .btn-sm{padding:.5rem 1rem;font-size:.85rem}
     
     /* Tables */
@@ -100,6 +102,7 @@
     .result-card::before{content:'';position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(139,92,246,0.1),transparent 60%);animation:spin 12s linear infinite;z-index:0}
     .result-card>*{position:relative;z-index:1}
     .plan-name{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#34d399,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    @media(max-width:768px){.plan-name{font-size:1.3rem}}
     
     /* Stat Boxes */
     .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;text-align:center;border:1px solid var(--border)}
@@ -240,7 +243,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label><i class="fa-solid fa-temperature-half"></i> ระดับความเสี่ยงที่รับได้ (Max Drawdown)</label>
+              <label style="white-space:nowrap"><i class="fa-solid fa-temperature-half"></i> ระดับความเสี่ยงที่รับได้ (Max Drawdown)</label>
               <select id="riskTolerance" required>
                 <option value="" disabled selected>เลือกระดับความเสี่ยง</option>
                 <option value="5">🟢 ต่ำมาก (รับขาดทุนได้ ≤ 5%)</option>
@@ -285,7 +288,7 @@
     <!-- ═══════ TAB 2: RISK METRICS ═══════ -->
     <div class="tab-content" id="tab-metrics">
       <div class="glass animate-in">
-        <div class="section-title"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> ตาราง Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge">LIVE DATA</span></div>
+        <div class="section-title"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge">LIVE DATA</span></div>
         <div class="table-wrap">
           <table class="data-table" id="metricsTable">
             <thead>
@@ -367,7 +370,7 @@
     <!-- ═══════ TAB 4: MONTE CARLO ═══════ -->
     <div class="tab-content" id="tab-montecarlo">
       <div class="glass animate-in">
-        <div class="section-title"><i class="fa-solid fa-chart-area" style="color:var(--pink)"></i> Monte Carlo Simulation <span class="badge">10,000 PATHS</span></div>
+        <div class="section-title"><i class="fa-solid fa-chart-area" style="color:var(--pink)"></i> Monte Carlo <span class="badge">10,000 PATHS</span></div>
         <div class="canvas-wrap" id="fanChartWrap">
           <canvas id="fanChart"></canvas>
         </div>

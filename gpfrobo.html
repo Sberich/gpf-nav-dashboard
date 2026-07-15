@@ -410,39 +410,51 @@
   }
   
   function calcLogReturns(navArray) {
-    const returns = [];
+    const returns = Array(navArray.length).fill(null);
     for (let i = 1; i < navArray.length; i++) {
-      if (navArray[i] > 0 && navArray[i-1] > 0) returns.push(Math.log(navArray[i] / navArray[i-1]));
+      if (navArray[i] > 0 && navArray[i-1] > 0) {
+        returns[i] = Math.log(navArray[i] / navArray[i-1]);
+      }
     }
     return returns;
   }
   function calcCAGR(navArray, datesArray) {
-    if (!navArray || navArray.length < 2) return 0;
-    const start = navArray[0], end = navArray[navArray.length-1];
-    if (start <= 0) return 0;
-    const d0 = new Date(datesArray[0]), d1 = new Date(datesArray[datesArray.length-1]);
+    let firstIdx = -1, lastIdx = -1;
+    for (let i = 0; i < navArray.length; i++) {
+      if (navArray[i] > 0) {
+        if (firstIdx === -1) firstIdx = i;
+        lastIdx = i;
+      }
+    }
+    if (firstIdx === -1 || firstIdx === lastIdx) return 0;
+    const start = navArray[firstIdx], end = navArray[lastIdx];
+    const d0 = new Date(datesArray[firstIdx]), d1 = new Date(datesArray[lastIdx]);
     const years = (d1 - d0) / (365.25 * 24 * 3600000);
     if (years <= 0) return 0;
     return Math.pow(end / start, 1 / years) - 1;
   }
   function calcVolatility(returns) {
-    if (returns.length < 2) return 0;
-    const mean = returns.reduce((a,b) => a+b, 0) / returns.length;
-    const variance = returns.reduce((a,r) => a + (r-mean)**2, 0) / (returns.length - 1);
+    const valid = returns.filter(r => r !== null);
+    if (valid.length < 2) return 0;
+    const mean = valid.reduce((a,b) => a+b, 0) / valid.length;
+    const variance = valid.reduce((a,r) => a + (r-mean)**2, 0) / (valid.length - 1);
     return Math.sqrt(variance) * Math.sqrt(252);
   }
   function calcMaxDrawdown(navArray) {
-    let peak = navArray[0], maxDD = 0;
-    for (let i = 1; i < navArray.length; i++) {
-      if (navArray[i] > peak) peak = navArray[i];
-      const dd = (peak - navArray[i]) / peak;
+    const valid = navArray.filter(n => n > 0);
+    if (valid.length < 2) return 0;
+    let peak = valid[0], maxDD = 0;
+    for (let i = 1; i < valid.length; i++) {
+      if (valid[i] > peak) peak = valid[i];
+      const dd = (peak - valid[i]) / peak;
       if (dd > maxDD) maxDD = dd;
     }
     return -maxDD;
   }
   function calcCVaR95(returns) {
-    if (returns.length < 20) return 0;
-    const sorted = [...returns].sort((a,b) => a-b);
+    const valid = returns.filter(r => r !== null);
+    if (valid.length < 20) return 0;
+    const sorted = valid.sort((a,b) => a-b);
     const cutoff = Math.floor(sorted.length * 0.05);
     if (cutoff === 0) return sorted[0] * Math.sqrt(252);
     let sum = 0;
@@ -465,12 +477,30 @@
     for (let i = 0; i < n; i++) {
       for (let j = 0; j <= i; j++) {
         const ri = allReturns[i], rj = allReturns[j];
-        const meanI = ri.reduce((a,b) => a+b, 0) / ri.length;
-        const meanJ = rj.reduce((a,b) => a+b, 0) / rj.length;
         const len = Math.min(ri.length, rj.length);
-        let cov = 0;
-        for (let k = 0; k < len; k++) cov += (ri[k] - meanI) * (rj[k] - meanJ);
-        cov = (cov / (len - 1)) * 252;
+        let cov = 0, count = 0, sumI = 0, sumJ = 0;
+        
+        for (let k = 0; k < len; k++) {
+          if (ri[k] !== null && rj[k] !== null) {
+            sumI += ri[k];
+            sumJ += rj[k];
+            count++;
+          }
+        }
+        
+        if (count > 1) {
+          const meanI = sumI / count;
+          const meanJ = sumJ / count;
+          for (let k = 0; k < len; k++) {
+            if (ri[k] !== null && rj[k] !== null) {
+              cov += (ri[k] - meanI) * (rj[k] - meanJ);
+            }
+          }
+          cov = (cov / (count - 1)) * 252;
+        } else {
+          cov = 0;
+        }
+        
         matrix[i][j] = cov;
         matrix[j][i] = cov;
       }
@@ -511,12 +541,13 @@
       const cvar = calcCVaR95(returns);
       
       // Assumed returns for new plans or error cases
-      if (nav.length < 252 * 2 || Math.abs(cagr) < 0.001) {
+      const validNavs = nav.filter(n => n > 0).length;
+      if (validNavs < 252 * 2 || Math.abs(cagr) < 0.001) {
         const pName = plan.label || plan.key;
-        if (pName.includes("หุ้น")) cagr = 0.065;
+        if (pName.includes("หุ้น") || pName.includes("เชิงรุก")) cagr = 0.065;
         else if (pName.includes("อสังหา")) cagr = 0.05;
         else if (pName.includes("ทองคำ")) cagr = 0.04;
-        else if (pName.includes("ผสม") || pName.includes("สมดุล")) cagr = 0.04;
+        else if (pName.includes("ผสม") || pName.includes("สมดุล") || pName.includes("หลัก")) cagr = 0.04;
         else cagr = 0.02;
       }
       
@@ -525,7 +556,9 @@
       
       metrics.push({
         name: plan.label || plan.key, color: plan.color, cagr, vol, mdd, cvar, sharpe, score,
-        isMixable: MIXABLE_PLANS.includes(plan.key), isLock100: LOCK_100_PLANS.includes(plan.key), nav, returns
+        isMixable: MIXABLE_PLANS.includes(plan.label) || MIXABLE_PLANS.includes(plan.key), 
+        isLock100: LOCK_100_PLANS.includes(plan.label) || LOCK_100_PLANS.includes(plan.key), 
+        nav, returns
       });
     });
     
@@ -536,11 +569,8 @@
   
   function getEquityTarget(age) {
     if (age <= 35) return 0.85;
-    if (age <= 40) return 0.75;
-    if (age <= 45) return 0.65;
-    if (age <= 50) return 0.55;
-    if (age <= 55) return 0.40;
-    return 0.25;
+    if (age >= 60) return 0.15;
+    return 0.85 - ((age - 35) / 25) * 0.70;
   }
   function riskParityWeights(indices, covMat) {
     const n = indices.length;
@@ -583,8 +613,11 @@
   function generateRecommendation(age, riskTolerance, style) {
     if (style === 'tactical') return generateTacticalRecommendation(age, riskTolerance);
     
-    const equityTarget = getEquityTarget(age);
+    const baseEquityTarget = getEquityTarget(age);
     const maxDD = riskTolerance / 100;
+    const riskMultiplier = { 5: 0.3, 10: 0.6, 20: 1.0, 35: 1.2, 50: 1.5 }[riskTolerance] || 1.0;
+    const equityTarget = Math.min(0.85, baseEquityTarget * riskMultiplier);
+    
     const yearsToRetire = Math.max(1, 60 - age);
     
     const eligibleLock = planMetrics.filter(m => m.isLock100 && Math.abs(m.mdd) <= maxDD && m.nav.length > 10).sort((a,b) => b.sharpe - a.sharpe);
@@ -742,7 +775,7 @@
           };
         } else {
           const sumMom = topPositive.reduce((a,b) => a + b.momentum, 0);
-          const alloc = topPositive.map(m => ({ name: m.plan.name, color: m.plan.color, weight: m.momentum / sumMom, cagr: m.plan.cagr, vol: m.plan.vol, mdd: m.plan.mdd }));
+          const alloc = topPositive.map(m => ({ name: m.plan.name, color: m.plan.color, weight: m.momentum / sumMom, cagr: m.plan.cagr, vol: m.plan.vol, mdd: m.plan.mdd, cvar: m.plan.cvar }));
           let portCAGR = 0, portMDD = 0, portVol = 0, portCVaR = 0;
           alloc.forEach(a => { portCAGR += a.weight * a.cagr; portMDD += a.weight * a.mdd; portVol += a.weight * a.vol; portCVaR += a.weight * (a.cvar||0); });
           
@@ -1051,7 +1084,14 @@
         if (allData.myPort.units && allData.plans) {
           allData.myPort.units.forEach(u => {
             const p = allData.plans.find(x => x.label === u.plan || x.key === u.plan);
-            if (p && (p.fullData || p.data)) { const nav = p.fullData || p.data; if (nav.length > 0) bal += u.units * nav[nav.length - 1]; }
+            if (p && (p.fullData || p.data)) { 
+              const nav = p.fullData || p.data; 
+              let lastNav = 0;
+              for (let i = nav.length - 1; i >= 0; i--) {
+                if (nav[i] > 0) { lastNav = nav[i]; break; }
+              }
+              bal += u.units * lastNav; 
+            }
           });
         }
         if (bal > 0) {

@@ -73,10 +73,26 @@
     /* Forms */
     .form-group{margin-bottom:1.5rem}
     .form-group label{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;font-weight:400;color:var(--text);font-size:.95rem}
-    input,select{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;padding:.9rem 1.2rem;border-radius:var(--radius-sm);font-family:'Prompt';font-size:.95rem;transition:all .2s;appearance:none;-webkit-appearance:none}
-    input:focus,select:focus{outline:none;border-color:var(--primary);background:rgba(255,255,255,0.06);box-shadow:0 0 0 4px var(--primary-g)}
-    select{background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:right 1rem top 50%;background-size:.65rem auto;padding-right:2.5rem}
-    option{background:var(--bg2);color:var(--text)}
+    input{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;padding:.9rem 1.2rem;border-radius:var(--radius-sm);font-family:'Prompt';font-size:.95rem;transition:all .2s;appearance:none;-webkit-appearance:none}
+    input:focus{outline:none;border-color:var(--primary);background:rgba(255,255,255,0.06);box-shadow:0 0 0 4px var(--primary-g)}
+    
+    /* Custom Select AI Style */
+    .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
+    .custom-select { position: relative; display: flex; flex-direction: column; }
+    .custom-select-trigger { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 0.9rem 1.2rem; border-radius: var(--radius-sm); font-family: 'Prompt'; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+    .custom-select-trigger:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+    .custom-select.open .custom-select-trigger { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-g); }
+    .custom-select-trigger i { transition: transform 0.3s; color: var(--muted); }
+    .custom-select.open .custom-select-trigger i { transform: rotate(-180deg); color: var(--primary); }
+    .custom-options { position: absolute; top: 100%; left: 0; right: 0; background: rgba(15,22,41,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); margin-top: 0.5rem; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 50; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
+    .custom-select.open .custom-options { opacity: 1; visibility: visible; pointer-events: all; transform: translateY(0); }
+    .custom-option { padding: 0.8rem 1.2rem; font-size: 0.9rem; color: var(--text); cursor: pointer; transition: all 0.2s; border-left: 2px solid transparent; }
+    .custom-option:hover { background: rgba(255,255,255,0.05); border-left-color: var(--primary); color: #fff; }
+    .custom-option.selected { background: rgba(59,130,246,0.1); border-left-color: var(--primary); color: #fff; font-weight: 500; }
+    @media(max-width:768px){
+      .custom-select-trigger { font-size: 0.9rem; padding: 0.8rem 1rem; }
+      .custom-option { font-size: 0.85rem; padding: 0.75rem 1rem; }
+    }
     
     /* Buttons */
     .btn{border:none;padding:.85rem 1.5rem;font-size:1rem;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;font-family:'Prompt';transition:all .3s;display:inline-flex;align-items:center;gap:.5rem}
@@ -237,21 +253,32 @@
             </div>
             <div class="form-group">
               <label><i class="fa-solid fa-compass"></i> สไตล์การลงทุน (Investment Style)</label>
-              <select id="investmentStyle" required>
-                <option value="strategic">🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</option>
-                <option value="tactical">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</option>
-              </select>
+              <div class="custom-select-wrapper">
+                <div class="custom-select">
+                  <div class="custom-select-trigger"><span>🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</span> <i class="fa-solid fa-chevron-down"></i></div>
+                  <div class="custom-options">
+                    <div class="custom-option selected" data-value="strategic">🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</div>
+                    <div class="custom-option" data-value="tactical">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div>
+                  </div>
+                </div>
+                <input type="hidden" id="investmentStyle" required value="strategic">
+              </div>
             </div>
             <div class="form-group">
               <label style="white-space:nowrap"><i class="fa-solid fa-temperature-half"></i> ระดับความเสี่ยงที่รับได้ (Max Drawdown)</label>
-              <select id="riskTolerance" required>
-                <option value="" disabled selected>เลือกระดับความเสี่ยง</option>
-                <option value="5">🟢 ต่ำมาก (รับขาดทุนได้ ≤ 5%)</option>
-                <option value="10">🔵 ต่ำ (รับขาดทุนได้ ≤ 10%)</option>
-                <option value="20">🟡 ปานกลาง (รับขาดทุนได้ ≤ 20%)</option>
-                <option value="35">🟠 สูง (รับขาดทุนได้ ≤ 35%)</option>
-                <option value="50">🔴 สูงมาก (รับขาดทุนได้ > 35% เน้นเติบโต)</option>
-              </select>
+              <div class="custom-select-wrapper">
+                <div class="custom-select">
+                  <div class="custom-select-trigger"><span style="color:var(--muted)">เลือกระดับความเสี่ยง</span> <i class="fa-solid fa-chevron-down"></i></div>
+                  <div class="custom-options">
+                    <div class="custom-option" data-value="5">🟢 ต่ำมาก (รับขาดทุนได้ ≤ 5%)</div>
+                    <div class="custom-option" data-value="10">🔵 ต่ำ (รับขาดทุนได้ ≤ 10%)</div>
+                    <div class="custom-option" data-value="20">🟡 ปานกลาง (รับขาดทุนได้ ≤ 20%)</div>
+                    <div class="custom-option" data-value="35">🟠 สูง (รับขาดทุนได้ ≤ 35%)</div>
+                    <div class="custom-option" data-value="50">🔴 สูงมาก (รับขาดทุนได้ > 35% เน้นเติบโต)</div>
+                  </div>
+                </div>
+                <input type="hidden" id="riskTolerance" required value="">
+              </div>
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top:.5rem">
               <i class="fa-solid fa-microchip"></i> วิเคราะห์ด้วย AI (ครบ 4 Phase)
@@ -288,7 +315,7 @@
     <!-- ═══════ TAB 2: RISK METRICS ═══════ -->
     <div class="tab-content" id="tab-metrics">
       <div class="glass animate-in">
-        <div class="section-title"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge">LIVE DATA</span></div>
+        <div class="section-title" style="font-size:clamp(0.85rem, 4vw, 1.3rem)"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge">LIVE DATA</span></div>
         <div class="table-wrap">
           <table class="data-table" id="metricsTable">
             <thead>
@@ -417,6 +444,41 @@
   let covarianceMatrix = [];
   let analysisResult = null;
   let currentSort = { col: 'score', asc: false };
+
+  // Init Custom Dropdowns
+  document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+    const select = wrapper.querySelector('.custom-select');
+    const trigger = wrapper.querySelector('.custom-select-trigger');
+    const options = wrapper.querySelectorAll('.custom-option');
+    const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+    
+    trigger.addEventListener('click', function(e) {
+      document.querySelectorAll('.custom-select').forEach(s => {
+        if (s !== select) s.classList.remove('open');
+      });
+      select.classList.toggle('open');
+      e.stopPropagation();
+    });
+    
+    options.forEach(option => {
+      option.addEventListener('click', function(e) {
+        options.forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        const span = trigger.querySelector('span');
+        span.innerText = this.innerText;
+        span.style.color = '#fff';
+        hiddenInput.value = this.dataset.value;
+        select.classList.remove('open');
+        e.stopPropagation();
+      });
+    });
+  });
+  
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.custom-select').forEach(select => {
+      select.classList.remove('open');
+    });
+  });
   
   function getDeviceId() {
     let id = localStorage.getItem('gpf_device_id');

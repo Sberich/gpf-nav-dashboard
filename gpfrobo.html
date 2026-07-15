@@ -57,9 +57,11 @@
     
     /* Grid Layouts */
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .grid-2-mobile{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
     .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
     .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-    @media(max-width:1024px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:1024px){.grid-2,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:768px){h1{font-size:2rem} .grid-3{gap:0.4rem}}
     @media(max-width:768px){h1{font-size:2rem}}
     
     /* Section Headers */
@@ -101,8 +103,11 @@
     
     /* Stat Boxes */
     .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;text-align:center;border:1px solid var(--border)}
-    .stat-box .stat-label{font-size:.75rem;color:var(--muted);margin-bottom:.3rem}
+    @media(max-width:768px){.stat-box{padding:.6rem}}
+    .stat-box .stat-label{font-size:.75rem;color:var(--muted);margin-bottom:.3rem;line-height:1.2}
+    @media(max-width:768px){.stat-box .stat-label{font-size:.65rem}}
     .stat-box .stat-value{font-size:1.3rem;font-weight:700;font-family:'Outfit'}
+    @media(max-width:768px){.stat-box .stat-value{font-size:1rem}}
     
     /* Allocation Bar */
     .alloc-bar{height:32px;border-radius:16px;overflow:hidden;display:flex;margin:1rem 0;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)}
@@ -203,26 +208,27 @@
         <div class="glass animate-in">
           <div class="section-title"><i class="fa-solid fa-user-gear" style="color:var(--primary)"></i> ข้อมูลส่วนตัว</div>
           <form id="roboForm" onsubmit="event.preventDefault(); runFullAnalysis();">
-            <div class="form-group">
-              <label><i class="fa-regular fa-user"></i> อายุปัจจุบัน (ปี)</label>
-              <input type="number" id="currentAge" required min="20" max="59" value="38" placeholder="เช่น 35">
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-coins"></i> ยอดเงิน กบข. ปัจจุบัน (บาท)</label>
-              <input type="number" id="currentBalance" required min="0" placeholder="กำลังโหลด..." readonly>
-              <small style="color:var(--muted);font-size:.75rem">*ดึงอัตโนมัติจากฐานข้อมูล หรือกรอกเอง</small>
+            <div class="grid-2-mobile" style="margin-bottom:1.5rem">
+              <div class="form-group" style="margin-bottom:0">
+                <label><i class="fa-regular fa-user"></i> อายุ (ปี)</label>
+                <input type="number" id="currentAge" required min="20" max="59" value="38" placeholder="เช่น 35">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label><i class="fa-solid fa-coins"></i> ยอด กบข. (บาท)</label>
+                <input type="number" id="currentBalance" required min="0" placeholder="กำลังโหลด..." readonly>
+              </div>
             </div>
             <div class="form-group">
               <label><i class="fa-solid fa-piggy-bank"></i> เงินเดือนปัจจุบัน (บาท)</label>
               <input type="number" id="currentSalary" required min="1000" placeholder="เช่น 30000">
             </div>
-            <div class="grid-2">
+            <div class="grid-2-mobile">
               <div class="form-group">
-                <label><i class="fa-solid fa-percent"></i> อัตราสะสม (%)</label>
+                <label><i class="fa-solid fa-percent"></i> สะสม (%)</label>
                 <input type="number" id="memberContribution" required min="3" max="27" step="1" value="10" title="หักสะสม 3% ถึง 27%">
               </div>
               <div class="form-group">
-                <label><i class="fa-solid fa-arrow-trend-up"></i> เงินเดือนขึ้น (%/ปี)</label>
+                <label><i class="fa-solid fa-arrow-trend-up"></i> เงินเดือนขึ้น (%)</label>
                 <input type="number" id="salaryGrowth" required min="0" max="15" step="0.1" value="5.0">
               </div>
             </div>
@@ -1002,14 +1008,13 @@
     const mc = document.getElementById('modelComparison');
     if (rec.models) {
       mc.innerHTML = rec.models.map(mod => `
-        <div class="stat-box" style="text-align:left">
-          <div style="font-size:1.2rem;margin-bottom:.3rem">${mod.emoji}</div>
-          <div style="font-weight:700;font-size:.95rem;margin-bottom:.5rem">${mod.name}</div>
-          <div style="font-size:.75rem;color:var(--muted)">
-            <div>CAGR: <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(2)}%</span></div>
-            <div>Vol: ${(mod.vol*100).toFixed(2)}%</div>
-            <div>MDD: <span class="negative">${(mod.mdd*100).toFixed(2)}%</span></div>
-            <div>Sharpe: ${mod.sharpe.toFixed(3)}</div>
+        <div class="stat-box" style="text-align:left;padding:.8rem">
+          <div style="font-size:1.2rem;margin-bottom:.2rem;text-align:center">${mod.emoji}</div>
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:.5rem;text-align:center">${mod.name}</div>
+          <div style="font-size:.65rem;color:var(--muted);line-height:1.4">
+            <div>CAGR: <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
+            <div>Vol: ${(mod.vol*100).toFixed(1)}%</div>
+            <div>MDD: <span class="negative">${(mod.mdd*100).toFixed(1)}%</span></div>
           </div>
         </div>
       `).join('');

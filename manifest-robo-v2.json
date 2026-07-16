@@ -3,7 +3,7 @@
   "short_name": "GPF Robo v2",
   "description": "ระบบผู้ช่วยอัจฉริยะวางแผนการลงทุน กบข. วิเคราะห์พอร์ต คาดการณ์เงินเกษียณด้วย AI",
   "id": "/gpf-robo-app-v3",
-  "scope": "/gpfrobo.html",
+  "scope": "./",
   "start_url": "./gpfrobo.html?v=3",
   "display": "standalone",
   "background_color": "#0a0e1a",

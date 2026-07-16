@@ -133,12 +133,29 @@
     .stat-box .stat-value{font-size:1.3rem;font-weight:700;font-family:'Outfit'}
     @media(max-width:768px){.stat-box .stat-value{font-size:1rem}}
     
+    /* Toast */
+    #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(15, 22, 41, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 0.8rem 1.5rem; border-radius: 30px; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; z-index: 10000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); white-space: nowrap; pointer-events: none; }
+    #toast.show { bottom: 30px; }
+    
     /* Allocation Bar */
     .alloc-bar{height:32px;border-radius:16px;overflow:hidden;display:flex;margin:1rem 0;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)}
     .alloc-segment{height:100%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);transition:width .8s ease}
     .alloc-legend{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
     .alloc-legend-item{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted)}
     .alloc-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    
+    /* Tactical */
+    .tactical-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:1rem;}
+    .tac-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:var(--radius-sm);padding:1.2rem;transition:transform 0.2s;position:relative;overflow:hidden;}
+    .tac-card:hover{transform:translateY(-2px);background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.1)}
+    .tac-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
+    .tac-name{font-weight:600;font-size:1.05rem;flex:1;}
+    .tac-badge{font-size:0.75rem;padding:3px 8px;border-radius:6px;font-weight:600;white-space:nowrap;background:var(--surface2);}
+    .tac-metric{display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.4rem;align-items:center;}
+    .rsi-container{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin:1.2rem 0 0.5rem;position:relative;}
+    .rsi-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+    .rsi-markers{display:flex;justify-content:space-between;font-size:0.65rem;color:var(--muted);position:relative;top:-2px;}
+    .rsi-marker{position:absolute;height:12px;width:1px;background:rgba(255,255,255,0.3);top:-3px;}
     
     /* Charts */
     .chart-area{width:100%;height:280px;background:rgba(0,0,0,0.15);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.04);position:relative;overflow:hidden}
@@ -222,6 +239,7 @@
       <button class="tab active" data-tab="input" onclick="switchMainTab('input')"><i class="fa-solid fa-sliders"></i> ข้อมูลผู้ใช้</button>
       <button class="tab" data-tab="metrics" onclick="switchMainTab('metrics')"><i class="fa-solid fa-chart-bar"></i> Risk Metrics ทุกแผน</button>
       <button class="tab" data-tab="recommend" onclick="switchMainTab('recommend')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI แนะนำ</button>
+      <button class="tab" data-tab="tactical" onclick="switchMainTab('tactical')"><i class="fa-solid fa-bolt"></i> สัญญาณระยะสั้น</button>
       <button class="tab" data-tab="montecarlo" onclick="switchMainTab('montecarlo')"><i class="fa-solid fa-chart-area"></i> Monte Carlo</button>
       <button class="tab" data-tab="correlation" onclick="switchMainTab('correlation')"><i class="fa-solid fa-table-cells"></i> Correlation</button>
     </div>
@@ -426,6 +444,17 @@
       </div>
     </div>
 
+    <!-- ═══════ TAB 6: TACTICAL SIGNALS ═══════ -->
+    <div class="tab-content" id="tab-tactical">
+      <div class="glass animate-in">
+        <div class="section-title"><i class="fa-solid fa-bolt" style="color:var(--yellow)"></i> AI สัญญาณซื้อขายระยะสั้น (Tactical)</div>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.5rem">ใช้อินดิเคเตอร์ RSI (14 วัน) และ Momentum (1M/3M) เพื่อหาจังหวะเข้าทำกำไร เหมาะสำหรับสับเปลี่ยนแผน 1-3 เดือน <br><span style="color:var(--red)">*โปรดระวัง Time Lag 1-3 วันทำการของระบบ กบข. เมื่อทำการสับเปลี่ยน</span></p>
+        <div class="tactical-grid" id="tacticalGrid">
+          <div style="text-align:center;color:var(--muted);padding:2rem;">กำลังประมวลผลสัญญาณ...</div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- end container -->
 
   <!-- Minimal AI PIN Modal -->
@@ -569,6 +598,30 @@
     }
     return returns;
   }
+  
+  function calcRSI(navArray, period=14) {
+    const { values } = cleanNavSeries(navArray);
+    if (values.length <= period) return 50;
+    let gains = 0, losses = 0;
+    for (let i = 1; i <= period; i++) {
+      let change = values[i] - values[i-1];
+      if (change > 0) gains += change;
+      else losses -= change;
+    }
+    let avgGain = gains / period;
+    let avgLoss = losses / period;
+    for (let i = period + 1; i < values.length; i++) {
+      let change = values[i] - values[i-1];
+      let gain = change > 0 ? change : 0;
+      let loss = change < 0 ? -change : 0;
+      avgGain = ((avgGain * (period - 1)) + gain) / period;
+      avgLoss = ((avgLoss * (period - 1)) + loss) / period;
+    }
+    if (avgLoss === 0) return 100;
+    let rs = avgGain / avgLoss;
+    return 100 - (100 / (1 + rs));
+  }
+
   function calcCAGR(navArray, datesArray) {
     const { values, idx } = cleanNavSeries(navArray);
     if (values.length < 2) return 0;
@@ -710,8 +763,14 @@
       const sortino = calcSortino(cagr, returns);
       const score = calcScore(cagr, vol, mdd, sharpe, sortino);
       
+      const { values } = cleanNavSeries(nav);
+      const ret1M = values.length >= 22 ? (values[values.length-1] / values[values.length-22] - 1) : 0;
+      const ret3M = values.length >= 64 ? (values[values.length-1] / values[values.length-64] - 1) : 0;
+      const rsi = calcRSI(nav, 14);
+      
       metrics.push({
         name: plan.label || plan.key, color: plan.color, cagr, vol, mdd, cvar, sharpe, sortino, score,
+        ret1M, ret3M, rsi,
         isMixable: MIXABLE_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k))), 
         isLock100: LOCK_100_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k))), 
         nav, returns
@@ -1406,6 +1465,77 @@
     }
   }
   
+  function renderTactical() {
+    const grid = document.getElementById('tacticalGrid');
+    grid.innerHTML = '';
+    
+    // Sort plans by 1-Month Momentum (highest first)
+    const sorted = [...planMetrics].sort((a, b) => b.ret1M - a.ret1M);
+    
+    sorted.forEach(p => {
+      let rsiColor = '#fff';
+      let badgeHtml = '';
+      
+      if (p.rsi > 70) {
+        rsiColor = 'var(--red)';
+        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">⚠️ ตึงตัว / ทยอยขาย</span>';
+      } else if (p.rsi < 30) {
+        rsiColor = 'var(--green)';
+        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">💰 น่าซื้อ / Oversold</span>';
+      } else if (p.ret1M > 0 && p.rsi > 50) {
+        rsiColor = 'var(--yellow)';
+        badgeHtml = '<span class="tac-badge" style="color:var(--yellow);background:rgba(245,158,11,0.15)">🔥 ร้อนแรง / ถือต่อ</span>';
+      } else {
+        rsiColor = 'var(--cyan)';
+        badgeHtml = '<span class="tac-badge" style="color:var(--cyan);background:rgba(6,182,212,0.15)">❄️ พักตัว / เฝ้าระวัง</span>';
+      }
+      
+      const rsiPct = Math.min(100, Math.max(0, p.rsi));
+      let rsiBarColor = 'var(--cyan)';
+      if(rsiPct < 30) rsiBarColor = 'var(--green)';
+      else if(rsiPct > 70) rsiBarColor = 'var(--red)';
+      else if(rsiPct > 50) rsiBarColor = 'var(--yellow)';
+      
+      grid.innerHTML += `
+        <div class="tac-card">
+          <div class="tac-header">
+            <div class="tac-name">${p.name}</div>
+            ${badgeHtml}
+          </div>
+          
+          <div class="tac-metric">
+            <span style="color:var(--muted)">1-Month Momentum:</span>
+            <span style="font-family:'Outfit'; font-weight:600; color:${p.ret1M >= 0 ? 'var(--green)' : 'var(--red)'}">
+              ${p.ret1M > 0 ? '<i class="fa-solid fa-arrow-trend-up"></i> +' : '<i class="fa-solid fa-arrow-trend-down"></i> '}${fmtPct(p.ret1M)}
+            </span>
+          </div>
+          
+          <div class="tac-metric">
+            <span style="color:var(--muted)">3-Month Trend:</span>
+            <span style="font-family:'Outfit'; font-weight:600; color:${p.ret3M >= 0 ? 'var(--green)' : 'var(--red)'}">
+              ${p.ret3M > 0 ? '<i class="fa-solid fa-arrow-trend-up"></i> +' : '<i class="fa-solid fa-arrow-trend-down"></i> '}${fmtPct(p.ret3M)}
+            </span>
+          </div>
+          
+          <div class="rsi-container">
+            <div class="rsi-fill" style="width:${rsiPct}%; background:${rsiBarColor}"></div>
+            <div class="rsi-marker" style="left:30%"></div>
+            <div class="rsi-marker" style="left:70%"></div>
+          </div>
+          <div class="rsi-markers">
+            <span>0</span>
+            <span style="padding-left:15%">30 (Oversold)</span>
+            <span style="padding-right:15%">70 (Overbought)</span>
+            <span>100</span>
+          </div>
+          <div style="text-align:center; font-family:'Outfit'; font-weight:700; font-size:1.2rem; color:${rsiColor}; margin-top:0.5rem">
+            RSI: ${p.rsi.toFixed(1)}
+          </div>
+        </div>
+      `;
+    });
+  }
+  
   async function runFullAnalysis() {
     const age = parseInt(document.getElementById('currentAge').value);
     const balance = parseFloat(document.getElementById('currentBalance').value);
@@ -1451,6 +1581,7 @@
     renderRecommendation(analysisResult, balance, salary, memberRate, salaryGrowth, mcResult);
     renderMonteCarlo(mcResult, age);
     renderHeatmap();
+    renderTactical();
     
     progress.style.width = '100%';
     loadText.innerText = 'COMPLETE ✓';

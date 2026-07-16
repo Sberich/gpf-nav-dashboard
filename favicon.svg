@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e1a" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+    <linearGradient id="glow1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+    <linearGradient id="glow2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="neon" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+
+  <!-- Abstract AI Brain / Network -->
+  <g stroke="rgba(255,255,255,0.15)" stroke-width="4">
+    <line x1="256" y1="120" x2="150" y2="200" />
+    <line x1="256" y1="120" x2="362" y2="200" />
+    <line x1="150" y1="200" x2="150" y2="312" />
+    <line x1="362" y1="200" x2="362" y2="312" />
+    <line x1="150" y1="312" x2="256" y2="392" />
+    <line x1="362" y1="312" x2="256" y2="392" />
+    <line x1="150" y1="200" x2="256" y2="256" />
+    <line x1="362" y1="200" x2="256" y2="256" />
+    <line x1="150" y1="312" x2="256" y2="256" />
+    <line x1="362" y1="312" x2="256" y2="256" />
+  </g>
+
+  <!-- Nodes -->
+  <g fill="url(#glow1)">
+    <circle cx="256" cy="120" r="14" />
+    <circle cx="150" cy="200" r="14" />
+    <circle cx="362" cy="200" r="14" />
+    <circle cx="150" cy="312" r="14" />
+    <circle cx="362" cy="312" r="14" />
+    <circle cx="256" cy="392" r="14" />
+  </g>
+
+  <!-- Core AI Center -->
+  <circle cx="256" cy="256" r="28" fill="url(#glow1)" filter="url(#neon)" />
+
+  <!-- Upward Trend Arrow (Financial Growth) -->
+  <path d="M 120 400 L 220 280 L 290 320 L 400 130" fill="none" stroke="url(#glow2)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon)"/>
+  
+  <path d="M 320 130 L 410 120 L 410 210" fill="none" stroke="url(#glow2)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon)"/>
+
+</svg>

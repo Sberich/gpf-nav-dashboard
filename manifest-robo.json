@@ -1,0 +1,25 @@
+{
+  "name": "GPF Robo",
+  "short_name": "GPF Robo",
+  "description": "ระบบผู้ช่วยอัจฉริยะ วิเคราะห์พอร์ต วางแผนการลงทุน กบข.",
+  "id": "/gpf-robo-app-v1",
+  "scope": "./",
+  "start_url": "./gpfrobo.html",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0d1117",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

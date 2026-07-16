@@ -448,7 +448,8 @@
     <div class="tab-content" id="tab-tactical">
       <div class="glass animate-in">
         <div class="section-title"><i class="fa-solid fa-bolt" style="color:var(--yellow)"></i> AI สัญญาณซื้อขายระยะสั้น (Tactical)</div>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.5rem">ใช้อินดิเคเตอร์ RSI (14 วัน) และ Momentum (1M/3M) เพื่อหาจังหวะเข้าทำกำไร เหมาะสำหรับสับเปลี่ยนแผน 1-3 เดือน <br><span style="color:var(--red)">*โปรดระวัง Time Lag 1-3 วันทำการของระบบ กบข. เมื่อทำการสับเปลี่ยน</span></p>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:.8rem">ใช้อินดิเคเตอร์ RSI (14 วัน), MACD (12,26,9) และ Momentum (1M/3M) เพื่อหาจังหวะเข้าทำกำไร เหมาะสำหรับสับเปลี่ยนแผน 1-3 เดือน <br><span style="color:var(--red)">*โปรดระวัง Time Lag 1-3 วันทำการของระบบ กบข. เมื่อทำการสับเปลี่ยน</span></p>
+        <div id="tacticalSummary" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.2rem;font-size:.85rem;line-height:1.6;display:none"></div>
         <div class="tactical-grid" id="tacticalGrid">
           <div style="text-align:center;color:var(--muted);padding:2rem;">กำลังประมวลผลสัญญาณ...</div>
         </div>
@@ -998,26 +999,6 @@
     });
   }
   
-  function calcRSI(navArray, period = 14) {
-    const { values } = cleanNavSeries(navArray);
-    if (values.length <= period) return 50;
-    let gains = 0, losses = 0;
-    for (let i = 0; i < period; i++) {
-      let diff = values[i+1] - values[i];
-      if (diff >= 0) gains += diff;
-      else losses -= diff;
-    }
-    let avgGain = gains / period, avgLoss = losses / period;
-    for (let i = period + 1; i < values.length; i++) {
-      let diff = values[i] - values[i-1];
-      let currentGain = diff >= 0 ? diff : 0;
-      let currentLoss = diff < 0 ? -diff : 0;
-      avgGain = ((avgGain * (period - 1)) + currentGain) / period;
-      avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;
-    }
-    if (avgLoss === 0) return 100;
-    return 100 - (100 / (1 + (avgGain / avgLoss)));
-  }
 
   function generateTacticalRecommendation(age, riskTolerance) {
     const yearsToRetire = Math.max(1, 60 - age);
@@ -1231,7 +1212,9 @@
 
     const finalSalary = salary * Math.pow(1 + salaryGrowth, rec.yearsToRetire);
     const annualWithdrawal = medianFinal * 0.04;
-    const irr = finalSalary > 0 ? (annualWithdrawal / (finalSalary * 12)) * 100 : 0;
+    // ใช้ 70% ของเงินเดือนปีสุดท้ายเป็นค่าใช้จ่ายหลังเกษียณ (Replacement Rate Standard)
+    const annualExpense = finalSalary * 12 * 0.70;
+    const irr = annualExpense > 0 ? (annualWithdrawal / annualExpense) * 100 : 0;
     document.getElementById('statIRR').innerText = irr.toFixed(1) + '%';
   }
   
@@ -1495,6 +1478,34 @@
     
     // Sort plans by 1-Month Momentum (highest first)
     const sorted = [...planMetrics].sort((a, b) => b.ret1M - a.ret1M);
+    
+    // AI Summary
+    const summaryEl = document.getElementById('tacticalSummary');
+    if (sorted.length > 0) {
+      const best = sorted[0];
+      const worst = sorted[sorted.length - 1];
+      const dates = allData.fullDates || allData.dates;
+      const lastDate = dates && dates.length > 0 ? dates[dates.length - 1] : 'ไม่ทราบ';
+      const buySignals = sorted.filter(p => p.rsi < 30).length;
+      const sellSignals = sorted.filter(p => p.rsi > 70).length;
+      summaryEl.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem">
+          <span style="font-weight:600;color:#fff"><i class="fa-solid fa-robot" style="color:var(--accent)"></i> AI สรุปภาพรวม</span>
+          <span style="font-size:.75rem;color:var(--muted)"><i class="fa-regular fa-calendar"></i> NAV ล่าสุด: <b style="color:var(--cyan)">${lastDate}</b></span>
+        </div>
+        <div style="color:var(--text)">
+          แผนที่ร้อนแรงที่สุดในรอบ 1 เดือน: <b style="color:var(--green)">${best.name}</b> (+${(best.ret1M*100).toFixed(2)}%)
+          &nbsp;|&nbsp;
+          แผนที่อ่อนตัวที่สุด: <b style="color:var(--red)">${worst.name}</b> (${(worst.ret1M*100).toFixed(2)}%)
+        </div>
+        <div style="margin-top:.5rem;color:var(--muted)">
+          สัญญาณซื้อ (Oversold): <b style="color:var(--green)">${buySignals} แผน</b>
+          &nbsp;|&nbsp;
+          สัญญาณขาย (Overbought): <b style="color:var(--red)">${sellSignals} แผน</b>
+        </div>
+      `;
+      summaryEl.style.display = 'block';
+    }
     
     sorted.forEach(p => {
       let rsiColor = '#fff';

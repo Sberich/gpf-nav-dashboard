@@ -262,29 +262,29 @@
             </div>
             <div class="form-group">
               <label><i class="fa-solid fa-piggy-bank"></i> เงินเดือนปัจจุบัน (บาท)</label>
-              <input type="number" id="currentSalary" required min="1000" placeholder="เช่น 30000">
+              <input type="number" id="currentSalary" required min="1000" placeholder="เช่น 30000" value="32000">
             </div>
             <div class="grid-2-mobile">
               <div class="form-group">
                 <label><i class="fa-solid fa-percent"></i> สะสม (%)</label>
-                <input type="number" id="memberContribution" required min="3" max="27" step="1" value="10" title="หักสะสม 3% ถึง 27%">
+                <input type="number" id="memberContribution" required min="3" max="27" step="1" value="12" title="หักสะสม 3% ถึง 27%">
               </div>
               <div class="form-group">
                 <label><i class="fa-solid fa-arrow-trend-up"></i> เงินเดือนขึ้น (%)</label>
-                <input type="number" id="salaryGrowth" required min="0" max="15" step="0.1" value="5.0">
+                <input type="number" id="salaryGrowth" required min="0" max="15" step="0.1" value="6.0">
               </div>
             </div>
             <div class="form-group">
               <label><i class="fa-solid fa-compass"></i> สไตล์การลงทุน (Investment Style)</label>
               <div class="custom-select-wrapper">
                 <div class="custom-select">
-                  <div class="custom-select-trigger"><span>🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</span> <i class="fa-solid fa-chevron-down"></i></div>
+                  <div class="custom-select-trigger"><span style="color:#fff">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</span> <i class="fa-solid fa-chevron-down"></i></div>
                   <div class="custom-options">
-                    <div class="custom-option selected" data-value="strategic">🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</div>
-                    <div class="custom-option" data-value="tactical">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div>
+                    <div class="custom-option" data-value="strategic">🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</div>
+                    <div class="custom-option selected" data-value="tactical">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div>
                   </div>
                 </div>
-                <input type="hidden" id="investmentStyle" required value="strategic">
+                <input type="hidden" id="investmentStyle" required value="tactical">
               </div>
             </div>
             <div class="form-group">
@@ -620,6 +620,29 @@
     if (avgLoss === 0) return 100;
     let rs = avgGain / avgLoss;
     return 100 - (100 / (1 + rs));
+  }
+  
+  function calcEMA(data, period) {
+    if(data.length === 0) return [];
+    const k = 2 / (period + 1);
+    let ema = [data[0]];
+    for (let i = 1; i < data.length; i++) {
+      ema.push(data[i] * k + ema[i - 1] * (1 - k));
+    }
+    return ema;
+  }
+  function calcMACD(navArray) {
+    const { values } = cleanNavSeries(navArray);
+    if (values.length < 26) return { hist: 0 };
+    const ema12 = calcEMA(values, 12);
+    const ema26 = calcEMA(values, 26);
+    const macdLine = [];
+    for (let i = 0; i < values.length; i++) {
+      macdLine.push(ema12[i] - ema26[i]);
+    }
+    const signalLine = calcEMA(macdLine, 9);
+    const lastIdx = values.length - 1;
+    return { hist: macdLine[lastIdx] - signalLine[lastIdx] };
   }
 
   function calcCAGR(navArray, datesArray) {
@@ -1476,15 +1499,21 @@
       let rsiColor = '#fff';
       let badgeHtml = '';
       
-      if (p.rsi > 70) {
+      if (p.rsi > 70 && p.macd.hist < 0) {
         rsiColor = 'var(--red)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">⚠️ ตึงตัว / ทยอยขาย</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">⚠️ ตึงตัว / สัญญาณขาย</span>';
+      } else if (p.rsi < 30 && p.macd.hist > 0) {
+        rsiColor = 'var(--green)';
+        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">💰 น่าซื้อ / Golden Cross</span>';
+      } else if (p.rsi > 70) {
+        rsiColor = 'var(--red)';
+        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">🔥 แพงมาก / ระวังย่อตัว</span>';
       } else if (p.rsi < 30) {
         rsiColor = 'var(--green)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">💰 น่าซื้อ / Oversold</span>';
-      } else if (p.ret1M > 0 && p.rsi > 50) {
+        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">📉 ถูกมาก / รอสัญญาณ</span>';
+      } else if (p.ret1M > 0 && p.macd.hist > 0) {
         rsiColor = 'var(--yellow)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--yellow);background:rgba(245,158,11,0.15)">🔥 ร้อนแรง / ถือต่อ</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--yellow);background:rgba(245,158,11,0.15)">🚀 ขาขึ้น / ถือต่อ</span>';
       } else {
         rsiColor = 'var(--cyan)';
         badgeHtml = '<span class="tac-badge" style="color:var(--cyan);background:rgba(6,182,212,0.15)">❄️ พักตัว / เฝ้าระวัง</span>';
@@ -1514,6 +1543,13 @@
             <span style="color:var(--muted)">3-Month Trend:</span>
             <span style="font-family:'Outfit'; font-weight:600; color:${p.ret3M >= 0 ? 'var(--green)' : 'var(--red)'}">
               ${p.ret3M > 0 ? '<i class="fa-solid fa-arrow-trend-up"></i> +' : '<i class="fa-solid fa-arrow-trend-down"></i> '}${fmtPct(p.ret3M)}
+            </span>
+          </div>
+          
+          <div class="tac-metric" style="margin-top:0.8rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:0.8rem">
+            <span style="color:var(--muted)">MACD Signal:</span>
+            <span style="font-family:'Outfit'; font-weight:600; color:${p.macd.hist > 0 ? 'var(--green)' : 'var(--red)'}">
+              ${p.macd.hist > 0 ? '<i class="fa-solid fa-arrow-up"></i> ขาขึ้น (ตัดขึ้น)' : '<i class="fa-solid fa-arrow-down"></i> ขาลง (ตัดลง)'}
             </span>
           </div>
           

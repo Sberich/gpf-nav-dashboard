@@ -10,7 +10,8 @@
   <meta name="description" content="ระบบผู้ช่วยอัจฉริยะวางแผนการลงทุน กบข. วิเคราะห์พอร์ต คาดการณ์เงินเกษียณด้วย AI">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="favicon.png">
-  <link rel="manifest" href="manifest-robo-v2.json">
+  <meta name="apple-mobile-web-app-title" content="GPF Robo">
+  <link rel="manifest" href="manifest-robo-v2.json?v=3">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -76,27 +77,27 @@
     .section-title .badge{background:linear-gradient(135deg,var(--primary),var(--accent));padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:500;letter-spacing:.5px}
     
     /* Forms */
-    .form-group{margin-bottom:1.5rem}
-    .form-group label{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;font-weight:400;color:var(--text);font-size:.95rem}
-    input{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;padding:.9rem 1.2rem;border-radius:var(--radius-sm);font-family:'Prompt';font-size:.95rem;transition:all .2s;appearance:none;-webkit-appearance:none}
+    .form-group{margin-bottom:.8rem}
+    .form-group label{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;font-weight:400;color:var(--muted);font-size:.85rem}
+    input{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#fff;padding:.6rem .8rem;border-radius:var(--radius-sm);font-family:'Prompt';font-size:1rem;transition:all .2s;box-shadow:inset 0 2px 4px rgba(0,0,0,0.2)}
     input:focus{outline:none;border-color:var(--primary);background:rgba(255,255,255,0.06);box-shadow:0 0 0 4px var(--primary-g)}
     
     /* Custom Select AI Style */
     .custom-select-wrapper { position: relative; user-select: none; width: 100%; }
     .custom-select { position: relative; display: flex; flex-direction: column; }
-    .custom-select-trigger { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 0.9rem 1.2rem; border-radius: var(--radius-sm); font-family: 'Prompt'; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+    .custom-select-trigger { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 0.6rem 1rem; border-radius: var(--radius-sm); font-family: 'Prompt'; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
     .custom-select-trigger:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
     .custom-select.open .custom-select-trigger { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-g); }
     .custom-select-trigger i { transition: transform 0.3s; color: var(--muted); }
     .custom-select.open .custom-select-trigger i { transform: rotate(-180deg); color: var(--primary); }
     .custom-options { position: absolute; top: 100%; left: 0; right: 0; background: rgba(15,22,41,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); margin-top: 0.5rem; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 50; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
     .custom-select.open .custom-options { opacity: 1; visibility: visible; pointer-events: all; transform: translateY(0); }
-    .custom-option { padding: 0.8rem 1.2rem; font-size: 0.9rem; color: var(--text); cursor: pointer; transition: all 0.2s; border-left: 2px solid transparent; }
+    .custom-option { padding: 0.6rem 1rem; font-size: 0.9rem; color: var(--text); cursor: pointer; transition: all 0.2s; border-left: 2px solid transparent; }
     .custom-option:hover { background: rgba(255,255,255,0.05); border-left-color: var(--primary); color: #fff; }
     .custom-option.selected { background: rgba(59,130,246,0.1); border-left-color: var(--primary); color: #fff; font-weight: 500; }
     @media(max-width:768px){
-      .custom-select-trigger { font-size: 0.9rem; padding: 0.8rem 1rem; }
-      .custom-option { font-size: 0.85rem; padding: 0.75rem 1rem; }
+      .custom-select-trigger { font-size: 0.9rem; padding: 0.6rem 0.8rem; }
+      .custom-option { font-size: 0.85rem; padding: 0.6rem 0.8rem; }
     }
     
     /* Buttons */
@@ -278,10 +279,10 @@
               <label><i class="fa-solid fa-compass"></i> สไตล์การลงทุน (Investment Style)</label>
               <div class="custom-select-wrapper">
                 <div class="custom-select">
-                  <div class="custom-select-trigger"><span style="color:#fff">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</span> <i class="fa-solid fa-chevron-down"></i></div>
+                  <div class="custom-select-trigger"><span style="color:#fff"><div style="font-weight:600">🚀 จับจังหวะตลาด (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div></span> <i class="fa-solid fa-chevron-down"></i></div>
                   <div class="custom-options">
-                    <div class="custom-option" data-value="strategic">🛡️ ถือยาว (Buy & Hold) - เน้นความเสถียร ไม่เปลี่ยนบ่อย</div>
-                    <div class="custom-option selected" data-value="tactical">🚀 จับจังหวะตลาด (Tactical) - เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div>
+                    <div class="custom-option" data-value="strategic"><div style="font-weight:600">🛡️ ถือยาว (Buy & Hold)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เน้นความเสถียร ไม่เปลี่ยนบ่อย</div></div>
+                    <div class="custom-option selected" data-value="tactical"><div style="font-weight:600">🚀 จับจังหวะตลาด (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div></div>
                   </div>
                 </div>
                 <input type="hidden" id="investmentStyle" required value="tactical">

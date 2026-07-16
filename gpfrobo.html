@@ -1675,6 +1675,10 @@
   
   function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
   window.onload = function() { loadGPFData(); };
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js?v=robo')
+  }
   </script>
 </body>
 </html>

@@ -1,10 +1,12 @@
-const CACHE_NAME = 'gpf-app-cache-v3';
+const CACHE_NAME = 'gpf-app-cache-v4';
 const URLS_TO_CACHE = [
   './',
   './index.html',
   './gpfnav69.html',
+  './gpfrobo.html',
   './manifest.json',
   './manifest-port.json',
+  './manifest-robo-v2.json',
   './icon.png',
   './icon-port.svg'
 ];

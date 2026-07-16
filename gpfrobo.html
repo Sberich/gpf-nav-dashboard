@@ -790,10 +790,11 @@
       const ret1M = values.length >= 22 ? (values[values.length-1] / values[values.length-22] - 1) : 0;
       const ret3M = values.length >= 64 ? (values[values.length-1] / values[values.length-64] - 1) : 0;
       const rsi = calcRSI(nav, 14);
+      const macd = calcMACD(nav);
       
       metrics.push({
         name: plan.label || plan.key, color: plan.color, cagr, vol, mdd, cvar, sharpe, sortino, score,
-        ret1M, ret3M, rsi,
+        ret1M, ret3M, rsi, macd,
         isMixable: MIXABLE_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k))), 
         isLock100: LOCK_100_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k))), 
         nav, returns

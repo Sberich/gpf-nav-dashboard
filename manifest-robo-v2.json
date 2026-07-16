@@ -1,0 +1,25 @@
+{
+  "name": "GPF Robo v2",
+  "short_name": "GPF Robo v2",
+  "description": "ระบบผู้ช่วยอัจฉริยะวางแผนการลงทุน กบข. วิเคราะห์พอร์ต คาดการณ์เงินเกษียณด้วย AI",
+  "id": "/gpf-robo-app-v2",
+  "scope": "./",
+  "start_url": "./gpfrobo.html?mode=app",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

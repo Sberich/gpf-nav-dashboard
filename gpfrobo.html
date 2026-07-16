@@ -55,8 +55,10 @@
     .subtitle{color:var(--muted);font-size:1rem}
     
     /* Navigation */
-    .nav-btn{display:inline-flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;padding:.6rem 1rem;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);transition:all .3s;margin-bottom:1.5rem}
-    .nav-btn:hover{color:var(--text);transform:translateX(-3px)}
+    .nav-btn{position:absolute;top:1.5rem;left:1.5rem;display:inline-flex;align-items:center;justify-content:center;color:var(--text);text-decoration:none;width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);z-index:100;transition:all .3s}
+    .nav-btn:hover{background:rgba(255,255,255,0.1);transform:scale(1.05);border-color:var(--primary)}
+    .nav-btn i{margin:0;font-size:1.2rem}
+    @media(max-width:768px){.nav-btn{top:1rem;left:1rem;width:40px;height:40px}}
     
     /* Grid Layouts */
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
@@ -208,7 +210,7 @@
   </div>
 
   <div class="container">
-    <a href="index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> กลับสู่ Dashboard หลัก</a>
+    <a href="index.html" class="nav-btn" title="กลับสู่ Dashboard หลัก"><i class="fa-solid fa-arrow-left"></i></a>
     
     <header>
       <h1><i class="fa-solid fa-microchip"></i> GPF Robo-Advisor</h1>
@@ -426,7 +428,39 @@
 
   </div><!-- end container -->
 
+  <!-- Minimal AI PIN Modal -->
+  <div id="pinModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px); z-index:9999; justify-content:center; align-items:center;">
+    <div class="glass animate-in" style="padding:2.5rem 2rem; text-align:center; width:90%; max-width:320px; border-radius:24px; border:1px solid rgba(59,130,246,0.3); box-shadow:0 0 40px rgba(59,130,246,0.15); background:var(--bg2);">
+      <i class="fa-solid fa-fingerprint" style="font-size:3rem; color:var(--primary); margin-bottom:1.5rem; filter:drop-shadow(0 0 10px var(--primary-g));"></i>
+      <div style="font-family:'Outfit'; font-weight:600; font-size:1.1rem; letter-spacing:2px; margin-bottom:1.5rem; color:#fff;">ENTER PIN</div>
+      <input type="password" id="pinInput" placeholder="••••" style="text-align:center; font-size:2rem; letter-spacing:15px; padding:1rem; margin-bottom:1.5rem; border-radius:16px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);" maxlength="4" autocomplete="off">
+      <div style="display:flex; gap:1rem;">
+        <button class="btn" style="flex:1; background:rgba(255,255,255,0.05); color:#aaa" onclick="closePinModal(false)">Cancel</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="closePinModal(true)">Unlock</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+  function requestPin() {
+    return new Promise(resolve => {
+      const modal = document.getElementById('pinModal');
+      const input = document.getElementById('pinInput');
+      modal.style.display = 'flex';
+      input.value = '';
+      setTimeout(() => input.focus(), 100);
+      
+      window.closePinModal = function(submit) {
+        modal.style.display = 'none';
+        resolve(submit ? input.value : null);
+      };
+      
+      input.onkeypress = function(e) {
+        if(e.key === 'Enter') closePinModal(true);
+      };
+    });
+  }
+
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
   
   const LOCK_100_PLANS = [
@@ -1312,7 +1346,7 @@
       allData = await res.json();
       
       if (allData.error === "Unauthorized_Device") {
-        const pin = prompt("⚠️ อุปกรณ์นี้ยังไม่เชื่อมต่อฐานข้อมูล กบข.\n\nกรุณากรอกรหัส PIN (6969) เพื่อยืนยันตัวตนและดึงข้อมูลพอร์ต/ยอดเงินอัตโนมัติ:");
+        const pin = await requestPin();
         if (pin) {
           const regRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) });
           const regData = await regRes.json();

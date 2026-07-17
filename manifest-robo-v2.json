@@ -1,6 +1,6 @@
 {
-  "name": "GPF Robo v2",
-  "short_name": "GPF Robo v2",
+  "name": "GPF Robo",
+  "short_name": "GPF Robo",
   "description": "ระบบผู้ช่วยอัจฉริยะวางแผนการลงทุน กบข. วิเคราะห์พอร์ต คาดการณ์เงินเกษียณด้วย AI",
   "id": "/gpf-robo-app-v3",
   "scope": "./",

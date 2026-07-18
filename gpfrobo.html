@@ -1029,7 +1029,7 @@
       const pVol = Math.sqrt(Math.max(pVol2, 0));
       const allocation = eligible.filter((_, i) => weights[i] > 0).map((m, i) => ({
         name: m.name, weight: weights[eligible.indexOf(m)], color: m.color
-      })).filter(a => a.weight > 0).sort((a, b) => b.weight - a.weight).slice(0, 3);
+      })).filter(a => a.weight > 0).sort((a, b) => b.weight - a.weight);
 
       return { ...mod, cagr: pCAGR, vol: pVol, mdd: pMDD, sharpe: calcSharpe(pCAGR, pVol), allocation };
     });
@@ -1218,7 +1218,7 @@
     const bar = document.getElementById('allocBar');
     const breakdown = document.getElementById('allocBreakdown');
     if (rec.type === 'mix' && rec.allocation) {
-      bar.innerHTML = rec.allocation.map(a => `<div class="alloc-segment" style="width:${(a.weight*100).toFixed(1)}%;background:${a.color}" title="${a.name}: ${(a.weight*100).toFixed(1)}%">${(a.weight*100).toFixed(0)}%</div>`).join('');
+      bar.innerHTML = rec.allocation.map(a => `<div class="alloc-segment" style="width:${(a.weight*100).toFixed(1)}%;background:${a.color}" title="${a.name}: ${(a.weight*100).toFixed(1)}%">${(a.weight*100).toFixed(1)}%</div>`).join('');
       breakdown.innerHTML = rec.allocation.map(a => `<div class="alloc-row"><div class="plan-info"><span class="plan-dot" style="background:${a.color}"></span><span>${a.name}</span></div><div class="pct" style="color:${a.color}">${(a.weight*100).toFixed(1)}%</div></div>`).join('');
     } else {
       bar.innerHTML = `<div class="alloc-segment" style="width:100%;background:${m.color || 'var(--primary)'}">${rec.label} 100%</div>`;

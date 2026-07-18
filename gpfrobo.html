@@ -498,7 +498,7 @@
   <div id="pinModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); z-index:9999; justify-content:center; align-items:center;">
     <div class="glass animate-in" style="padding:1.5rem 2rem; border-radius:30px; border:1px solid rgba(255,255,255,0.1); background:rgba(15,22,41,0.9); display:flex; align-items:center; gap:1rem; box-shadow:0 10px 40px rgba(0,0,0,0.5);">
       <i class="fa-solid fa-lock" style="color:var(--muted); font-size:1.2rem;"></i>
-      <input type="password" id="pinInput" placeholder="PIN" style="width:120px; text-align:center; font-size:1.5rem; letter-spacing:10px; padding:0; background:transparent; border:none; outline:none; color:#fff;" maxlength="4" autocomplete="off">
+      <input type="text" inputmode="numeric" pattern="[0-9]*" id="pinInput" placeholder="PIN" style="-webkit-text-security:disc; width:120px; text-align:center; font-size:1.5rem; letter-spacing:10px; padding:0; background:transparent; border:none; outline:none; color:#fff;" maxlength="4" autocomplete="off">
     </div>
   </div>
 

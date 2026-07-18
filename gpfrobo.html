@@ -126,13 +126,20 @@
     .plan-name{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#34d399,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     @media(max-width:768px){.plan-name{font-size:1.3rem}}
     
-    /* Stat Boxes */
-    .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;text-align:center;border:1px solid var(--border)}
-    @media(max-width:768px){.stat-box{padding:.6rem}}
-    .stat-box .stat-label{font-size:.75rem;color:var(--muted);margin-bottom:.3rem;line-height:1.2}
-    @media(max-width:768px){.stat-box .stat-label{font-size:.65rem}}
-    .stat-box .stat-value{font-size:1.3rem;font-weight:700;font-family:'Outfit'}
-    @media(max-width:768px){.stat-box .stat-value{font-size:1rem}}
+    /* Stat Boxes Premium UI */
+    .stat-box{background:linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);border-radius:var(--radius-sm);padding:1.2rem;text-align:center;border:1px solid rgba(255,255,255,0.08);transition:all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);position:relative;overflow:hidden;}
+    .stat-box:hover{transform:translateY(-5px);border-color:rgba(255,255,255,0.2);box-shadow:0 10px 25px rgba(0,0,0,0.3);}
+    .stat-box::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);transform:skewX(-25deg);transition:0.5s;z-index:0;}
+    .stat-box:hover::before{left:200%;}
+    .stat-box > *{position:relative;z-index:1;}
+    @media(max-width:768px){.stat-box{padding:.8rem}}
+    .stat-box .stat-label{font-size:.75rem;color:var(--muted);margin-bottom:.5rem;line-height:1.2;font-weight:500;}
+    @media(max-width:768px){.stat-box .stat-label{font-size:.65rem;margin-bottom:.3rem;}}
+    .stat-box .stat-value{font-size:1.5rem;font-weight:800;font-family:'Outfit';letter-spacing:0.5px;}
+    @media(max-width:768px){.stat-box .stat-value{font-size:1.15rem}}
+    
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(139,92,246,0.4); } 70% { box-shadow: 0 0 0 10px rgba(139,92,246,0); } 100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); } }
+    .pulse-box { animation: pulseGlow 2s infinite; border-color: rgba(139,92,246,0.5) !important; background: linear-gradient(145deg, rgba(139,92,246,0.1) 0%, rgba(255,255,255,0.01) 100%); }
     
     /* Toast */
     #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(15, 22, 41, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 0.8rem 1.5rem; border-radius: 30px; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; z-index: 10000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); white-space: nowrap; pointer-events: none; }
@@ -1217,17 +1224,30 @@
     
     const mc = document.getElementById('modelComparison');
     if (rec.models) {
-      mc.innerHTML = rec.models.map(mod => `
-        <div class="stat-box" style="text-align:left;padding:.8rem">
-          <div style="font-size:1.2rem;margin-bottom:.2rem;text-align:center">${mod.emoji}</div>
-          <div style="font-weight:700;font-size:.9rem;margin-bottom:.5rem;text-align:center">${mod.name}</div>
-          <div style="font-size:.65rem;color:var(--muted);line-height:1.4">
-            <div>CAGR: <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
-            <div>Vol: ${(mod.vol*100).toFixed(1)}%</div>
-            <div>MDD: <span class="negative">${(mod.mdd*100).toFixed(1)}%</span></div>
+      mc.innerHTML = rec.models.map(mod => {
+        let glowColor = mod.name.includes('รุก') ? 'rgba(239,68,68,0.1)' : mod.name.includes('สมดุล') ? 'rgba(245,158,11,0.1)' : 'rgba(59,130,246,0.1)';
+        let borderColor = mod.name.includes('รุก') ? 'rgba(239,68,68,0.3)' : mod.name.includes('สมดุล') ? 'rgba(245,158,11,0.3)' : 'rgba(59,130,246,0.3)';
+        let allocHtml = '';
+        if (mod.allocation) {
+          allocHtml = '<div style="margin-top:0.6rem;font-size:0.65rem;color:var(--text);border-top:1px solid rgba(255,255,255,0.1);padding-top:0.5rem;">';
+          mod.allocation.forEach(a => {
+            allocHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:0.2rem;"><span><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${a.color || 'var(--text)'};margin-right:4px;"></span>${a.name}</span> <span>${(a.weight*100).toFixed(0)}%</span></div>`;
+          });
+          allocHtml += '</div>';
+        }
+
+        return `
+        <div class="stat-box" style="text-align:left;padding:1rem;background:linear-gradient(145deg, ${glowColor} 0%, rgba(255,255,255,0.01) 100%);border-color:${borderColor};">
+          <div style="font-size:1.5rem;margin-bottom:.3rem;text-align:center;filter:drop-shadow(0 4px 6px ${glowColor});">${mod.emoji}</div>
+          <div style="font-weight:700;font-size:1rem;margin-bottom:.6rem;text-align:center;letter-spacing:0.5px;">${mod.name}</div>
+          <div style="font-size:.7rem;color:var(--muted);line-height:1.6;background:rgba(0,0,0,0.2);padding:0.6rem;border-radius:6px;">
+            <div style="display:flex;justify-content:space-between"><span>CAGR:</span> <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
+            <div style="display:flex;justify-content:space-between"><span>Vol:</span> <span>${(mod.vol*100).toFixed(1)}%</span></div>
+            <div style="display:flex;justify-content:space-between"><span>MDD:</span> <span class="negative">${(mod.mdd*100).toFixed(1)}%</span></div>
           </div>
+          ${allocHtml}
         </div>
-      `).join('');
+      `}).join('');
     }
     
     const medianFinal = mcResult.p50[mcResult.p50.length - 1];

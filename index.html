@@ -1375,7 +1375,7 @@ function updateYTD() {
 // HIGH / LOW — sync กับ mode ปัจจุบัน
 // ─────────────────────────────────────────
 function updateHighLow() {
-  if (!chart) return;
+  if (!chart || !chart.w || !chart.w.globals) return;
   const minTs = chart.w.globals.minX;
   const maxTs = chart.w.globals.maxX;
   let high = -Infinity, low = Infinity;
@@ -1426,7 +1426,7 @@ function getPrevValue(arr) {
  * ถ้าค่า -5% หมายถึง "ย่อตัวลงมา 5% จากดอย" → โอกาสช้อนซื้อ
  */
 function calcDrawdownFromHigh(planData) {
-  if (!chart) return null;
+  if (!chart || !chart.w || !chart.w.globals) return null;
   const minTs = chart.w.globals.minX;
   const maxTs = chart.w.globals.maxX;
   let high = -Infinity;
@@ -1467,7 +1467,7 @@ function calcSMA(planData, period) {
  * ผลลัพธ์ 100% = ราคาอยู่ที่จุดสูงสุด (แพงสุด)
  */
 function calcPriceZone(planData) {
-  if (!chart) return null;
+  if (!chart || !chart.w || !chart.w.globals) return null;
   const minTs = chart.w.globals.minX;
   const maxTs = chart.w.globals.maxX;
   let high = -Infinity, low = Infinity, lastVal = null;

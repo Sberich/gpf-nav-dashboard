@@ -1938,10 +1938,19 @@ document.addEventListener('keydown', function(e) {
   <!-- PWA: ลงทะเบียน Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('Service Worker ลงทะเบียนสำเร็จ', reg))
-      .catch(err => console.error('Service Worker ลงทะเบียนไม่สำเร็จ', err));
+  window.addEventListener('load', async () => {
+    // ลบ Service Worker ตัวเก่าที่ใช้ร่วมกัน (one-time cleanup)
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for (const reg of regs) {
+      if (reg.active && !reg.active.scriptURL.includes('sw-nav.js')) {
+        await reg.unregister();
+        console.log('Unregistered old SW:', reg.active.scriptURL);
+      }
+    }
+    // ลงทะเบียน SW เฉพาะของหน้านี้
+    navigator.serviceWorker.register('sw-nav.js')
+      .then(reg => console.log('SW (NAV) registered', reg))
+      .catch(err => console.error('SW register failed', err));
   });
 }
 </script>

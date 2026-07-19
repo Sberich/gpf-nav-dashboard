@@ -1750,10 +1750,17 @@ function restorePins() {
 <!-- PWA: ลงทะเบียน Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
+  window.addEventListener('load', async () => {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for (const reg of regs) {
+      if (reg.active && !reg.active.scriptURL.includes('sw-port.js')) {
+        await reg.unregister();
+        console.log('Unregistered old SW:', reg.active.scriptURL);
+      }
+    }
+    navigator.serviceWorker.register('sw-port.js')
       .then(reg => console.log('SW (Port) registered', reg))
-      .catch(err => console.error('Service Worker ลงทะเบียนล้มเหลว', err));
+      .catch(err => console.error('SW register failed', err));
   });
 }
 </script>

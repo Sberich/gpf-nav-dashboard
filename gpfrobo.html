@@ -1904,7 +1904,18 @@
   window.onload = function() { loadGPFData(); };
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
+    window.addEventListener('load', async () => {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of regs) {
+        if (reg.active && !reg.active.scriptURL.includes('sw-robo.js')) {
+          await reg.unregister();
+          console.log('Unregistered old SW:', reg.active.scriptURL);
+        }
+      }
+      navigator.serviceWorker.register('sw-robo.js')
+        .then(reg => console.log('SW (Robo) registered', reg))
+        .catch(err => console.error('SW register failed', err));
+    });
   }
   </script>
 </body>

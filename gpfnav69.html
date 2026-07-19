@@ -27,6 +27,7 @@
       --muted: #8b949e;
     }
     body {
+      position: relative; min-height: 100vh;
       margin: 0; padding: 20px;
       background-color: var(--bg); color: var(--text);
       font-family: 'Sarabun', sans-serif;
@@ -127,7 +128,7 @@
     .custom-toast.btn-toast { transform: translateY(10px) scale(0.95); }
     .custom-toast.btn-toast.show { opacity: 1; transform: translateY(0) scale(1); }
     .custom-toast.global-toast {
-      position: fixed;
+      position: absolute;
       bottom: 40px;
       left: 50%;
       transform: translate(-50%, 20px) scale(0.95);
@@ -335,6 +336,9 @@
         <div class="title"><span><span style="margin-right:8px;">🔮</span><span>ประวัติและวิเคราะห์การเปลี่ยนแผน (What-If)</span></span></div>
       </div>
       <div class="body">
+        <div style="font-size:10px; color:var(--muted); margin-bottom:12px; line-height:1.4;">
+          *หมายเหตุ: การวิเคราะห์ What-If สมมติให้เงินอยู่แผนเดิมจนถึงปัจจุบัน หากมีการสับเปลี่ยนซ้อนกันหลายรอบ (ย้ายต่อ) ค่าส่วนต่างอาจมีความคลาดเคลื่อนเนื่องจากไม่ได้ติดตามเงินเป็นรายก้อน
+        </div>
         <div id="trade-history-list" style="display:flex; flex-direction:column; gap:12px;">
           <!-- Trade rows injected here -->
         </div>
@@ -355,8 +359,8 @@
       <div class="body" style="cursor:default;">
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">เดือน/ปี (เช่น 05/2024)</label>
-            <input type="text" id="inp-date" class="input" placeholder="MM/YYYY">
+            <label class="form-label">เดือน/ปี</label>
+            <input type="month" id="inp-date" class="input">
           </div>
           <div class="form-group">
             <label class="form-label">ยอดเงิน (บาท)</label>
@@ -394,7 +398,7 @@
           <div class="grid-2">
             <div class="form-group">
               <label class="form-label">วันที่ทำรายการ</label>
-              <input type="text" id="inp-trade-date" class="input" placeholder="DD/MM/YYYY">
+              <input type="date" id="inp-trade-date" class="input">
             </div>
             <div class="form-group">
               <label class="form-label">ยอดเงินที่ย้าย ฿</label>
@@ -427,7 +431,7 @@
           <div class="grid-2">
             <div class="form-group">
               <label class="form-label">วันที่ทำรายการ</label>
-              <input type="text" id="inp-smart-date" class="input" placeholder="DD/MM/YYYY">
+              <input type="date" id="inp-smart-date" class="input">
             </div>
             <div class="form-group">
               <label class="form-label">มูลค่าพอร์ตรวม (ก่อนย้าย) ฿</label>
@@ -509,6 +513,14 @@ function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
 // Use the original GAS_URL endpoint
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
 let allData = null;
+
+function getLastValidValue(arr) {
+  if (!arr) return null;
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (arr[i] !== null && arr[i] !== undefined && arr[i] > 0) return arr[i];
+  }
+  return null;
+}
 
 // --- Mock Port Logic ---
 function addMockPlanRow(suffix = '', planName = '', pct = '') {
@@ -715,26 +727,44 @@ function renderMockPort(mockData, suffix = '') {
     const initialCapital = mockData.startCapital * (pct / 100);
     const pData = allData.plans.find(x => x.label === plan || x.key === plan);
     
-    if (pData && (pData.fullData || pData.data).length > 0) {
-      const dataArr = pData.fullData || pData.data;
-      const startNav = dataArr[closestIdx] || dataArr[dataArr.length - 1];
-      const lastNav = dataArr[dataArr.length - 1];
-      
-      let mockUnits = initialCapital / startNav;
-      let planContribAmt = 0;
+      if (pData && (pData.fullData || pData.data).length > 0) {
+        const dataArr = pData.fullData || pData.data;
+        const startNav = dataArr[closestIdx];
+        
+        if (!startNav || startNav <= 0) {
+          breakdownHtml += `
+            <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
+              <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
+                <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
+                <div style="flex:1; min-width:0;">
+                  <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-0.3px;">${plan}</div>
+                  <div style="color:#f85149;font-size:11px;">⚠️ แผนนี้ยังไม่มีข้อมูล ณ วันที่เลือก จึงถูกข้ามการคำนวณ</div>
+                </div>
+              </div>
+            </div>`;
+          return;
+        }
 
-      validContribs.forEach(c => {
-        let cIdx = 0;
-        let cMinDiff = Infinity;
-        searchDates.forEach((dStr, idx) => {
-          const diff = Math.abs(new Date(dStr).getTime() - c.time);
-          if (diff < cMinDiff) { cMinDiff = diff; cIdx = idx; }
+        const lastNav = getLastValidValue(dataArr);
+        if (!lastNav) return;
+        
+        let mockUnits = initialCapital / startNav;
+        let planContribAmt = 0;
+
+        validContribs.forEach(c => {
+          let cIdx = 0;
+          let cMinDiff = Infinity;
+          searchDates.forEach((dStr, idx) => {
+            const diff = Math.abs(new Date(dStr).getTime() - c.time);
+            if (diff < cMinDiff) { cMinDiff = diff; cIdx = idx; }
+          });
+          const cNav = dataArr[cIdx];
+          if (cNav && cNav > 0) {
+            const cAmt = c.amount * (pct / 100);
+            mockUnits += cAmt / cNav;
+            planContribAmt += cAmt;
+          }
         });
-        const cNav = dataArr[cIdx] || dataArr[dataArr.length - 1];
-        const cAmt = c.amount * (pct / 100);
-        mockUnits += cAmt / cNav;
-        planContribAmt += cAmt;
-      });
 
       const val = mockUnits * lastNav;
       totalMockValue += val;
@@ -860,7 +890,7 @@ function initDashboard() {
       // Find latest NAV for this plan
       const pData = allData.plans.find(x => x.label === u.plan || x.key === u.plan);
       if(pData && pData.data.length > 0) {
-        const lastNav = pData.data[pData.data.length - 1];
+        const lastNav = getLastValidValue(pData.data);
         const val = u.units * lastNav;
         totalValue += val;
         
@@ -954,6 +984,11 @@ function initDashboard() {
   document.getElementById('val-pl-pct').textContent = plPct.toFixed(2) + '%';
   document.getElementById('val-pl-pct').style.color = plPct >= 0 ? '#4caf50' : '#f44336';
 
+  let sumUnitCost = port.units.reduce((s, u) => s + (u.cost || 0), 0);
+  if (Math.abs(sumUnitCost - totalCost) > 1 && totalCost > 0) {
+    console.warn(`[P/L Warning] ผลรวมต้นทุนรายแผน (${formatMoney(sumUnitCost)} ฿) ไม่ตรงกับต้นทุนรวมจากกระแสเงินสด (${formatMoney(totalCost)} ฿) อาจทำให้กำไรแยกส่วนไม่เท่ากับกำไรรวม`);
+  }
+
   // Calculate Historical Snapshot PnL
   if (port.snapshots && port.snapshots.length > 0) {
     const now = new Date().getTime();
@@ -991,7 +1026,12 @@ function initDashboard() {
           let sign = '';
           if (profitDiff > 0.01) { color = '#4caf50'; sign = '+'; }
           else if (profitDiff < -0.01) { color = '#f44336'; }
-          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <div><span style="color:${color}; font-size:16px; font-weight:700; margin-right:4px;">${sign}${formatMoney(profitDiff)}฿</span><span style="color:${color}; font-size:11px; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
+          let label = p.toUpperCase();
+          if (p === '1d') {
+            const diffDays = Math.round((now - snap.date) / dayMs);
+            if (diffDays > 1) label = `1D <span style="font-size:9px; font-weight:normal;">(ย้อน ${diffDays} วัน)</span>`;
+          }
+          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${color}; font-size:16px; font-weight:700; margin-right:4px;">${sign}${formatMoney(profitDiff)}฿</span><span style="color:${color}; font-size:11px; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
         } else {
           el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <span style="color:var(--muted); font-weight:600;">-</span>`;
         }
@@ -1017,41 +1057,44 @@ function initDashboard() {
     if (chartDataDates.length > 1 && window.Chart) {
       // ปิดการแสดงผลกราฟชั่วคราวตามที่ผู้ใช้ต้องการ
       // document.getElementById('chart-container').style.display = 'block';
-      const ctx = document.getElementById('portChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: chartDataDates,
-          datasets: [{
-            label: 'มูลค่าพอร์ต',
-            data: chartDataValues,
-            borderColor: '#58a6ff',
-            backgroundColor: 'rgba(88, 166, 255, 0.1)',
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            fill: true,
-            tension: 0.2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(context) { return formatMoney(context.raw) + ' ฿'; }
+      const container = document.getElementById('chart-container');
+      if (container.style.display !== 'none') {
+        const ctx = document.getElementById('portChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartDataDates,
+            datasets: [{
+              label: 'มูลค่าพอร์ต',
+              data: chartDataValues,
+              borderColor: '#58a6ff',
+              backgroundColor: 'rgba(88, 166, 255, 0.1)',
+              borderWidth: 2,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              fill: true,
+              tension: 0.2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) { return formatMoney(context.raw) + ' ฿'; }
+                }
               }
-            }
-          },
-          scales: {
-            x: { display: true, grid: { display: false, drawBorder: false }, ticks: { color: '#8b949e', font: { size: 9 }, maxTicksLimit: 6 } },
-            y: { display: false, min: Math.min(...chartDataValues) * 0.99, max: Math.max(...chartDataValues) * 1.01 }
-          },
-          interaction: { intersect: false, mode: 'index' },
-        }
-      });
+            },
+            scales: {
+              x: { display: true, grid: { display: false, drawBorder: false }, ticks: { color: '#8b949e', font: { size: 9 }, maxTicksLimit: 6 } },
+              y: { display: false, min: Math.min(...chartDataValues) * 0.99, max: Math.max(...chartDataValues) * 1.01 }
+            },
+            interaction: { intersect: false, mode: 'index' },
+          }
+        });
+      }
     }
   }
 
@@ -1097,9 +1140,9 @@ function initDashboard() {
             const oldDataArr = oldPlanData.fullData || oldPlanData.data;
             const newDataArr = newPlanData.fullData || newPlanData.data;
             const navOldThen = oldDataArr[bestIdx];
-            const navOldNow = oldPlanData.data[oldPlanData.data.length - 1];
+            const navOldNow = getLastValidValue(oldPlanData.data);
             const navNewThen = newDataArr[bestIdx];
-            const navNewNow = newPlanData.data[newPlanData.data.length - 1];
+            const navNewNow = getLastValidValue(newPlanData.data);
             
             if (navOldThen && navOldNow && navNewThen && navNewNow) {
               oldNavStr = ` <span style="font-size:10px; color:#58a6ff; font-weight:normal;">@${navOldThen.toFixed(4)}</span>`;
@@ -1193,9 +1236,16 @@ function getDeviceId() {
   return id;
 }
 
+function fetchWithTimeout(url, opts, ms = 20000) {
+  return Promise.race([
+    fetch(url, opts),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ โปรดลองอีกครั้ง')), ms))
+  ]);
+}
+
 async function apiCall(payload) {
   payload.deviceId = getDeviceId();
-  const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+  const res = await fetchWithTimeout(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
   const result = await res.json();
   if (result.error === "Unauthorized_Device") {
     showToast("🔒 อุปกรณ์นี้ไม่ได้รับอนุญาตหรือเซสชันหมดอายุ ระบบจะทำการโหลดใหม่", null, 'error');
@@ -1276,6 +1326,10 @@ function saveContrib() {
   if(!date || isNaN(amount)) {
     showToast("กรุณากรอกเดือน/ปี และยอดเงินให้ถูกต้อง", null, 'error');
     return;
+  }
+  if (date.includes('-')) {
+    const parts = date.split('-');
+    if (parts.length === 2) date = `${parts[1]}/${parts[0]}`;
   }
   
   postData({ action: 'add_contrib', date, amount, note }, 'btn-save-contrib');
@@ -1379,9 +1433,14 @@ function calcSmartSum(type) {
 }
 
 async function saveSmartRebalance() {
-  const dateStr = document.getElementById('inp-smart-date').value;
+  let dateStr = document.getElementById('inp-smart-date').value;
   const totalVal = parseFloat(document.getElementById('inp-smart-total').value);
   if (!dateStr || !totalVal) return showToast('กรุณากรอกวันที่และมูลค่าพอร์ตให้ครบ', null, 'error');
+  
+  if (dateStr.includes('-')) {
+    const p = dateStr.split('-');
+    if (p.length === 3) dateStr = `${p[2]}/${p[1]}/${p[0]}`;
+  }
   
   const bList = document.querySelectorAll('.smart-before-plan');
   const bPct = document.querySelectorAll('.smart-before-pct');
@@ -1448,24 +1507,31 @@ async function saveSmartRebalance() {
   if(!conf) return;
   
   const btn = document.getElementById('btn-save-smart');
-  btn.innerText = 'กำลังบันทึก...';
   btn.disabled = true;
   
+  let successCount = 0;
   try {
-    for (const t of trades) {
-      await apiCall(t);
+    for (let i = 0; i < trades.length; i++) {
+      btn.innerText = `กำลังบันทึก (${i + 1}/${trades.length})...`;
+      await apiCall(trades[i]);
+      successCount++;
     }
     showToast('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
     localStorage.removeItem("gpfnav_data_v3");
     location.reload();
   } catch(e) {
-    if (e.message !== "Canceled by user") showToast(e.message, null, 'error');
+    if (e.message !== "Canceled by user") {
+      showToast(`เกิดข้อผิดพลาด: บันทึกสำเร็จไปแล้ว ${successCount}/${trades.length} รายการ โปรดตรวจสอบประวัติและทำรายการส่วนที่เหลือใหม่`, null, 'error');
+      console.error(e);
+    }
+  } finally {
+    btn.innerText = 'วิเคราะห์และบันทึก';
+    btn.disabled = false;
   }
-  btn.innerText = 'วิเคราะห์และบันทึก';
-  btn.disabled = false;
 }
 
 async function seedData() {
+  if(!confirm('คุณต้องการนำเข้าข้อมูลประวัติทั้งหมดลงในชีต MyPort ใช่หรือไม่?\n\n(หากเคยนำเข้าแล้ว ไม่ควรกดซ้ำ)')) return;
   const btn = document.getElementById('btn-seed-data');
   btn.innerText = 'กำลังนำเข้าข้อมูล...';
   btn.disabled = true;
@@ -1500,7 +1566,7 @@ async function exportStatement() {
 }
 
 async function saveTrade() {
-  const date = document.getElementById('inp-trade-date').value;
+  let date = document.getElementById('inp-trade-date').value;
   const oldPlan = document.getElementById('inp-trade-old').value;
   const newPlan = document.getElementById('inp-trade-new').value;
   const amt = document.getElementById('inp-trade-amt').value;
@@ -1508,6 +1574,11 @@ async function saveTrade() {
   const note = document.getElementById('inp-trade-note').value;
   
   if(!date || !oldPlan || !newPlan || !amt) return showToast('กรอกข้อมูลให้ครบ', null, 'error');
+  
+  if (date.includes('-')) {
+    const p = date.split('-');
+    if (p.length === 3) date = `${p[2]}/${p[1]}/${p[0]}`;
+  }
   
   const btn = document.getElementById('btn-save-trade');
   btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;

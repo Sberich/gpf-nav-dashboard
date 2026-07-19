@@ -14,6 +14,12 @@
   <link rel="manifest" href="manifest-robo-v2.json?v=3">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Demo Data Warning Banner -->
+  <style>
+    #demoBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(90deg,#dc2626,#ef4444);color:#fff;text-align:center;padding:8px 16px;font-size:.85rem;font-weight:600;letter-spacing:.3px;box-shadow:0 2px 10px rgba(239,68,68,0.4)}
+    #demoBanner.show{display:block}
+    body.has-demo-banner{padding-top:36px}
+  </style>
   <style>
     :root {
       --bg: #0a0e1a;
@@ -237,6 +243,7 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
+  <div id="demoBanner"><i class="fa-solid fa-triangle-exclamation"></i> กำลังใช้ข้อมูลจำลอง (Demo) เนื่องจากเชื่อมต่อเซิร์ฟเวอร์ไม่ได้ — ตัวเลขทั้งหมดเป็นค่าสุ่ม ไม่ใช่ข้อมูลจริง</div>
   <div class="container">
     <a href="index.html" class="nav-btn" title="กลับสู่ Dashboard หลัก"><i class="fa-solid fa-arrow-left"></i></a>
     
@@ -277,13 +284,38 @@
             </div>
             <div class="grid-2-mobile">
               <div class="form-group">
-                <label><i class="fa-solid fa-percent"></i> สะสม (%)</label>
-                <input type="number" id="memberContribution" required min="3" max="27" step="1" value="12" title="หักสะสม 3% ถึง 27%">
+                <label><i class="fa-solid fa-percent"></i> สะสม (%) <span style="font-size:.7rem;color:var(--muted)">(3% บังคับ + ออมเพิ่มได้ถึง 27%)</span></label>
+                <input type="number" id="memberContribution" required min="3" max="30" step="1" value="12" title="หักสะสม 3% บังคับ + ออมเพิ่มสมัครใจสูงสุด 27% = รวมเพดาน 30%">
               </div>
               <div class="form-group">
                 <label><i class="fa-solid fa-arrow-trend-up"></i> เงินเดือนขึ้น (%)</label>
                 <input type="number" id="salaryGrowth" required min="0" max="15" step="0.1" value="6.0">
               </div>
+            </div>
+            <div class="grid-2-mobile" style="margin-bottom:.5rem">
+              <div class="form-group">
+                <label><i class="fa-solid fa-calendar-check"></i> บรรจุรับราชการ</label>
+                <div class="custom-select-wrapper">
+                  <div class="custom-select">
+                    <div class="custom-select-trigger"><span style="color:#fff">หลัง 27 มี.ค. 2540 (สมทบ 3%)</span> <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="custom-options">
+                      <div class="custom-option selected" data-value="no">หลัง 27 มี.ค. 2540 (สมทบ 3%)</div>
+                      <div class="custom-option" data-value="yes">ก่อน 27 มี.ค. 2540 (สมทบ 3% + ชดเชย 2%)</div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="isPre1997" required value="no">
+                </div>
+              </div>
+              <div class="form-group">
+                <label><i class="fa-solid fa-user-clock"></i> อายุตอนเริ่มรับราชการ (ปี)</label>
+                <input type="number" id="startServiceAge" required min="18" max="55" step="1" value="29" title="อายุตอนที่บรรจุเข้ารับราชการ">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:.5rem">
+              <label style="cursor:pointer;user-select:none">
+                <input type="checkbox" id="adjustInflation" style="width:auto;margin-right:.5rem;accent-color:var(--primary)">
+                <i class="fa-solid fa-chart-line"></i> ปรับลดด้วยเงินเฟ้อ (Real Terms ~3%/ปี)
+              </label>
             </div>
             <div class="form-group">
               <label><i class="fa-solid fa-compass"></i> สไตล์การลงทุน (Investment Style)</label>
@@ -420,9 +452,13 @@
               <div class="stat-value" id="statWorst" style="color:var(--red)">—</div>
             </div>
             <div class="stat-box" style="border-color:rgba(16,185,129,0.3)">
-              <div class="stat-label">Income Replacement Ratio (SWR 4%)</div>
+              <div class="stat-label">Income Replacement Ratio <span style="font-size:.65rem;color:var(--muted)">(กบข.+บำนาญ vs 70% เงินเดือน)</span></div>
               <div class="stat-value" id="statIRR" style="color:var(--green);font-size:1.1rem">—</div>
+              <div id="irrBreakdown" style="font-size:.65rem;color:var(--muted);margin-top:.3rem"></div>
             </div>
+          </div>
+          <div id="irrDisclaimer" style="display:none;margin-top:.8rem;padding:.6rem .8rem;border-radius:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);font-size:.75rem;color:var(--yellow);line-height:1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> <b>หมายเหตุ:</b> ตัวเลข Income Replacement Ratio = (ถอน 4% จากเงินก้อน กบข. + บำนาญรายเดือน) ÷ 70% ของเงินเดือนสุดท้าย สูตรบำนาญ: (เงินเดือนสุดท้าย × อายุราชการ) / 50 ไม่เกิน 70% ของเงินเดือนสุดท้าย
           </div>
         </div>
       </div>
@@ -729,7 +765,7 @@
     // Use 0 as the Minimum Acceptable Return (MAR) threshold for downside deviation
     const downside = valid.filter(r => r < 0);
     if (downside.length < 5) return calcSharpe(cagr, calcVolatility(returns));
-    const downDev = Math.sqrt(downside.reduce((a, r) => a + r ** 2, 0) / downside.length) * Math.sqrt(252);
+    const downDev = Math.sqrt(downside.reduce((a, r) => a + r ** 2, 0) / valid.length) * Math.sqrt(252);
     return downDev > 0 ? (cagr - RF) / downDev : 0;
   }
   function calcScore(cagr, vol, mdd, sharpe, sortino) {
@@ -810,7 +846,9 @@
       
       // Assumed returns for new plans or error cases
       const validNavs = nav.filter(n => n > 0).length;
+      let isEstimatedCAGR = false;
       if (validNavs < 252 * 2 || Math.abs(cagr) < 0.001) {
+        isEstimatedCAGR = true;
         const pName = plan.label || plan.key;
         if (pName.includes("หุ้น") || pName.includes("เชิงรุก")) cagr = 0.065;
         else if (pName.includes("อสังหา")) cagr = 0.05;
@@ -829,11 +867,19 @@
       const rsi = calcRSI(nav, 14);
       const macd = calcMACD(nav);
       
+      const pName = plan.label || plan.key;
+      const isMixable = MIXABLE_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k)));
+      const isLock100 = LOCK_100_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k)));
+      
+      // === FIX #10: Warn about unmatched plans ===
+      if (!isMixable && !isLock100) {
+        console.warn(`⚠️ แผน "${pName}" ไม่ตรงกับ LOCK_100_PLANS หรือ MIXABLE_PLANS — จะไม่ถูกพิจารณาในคำแนะนำ AI`);
+      }
+      
       metrics.push({
-        name: plan.label || plan.key, color: plan.color, cagr, vol, mdd, cvar, sharpe, sortino, score,
-        ret1M, ret3M, rsi, macd,
-        isMixable: MIXABLE_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k))), 
-        isLock100: LOCK_100_PLANS.some(k => (plan.label && plan.label.includes(k)) || (plan.key && plan.key.includes(k))), 
+        name: pName, color: plan.color, cagr, vol, mdd, cvar, sharpe, sortino, score,
+        ret1M, ret3M, rsi, macd, isMixable, isLock100,
+        isEstimatedCAGR, // === FIX #12: Track estimated CAGR flag ===
         nav, returns
       });
     });
@@ -868,7 +914,11 @@
       let maxChange = 0;
       for (let i = 0; i < n; i++) {
         let oldW = w[i];
-        if (rc[i] > 1e-12) w[i] *= target / rc[i];
+        if (rc[i] > 1e-12) {
+          // === FIX 🔵: Clamp per-iteration change to ±50% for stability ===
+          const newW = w[i] * target / rc[i];
+          w[i] = Math.max(w[i] * 0.5, Math.min(newW, w[i] * 1.5));
+        }
         else w[i] = 1/n;
         maxChange = Math.max(maxChange, Math.abs(w[i] - oldW));
       }
@@ -886,6 +936,40 @@
     const { values } = cleanNavSeries(window);
     if (values.length < 2) return null;
     return (values[values.length - 1] / values[0]) - 1;
+  }
+
+  // Build a synthetic blended NAV series from weighted daily log-returns
+  // This gives us the actual portfolio path so MDD/CVaR are computed correctly
+  // (accounting for diversification, not just weighted-average of individual stats)
+  function buildBlendedNav(weights, eligiblePlans) {
+    // Find the common length (shortest NAV series among eligible plans)
+    const navArrays = eligiblePlans.map(p => p.nav || []);
+    const minLen = Math.min(...navArrays.map(n => n.length));
+    if (minLen < 10) return { nav: [], returns: [] };
+    
+    // Build daily weighted returns and cumulative NAV
+    const blendedNav = [1.0]; // Start at 1.0 (normalized)
+    const blendedReturns = [null];
+    
+    for (let t = 1; t < minLen; t++) {
+      let dailyLogRet = 0;
+      let validDay = true;
+      for (let i = 0; i < weights.length; i++) {
+        if (weights[i] === 0) continue;
+        const curr = navArrays[i][t];
+        const prev = navArrays[i][t - 1];
+        if (!curr || !prev || curr <= 0 || prev <= 0) { validDay = false; break; }
+        dailyLogRet += weights[i] * Math.log(curr / prev);
+      }
+      if (validDay) {
+        blendedReturns.push(dailyLogRet);
+        blendedNav.push(blendedNav[blendedNav.length - 1] * Math.exp(dailyLogRet));
+      } else {
+        blendedReturns.push(null);
+        blendedNav.push(blendedNav[blendedNav.length - 1]); // carry forward
+      }
+    }
+    return { nav: blendedNav, returns: blendedReturns };
   }
 
   function momentumViews(metrics) {
@@ -955,23 +1039,41 @@
       const portVol = Math.sqrt(Math.max(portVol2, 0));
       const portSharpe = calcSharpe(portCAGR, portVol);
       
-      let portMDD = 0; tiltedWeights.forEach((w, i) => portMDD += w * eligibleMix[i].mdd);
-      let portCVaR = 0; tiltedWeights.forEach((w, i) => portCVaR += w * eligibleMix[i].cvar);
+      // === FIX: Calculate MDD/CVaR from actual blended NAV, not weighted averages ===
+      const blended = buildBlendedNav(tiltedWeights, eligibleMix);
+      let portMDD, portCVaR;
+      if (blended.nav.length >= 10) {
+        portMDD = calcMaxDrawdown(blended.nav);
+        portCVaR = calcCVaR95(blended.returns);
+      } else {
+        // Fallback to weighted average if blended NAV is too short
+        portMDD = 0; tiltedWeights.forEach((w, i) => portMDD += w * eligibleMix[i].mdd);
+        portCVaR = 0; tiltedWeights.forEach((w, i) => portCVaR += w * eligibleMix[i].cvar);
+      }
       
       mixAllocation = eligibleMix.map((m, i) => ({
         name: m.name, color: m.color, weight: tiltedWeights[i], cagr: m.cagr, vol: m.vol, mdd: m.mdd
       })).filter(a => a.weight > 0).sort((a,b) => b.weight - a.weight);
       mixMetrics = { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: portSharpe, cvar: portCVaR };
+      
+      // === FIX: Reject mix if MDD exceeds user's risk tolerance ===
+      if (Math.abs(portMDD) > maxDD) {
+        mixAllocation = null;
+        mixMetrics = null;
+      }
     }
     
     const bestLock = eligibleLock.length > 0 ? eligibleLock[0] : null;
+    const safePlanFallback = planMetrics.find(p => p.name.includes("ระยะสั้น"))
+      || planMetrics.find(p => p.name.includes("ตราสารหนี้"))
+      || [...planMetrics].sort((a,b) => a.vol - b.vol)[0];
     let recommendation;
     if (mixMetrics && bestLock) {
       if (mixMetrics.sharpe > bestLock.sharpe * 1.05) recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'แผนผสม AI Optimized' };
       else recommendation = { type: 'single', plan: bestLock, label: bestLock.name };
     } else if (mixMetrics) { recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'แผนผสม AI Optimized' };
     } else if (bestLock) { recommendation = { type: 'single', plan: bestLock, label: bestLock.name };
-    } else { recommendation = { type: 'single', plan: planMetrics[0], label: 'แผนตราสารหนี้ (Default Safe)' }; }
+    } else { recommendation = { type: 'single', plan: safePlanFallback, label: safePlanFallback.name + ' (Default Safe)' }; }
     
     recommendation.models = generateThreeModels(riskTolerance);
     recommendation.yearsToRetire = yearsToRetire;
@@ -979,11 +1081,15 @@
   }
   
   function generateThreeModels(riskTolerance) {
+    // === FIX #7: Map riskTolerance to highlight the matching model ===
+    const riskToModel = { 5: 'conservative', 10: 'conservative', 20: 'balanced', 35: 'aggressive', 50: 'aggressive' };
+    const matchedCls = riskToModel[riskTolerance] || 'balanced';
+    
     const models = [
       { name: 'เชิงรุก', emoji: '🔥', eqTarget: 0.80, maxMDD: 0.40, cls: 'aggressive' },
       { name: 'สมดุล', emoji: '⚖️', eqTarget: 0.50, maxMDD: 0.22, cls: 'balanced' },
       { name: 'มั่นคง', emoji: '🛡️', eqTarget: 0.20, maxMDD: 0.08, cls: 'conservative' }
-    ];
+    ].map(m => ({ ...m, isRecommended: m.cls === matchedCls }));
 
     const equityKeywords = ['หุ้นไทย', 'หุ้นต่างประเทศ', 'อสังหาริมทรัพย์', 'ทองคำ'];
 
@@ -1016,17 +1122,26 @@
       const cs = weights.reduce((a, b) => a + b, 0);
       if (cs > 0) weights = weights.map(w => w / cs);
 
-      let pCAGR = 0, pVol2 = 0, pMDD = 0;
+      let pCAGR = 0, pVol2 = 0;
       for (let i = 0; i < weights.length; i++) {
         if (weights[i] === 0) continue;
         pCAGR += weights[i] * eligible[i].cagr;
-        pMDD += weights[i] * eligible[i].mdd;
         for (let j = 0; j < weights.length; j++) {
           if (weights[j] === 0) continue;
           pVol2 += weights[i] * weights[j] * covarianceMatrix[indices[i]][indices[j]];
         }
       }
       const pVol = Math.sqrt(Math.max(pVol2, 0));
+      
+      // === FIX: Use blended NAV for MDD instead of weighted average ===
+      const blendedModel = buildBlendedNav(weights, eligible);
+      let pMDD;
+      if (blendedModel.nav.length >= 10) {
+        pMDD = calcMaxDrawdown(blendedModel.nav);
+      } else {
+        pMDD = 0; weights.forEach((w, i) => { if (w > 0) pMDD += w * eligible[i].mdd; });
+      }
+      
       const allocation = eligible.filter((_, i) => weights[i] > 0).map((m, i) => ({
         name: m.name, weight: weights[eligible.indexOf(m)], color: m.color
       })).filter(a => a.weight > 0).sort((a, b) => b.weight - a.weight);
@@ -1065,7 +1180,7 @@
     });
     
     const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.momentum - a.momentum);
-    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น")) || planMetrics.find(p => p.name.includes("ตราสารหนี้")) || planMetrics[0];
+    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น")) || planMetrics.find(p => p.name.includes("ตราสารหนี้")) || [...planMetrics].sort((a,b) => a.vol - b.vol)[0];
     
     let recommendation;
     const bestMixable = mixable[0];
@@ -1105,8 +1220,21 @@
          cvar: a.plan.cvar
       }));
       
-      let portCAGR = 0, portMDD = 0, portVol = 0, portCVaR = 0;
-      finalAlloc.forEach(a => { portCAGR += a.weight * a.cagr; portMDD += a.weight * a.mdd; portVol += a.weight * a.vol; portCVaR += a.weight * (a.cvar||0); });
+      let portCAGR = 0, portVol = 0;
+      finalAlloc.forEach(a => { portCAGR += a.weight * a.cagr; portVol += a.weight * a.vol; });
+      
+      // === FIX: Use blended NAV for MDD/CVaR in tactical mode too ===
+      const tacPlans = finalAlloc.map(a => a.plan);
+      const tacWeights = finalAlloc.map(a => a.weight);
+      const blendedTac = buildBlendedNav(tacWeights, tacPlans);
+      let portMDD, portCVaR;
+      if (blendedTac.nav.length >= 10) {
+        portMDD = calcMaxDrawdown(blendedTac.nav);
+        portCVaR = calcCVaR95(blendedTac.returns);
+      } else {
+        portMDD = 0; portCVaR = 0;
+        finalAlloc.forEach(a => { portMDD += a.weight * a.mdd; portCVaR += a.weight * (a.cvar||0); });
+      }
       
       const hasOB = topPositive.some(m => m.isOB);
       const bestMixedRsi = topPositive[0].rsi.toFixed(1);
@@ -1127,17 +1255,33 @@
     return recommendation;
   }
   
-  function monteCarloSim(balance, salary, memberRate, salaryGrowth, years, mu, sigma, numSims = 10000) {
+  function monteCarloSim(balance, salary, memberRate, salaryGrowth, years, mu, sigma, numSims = 10000, startAge = 38) {
     const paths = [];
-    const govRate = 0.05; 
+    const govRate = document.getElementById('isPre1997').value === 'yes' ? 0.05 : 0.03;
+    
+    // === FIX #9: Glide Path — adjust mu/sigma each year based on equity target ===
+    // At startAge the user has equityRatio0; at age 60 it should drop to ~10%
+    // mu and sigma scale linearly with the equity ratio relative to the initial ratio
+    const eqRatio0 = getEquityTarget(startAge);
+    // Safe asset assumptions (cash/bond-like floor)
+    const safeMu = 0.02;   // ~2% return for pure bonds/deposit
+    const safeSigma = 0.02; // ~2% vol for pure bonds/deposit
+    
     for (let s = 0; s < numSims; s++) {
       let bal = balance;
       let curAnnualS = salary * 12;
       const path = [bal];
       for (let y = 0; y < years; y++) {
-        const u1 = Math.random(), u2 = Math.random();
+        // Glide Path: blend between risky portfolio and safe asset
+        const currentAge = startAge + y;
+        const eqRatioY = getEquityTarget(currentAge);
+        const blendRatio = eqRatio0 > 0.01 ? eqRatioY / eqRatio0 : 0;
+        const yearMu = blendRatio * mu + (1 - blendRatio) * safeMu;
+        const yearSigma = blendRatio * sigma + (1 - blendRatio) * safeSigma;
+        
+        const u1 = Math.max(Math.random(), 1e-10), u2 = Math.random();
         const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-        const r = Math.exp((mu - sigma*sigma/2) + sigma * z);
+        const r = Math.exp((yearMu - yearSigma*yearSigma/2) + yearSigma * z);
         
         bal = bal * r;
         bal += (curAnnualS * (memberRate + govRate));
@@ -1185,10 +1329,12 @@
       const cagrClass = m.cagr >= 0 ? 'positive' : 'negative';
       const mddClass = 'negative';
       const scoreColor = m.score >= 70 ? 'var(--green)' : m.score >= 40 ? 'var(--yellow)' : 'var(--red)';
+      // === FIX #12: Show "ประมาณการ" badge if CAGR was estimated ===
+      const cagrBadge = m.isEstimatedCAGR ? ' <span style="font-size:.6rem;background:rgba(245,158,11,0.2);color:var(--yellow);padding:1px 5px;border-radius:4px;vertical-align:middle">ประมาณการ</span>' : '';
       return `<tr>
         <td><span class="plan-dot" style="background:${m.color}"></span>${m.name}</td>
         <td><span class="tag ${tagClass}">${tagText}</span></td>
-        <td class="${cagrClass}">${(m.cagr*100).toFixed(2)}%</td>
+        <td class="${cagrClass}">${(m.cagr*100).toFixed(2)}%${cagrBadge}</td>
         <td>${(m.vol*100).toFixed(2)}%</td>
         <td>${m.sharpe.toFixed(3)}</td>
         <td>${(m.sortino || 0).toFixed(3)}</td>
@@ -1230,6 +1376,9 @@
       mc.innerHTML = rec.models.map(mod => {
         let glowColor = mod.name.includes('รุก') ? 'rgba(239,68,68,0.1)' : mod.name.includes('สมดุล') ? 'rgba(245,158,11,0.1)' : 'rgba(59,130,246,0.1)';
         let borderColor = mod.name.includes('รุก') ? 'rgba(239,68,68,0.3)' : mod.name.includes('สมดุล') ? 'rgba(245,158,11,0.3)' : 'rgba(59,130,246,0.3)';
+        // === FIX #7: Highlight recommended model with pulse glow ===
+        const recBadge = mod.isRecommended ? '<div style="font-size:.6rem;color:var(--green);background:rgba(16,185,129,0.15);padding:2px 8px;border-radius:10px;margin-top:.3rem;font-weight:600">✅ แนะนำสำหรับคุณ</div>' : '';
+        const pulseClass = mod.isRecommended ? ' pulse-box' : '';
         let allocHtml = '';
         if (mod.allocation) {
           allocHtml = '<div style="margin-top:0.6rem;font-size:0.65rem;color:var(--text);border-top:1px solid rgba(255,255,255,0.1);padding-top:0.5rem;">';
@@ -1240,11 +1389,12 @@
         }
 
         return `
-        <div class="stat-box" style="text-align:left;padding:1rem;background:linear-gradient(145deg, ${glowColor} 0%, rgba(255,255,255,0.01) 100%);border-color:${borderColor};">
+        <div class="stat-box${pulseClass}" style="text-align:left;padding:1rem;background:linear-gradient(145deg, ${glowColor} 0%, rgba(255,255,255,0.01) 100%);border-color:${borderColor};">
           <div style="display:flex;align-items:center;gap:1rem;">
             <div style="flex:0 0 30%;text-align:center;">
               <div style="font-size:1.8rem;filter:drop-shadow(0 4px 6px ${glowColor});line-height:1;">${mod.emoji}</div>
               <div style="font-weight:700;font-size:0.9rem;letter-spacing:0.5px;margin-top:0.4rem;">${mod.name}</div>
+              ${recBadge}
             </div>
             <div style="flex:1;font-size:.7rem;color:var(--muted);line-height:1.5;background:rgba(0,0,0,0.2);padding:0.5rem 0.6rem;border-radius:6px;">
               <div style="display:flex;justify-content:space-between"><span>CAGR:</span> <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
@@ -1257,18 +1407,44 @@
       `}).join('');
     }
     
-    const medianFinal = mcResult.p50[mcResult.p50.length - 1];
-    const p10Final = mcResult.p10[mcResult.p10.length - 1];
+    let medianFinal = mcResult.p50[mcResult.p50.length - 1];
+    let p10Final = mcResult.p10[mcResult.p10.length - 1];
+    
+    // === FIX: Apply inflation adjustment if user opted in ===
+    const adjustInflation = document.getElementById('adjustInflation').checked;
+    const inflationRate = 0.03;
+    const inflationFactor = adjustInflation ? Math.pow(1 + inflationRate, rec.yearsToRetire) : 1;
+    const inflationLabel = adjustInflation ? ' (Real)' : '';
+    medianFinal = medianFinal / inflationFactor;
+    p10Final = p10Final / inflationFactor;
 
-    document.getElementById('statFuture').innerText = fmtM(medianFinal) + ' ฿';
-    document.getElementById('statWorst').innerText = fmtM(p10Final) + ' ฿';
+    document.getElementById('statFuture').innerText = fmtM(medianFinal) + ' ฿' + inflationLabel;
+    document.getElementById('statWorst').innerText = fmtM(p10Final) + ' ฿' + inflationLabel;
 
     const finalSalary = salary * Math.pow(1 + salaryGrowth, rec.yearsToRetire);
-    const annualWithdrawal = medianFinal * 0.04;
+    const annualWithdrawalGPF = medianFinal * 0.04;
+    
+    // === FIX: Include civil service pension in IRR calculation ===
+    const startServiceAge = parseInt(document.getElementById('startServiceAge').value) || 25;
+    const serviceYears = Math.min(40, 60 - startServiceAge); // Cap at 40 years max
+    const finalMonthlySalary = finalSalary; // Already monthly
+    // สูตรบำนาญ: (เงินเดือนสุดท้าย x อายุราชการ) / 50 ไม่เกิน 70% ของเงินเดือนสุดท้าย
+    const pensionMonthly = Math.min(finalMonthlySalary * serviceYears / 50, finalMonthlySalary * 0.70);
+    const pensionAnnual = pensionMonthly * 12;
+    // ปรับเงินเฟ้อเช่นกัน (บำนาญจริงๆ ไม่ปรับตามเงินเฟ้อ แต่เพื่อเทียบค่าแท้จริง)
+    const adjustedPensionAnnual = adjustInflation ? pensionAnnual / inflationFactor : pensionAnnual;
+    
+    const totalRetirementIncome = annualWithdrawalGPF + adjustedPensionAnnual;
     // ใช้ 70% ของเงินเดือนปีสุดท้ายเป็นค่าใช้จ่ายหลังเกษียณ (Replacement Rate Standard)
-    const annualExpense = finalSalary * 12 * 0.70;
-    const irr = annualExpense > 0 ? (annualWithdrawal / annualExpense) * 100 : 0;
-    document.getElementById('statIRR').innerText = irr.toFixed(1) + '%';
+    const annualExpense = finalMonthlySalary * 12 * 0.70;
+    const irr = annualExpense > 0 ? (totalRetirementIncome / annualExpense) * 100 : 0;
+    document.getElementById('statIRR').innerText = irr.toFixed(1) + '%' + inflationLabel;
+    
+    // Show breakdown
+    const gpfPortion = annualExpense > 0 ? (annualWithdrawalGPF / annualExpense * 100).toFixed(1) : '0';
+    const pensionPortion = annualExpense > 0 ? (adjustedPensionAnnual / annualExpense * 100).toFixed(1) : '0';
+    document.getElementById('irrBreakdown').innerHTML = `กบข. ${gpfPortion}% + บำนาญ ${pensionPortion}% (อายุราชการ ${serviceYears} ปี)`;
+    document.getElementById('irrDisclaimer').style.display = 'block';
   }
   
   function renderMonteCarlo(mcResult, age) {
@@ -1522,6 +1698,9 @@
       allData = generateFallbackData();
       document.getElementById('currentBalance').removeAttribute('readonly');
       document.getElementById('currentBalance').placeholder = "กรอกยอดเงิน กบข. ปัจจุบัน (โหมดจำลอง)";
+      // === FIX 🔵: Show red demo banner ===
+      document.getElementById('demoBanner').classList.add('show');
+      document.body.classList.add('has-demo-banner');
     }
   }
   
@@ -1680,7 +1859,7 @@
     await delay(300);
     
     const m = analysisResult.type === 'mix' ? analysisResult.metrics : analysisResult.plan;
-    const mcResult = monteCarloSim(balance, salary, memberRate, salaryGrowth, analysisResult.yearsToRetire, m.cagr, m.vol, 10000);
+    const mcResult = monteCarloSim(balance, salary, memberRate, salaryGrowth, analysisResult.yearsToRetire, m.cagr, m.vol, 10000, age);
     
     progress.style.width = '80%';
     loadText.innerText = 'PHASE 4: สร้างกราฟและ Heatmap...';

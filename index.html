@@ -868,10 +868,6 @@ window.addEventListener('unhandledrejection', function(e) {
   }
 });
 
-// Redirect to index.html if accessing root directory (ensures PWA scope matches)
-if (window.location.pathname.endsWith('/')) {
-  window.location.replace('./index.html' + window.location.search);
-}
 
 // ─────────────────────────────────────────
 // STATE

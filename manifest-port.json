@@ -2,7 +2,7 @@
   "name": "GPF Portfolio",
   "short_name": "GPF Port",
   "id": "/gpf-port-dashboard",
-  "scope": "./gpfnav69.html",
+  "scope": "./",
   "start_url": "./gpfnav69.html?pwa=2",
   "display": "standalone",
   "background_color": "#0d1117",

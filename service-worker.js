@@ -8,7 +8,13 @@ const URLS_TO_CACHE = [
   './manifest-port.json',
   './manifest-robo-v2.json',
   './icon.png',
-  './icon-port.svg'
+  './icon-port.svg',
+  './config.js',
+  'https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js',
+  'https://cdn.jsdelivr.net/npm/flatpickr',
+  'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
+  'https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css',
+  'https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap'
 ];
 
 // ติดตั้ง Service Worker

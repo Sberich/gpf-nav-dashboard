@@ -19,6 +19,7 @@
 
   <!-- จบส่วน PWA -->
 
+  <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js" defer></script>
   <style>
     /* ════════════════════════════════════════
@@ -251,7 +252,7 @@
        LOADER & ERROR
     ════════════════════════════════════════ */
     #loader {
-      position: fixed; inset: 0; background: var(--bg);
+      position: absolute; inset: 0; background: var(--bg);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 16px;
       z-index: 999; transition: opacity .4s;
@@ -265,7 +266,7 @@
     .load-text { color: var(--muted); font-size: 13px; }
 
     #error-msg {
-      display: none; position: fixed; inset: 0; background: var(--bg);
+      display: none; position: absolute; inset: 0; background: var(--bg);
       align-items: center; justify-content: center; z-index: 998;
     }
     .error-box {
@@ -280,7 +281,7 @@
        COMPARATOR MODAL
     ════════════════════════════════════════ */
     #cmp-modal {
-      display: none; position: fixed; inset: 0;
+      display: none; position: absolute; inset: 0;
       background: rgba(0,0,0,.75); z-index: 900;
       align-items: center; justify-content: center;
       backdrop-filter: blur(4px);
@@ -443,7 +444,7 @@
  
     /* DEV MODAL (Minimal & Cool) */
     #dev-modal {
-      display: none; position: fixed; inset: 0;
+      display: none; position: absolute; inset: 0;
       background: rgba(0,0,0,0.4); z-index: 10000;
       align-items: center; justify-content: center;
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -530,7 +531,7 @@
 
     /* TOAST NOTIFICATION */
     .toast {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
       background: var(--bg2); color: var(--text); border: 1px solid var(--border);
       padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600;
       box-shadow: 0 8px 24px rgba(0,0,0,0.6); z-index: 10000;
@@ -544,7 +545,7 @@
       font-size: 24px; cursor: pointer; padding: 0 8px 0 0;
     }
     #sidebar-overlay {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.6); z-index: 9998; opacity: 0; transition: opacity 0.3s;
     }
     #sidebar-overlay.show { display: block; opacity: 1; }
@@ -555,7 +556,7 @@
     @media (max-width: 768px) {
       .mobile-menu-btn { display: block; }
       #sidebar { 
-        display: flex; position: fixed; top: 0; left: -260px; bottom: 0; width: 240px; 
+        display: flex; position: absolute; top: 0; left: -260px; bottom: 0; width: 240px; 
         z-index: 9999; transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.5);
       }
       #sidebar.open { left: 0; }
@@ -860,6 +861,15 @@ let dateTimestamps = [];
 let allData        = null;
 let chart          = null;
 let hidden         = new Set();
+
+const BE_OFFSET = 543;
+function toBE(year) { return year + BE_OFFSET; }
+
+function getAnchorPlan() {
+  return allData.plans.find(p => p.label === 'แผนลงทุนพื้นฐานทั่วไป' && !hidden.has(p.key))
+      || allData.plans.find(p => !hidden.has(p.key))
+      || allData.plans[0];
+}
 let chartMode      = 'nav';
 let curRange       = { n: 6, unit: 'M' };
 let currentMinTs   = null;  // sync กับ range ที่เลือก
@@ -871,18 +881,21 @@ const CACHE_KEY = 'gpf_nav_cache_v3';
 const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 ชั่วโมง (NAV อัพเดทวันละครั้ง)
 
 window.addEventListener('load', () => {
+  let hasCached = false;
   try {
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
       onDataLoaded(cached.data);
-      return; // ใช้ cache — ไม่ต้อง fetch
+      hasCached = true;
     }
   } catch(e) {}
 
   const loadTimeout = setTimeout(() => {
-    const loader = document.getElementById('loader');
-    if (loader) {
-      loader.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);"><div class="error-title" style="margin-bottom:8px;">⚠️ โหลดนานผิดปกติ</div><div style="font-size:13px; margin-bottom:16px;">อาจเกิดจากการเชื่อมต่อขัดข้อง หรือ Server ทำงานช้า</div><button onclick="location.reload()" style="padding:8px 20px; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-size:13px; cursor:pointer;">🔄 ลองโหลดใหม่</button></div>';
+    if (!hasCached) {
+      const loader = document.getElementById('loader');
+      if (loader) {
+        loader.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);"><div class="error-title" style="margin-bottom:8px;">⚠️ โหลดนานผิดปกติ</div><div style="font-size:13px; margin-bottom:16px;">อาจเกิดจากการเชื่อมต่อขัดข้อง หรือ Server ทำงานช้า</div><button onclick="location.reload()" style="padding:8px 20px; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-size:13px; cursor:pointer;">🔄 ลองโหลดใหม่</button></div>';
+      }
     }
   }, 15000);
 
@@ -891,13 +904,24 @@ window.addEventListener('load', () => {
     .then(data => {
       clearTimeout(loadTimeout);
       if (!data.error) {
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+        try { 
+          const oldData = localStorage.getItem(CACHE_KEY);
+          const oldDataObj = oldData ? JSON.parse(oldData).data : null;
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); 
+          
+          if (hasCached && JSON.stringify(oldDataObj) !== JSON.stringify(data)) {
+            showToast('✨ มีข้อมูลใหม่มาแล้ว โหลดหน้าเว็บเพื่ออัปเดต');
+          } else if (!hasCached) {
+            onDataLoaded(data);
+          }
+        } catch(e) {}
+      } else if (!hasCached) {
+        onDataLoaded(data);
       }
-      onDataLoaded(data);
     })
     .catch(e => {
       clearTimeout(loadTimeout);
-      showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message);
+      if (!hasCached) showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message);
     });
 });
 
@@ -1121,7 +1145,12 @@ function buildChart() {
           if (chartMode === 'nav') {
             const i    = cfg.dataPointIndex;
             const cur  = p.data[i];
-            const prev = i > 0 ? p.data.slice(0, i).reverse().find(x => x !== null) : null;
+            let prev = null;
+            if (i > 0) {
+              for (let j = i - 1; j >= 0; j--) {
+                if (p.data[j] !== null) { prev = p.data[j]; break; }
+              }
+            }
             const chg  = (cur && prev) ? ((cur - prev) / prev * 100) : null;
             document.getElementById('s-plan-chg').textContent =
               chg !== null ? `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}% จากวันก่อน` : '—';
@@ -1149,7 +1178,7 @@ function buildChart() {
           if (!timestamp) return val;
           const d = new Date(timestamp);
           const shortM = d.toLocaleDateString('th-TH', { month: 'short' });
-          const shortY = String(d.getFullYear() + 543).slice(-2);
+          const shortY = String(toBE(d.getFullYear())).slice(-2);
           return `${d.getDate()} ${shortM} '${shortY}`;
         }
       },
@@ -1251,14 +1280,14 @@ function updateStats() {
 // HIGHLIGHT CARD — sync กับ mode ปัจจุบัน
 // ─────────────────────────────────────────
 function updateHighLightCard() {
-  const main = allData.plans.find(p => p.label === 'แผนลงทุนพื้นฐานทั่วไป') || allData.plans[0];
+  const main = getAnchorPlan();
   if (!main) return;
 
   const lastNav = getLastValue(main.data);
   const prevNav = getPrevValue(main.data);
   const dayChg  = (lastNav && prevNav) ? ((lastNav - prevNav) / prevNav * 100) : 0;
 
-  document.getElementById('s-plan-label').textContent = main.label;
+  document.getElementById('s-plan-label').innerHTML = `${main.label} <span style="font-size:10px;color:var(--muted);font-weight:normal;">(อ้างอิง)</span>`;
 
   if (chartMode === 'nav') {
     document.getElementById('s-plan-nav').textContent = lastNav ? lastNav.toFixed(4) : '—';
@@ -1320,8 +1349,7 @@ function updateYTD() {
   const thisYear = new Date(allData.dates[allData.dates.length - 1]).getFullYear();
   const janFirst = `${thisYear}-01-01`;
 
-  let target = allData.plans.find(p => p.label === 'แผนลงทุนพื้นฐานทั่วไป' && !hidden.has(p.key))
-            || allData.plans.find(p => !hidden.has(p.key));
+  let target = getAnchorPlan();
   if (!target) {
     document.getElementById('s-ytd').textContent     = '—';
     document.getElementById('s-ytd-sub').textContent = '';
@@ -1462,7 +1490,7 @@ function calcPriceZone(planData) {
  */
 function updateSwingStats() {
   // หาแผนที่แสดงอยู่ตัวแรก (ถ้าไม่มี ใช้แผนแรก)
-  let target = allData.plans.find(p => !hidden.has(p.key)) || allData.plans[0];
+  let target = getAnchorPlan();
   if (!target) return;
 
   // ── 1. Drawdown ──
@@ -1473,13 +1501,13 @@ function updateSwingStats() {
     elDD.textContent = `${dd.pct.toFixed(2)}%`;
     elDD.style.color = 'var(--text)';
     if (dd.pct > -1) {
-      elDDsub.textContent = `🚨 ระวังการย่อตัว — ควรชะลอเข้า`;
+      elDDsub.innerHTML = `🚨 ระวังการย่อตัว <br><span style="font-size:9px;font-weight:normal;">(อิงตามช่วงเวลาที่แสดงบนกราฟ)</span>`;
       elDDsub.className = 'stat-sub badge red';
     } else if (dd.pct > -5) {
-      elDDsub.textContent = `รอย่อตัวเพิ่ม (${target.label})`;
+      elDDsub.innerHTML = `รอย่อตัวเพิ่ม <br><span style="font-size:9px;font-weight:normal;">(อ้างอิง: ${target.label})</span>`;
       elDDsub.className = 'stat-sub badge gray';
     } else {
-      elDDsub.textContent = `📉 ย่อตัวลึก — ทยอยสะสมได้`;
+      elDDsub.innerHTML = `📉 ย่อตัวลึก — ทยอยสะสมได้ <br><span style="font-size:9px;font-weight:normal;">(อ้างอิง: ${target.label})</span>`;
       elDDsub.className = 'stat-sub badge green';
     }
   } else {
@@ -1493,11 +1521,20 @@ function updateSwingStats() {
   const elTrend = document.getElementById('s-trend');
   const elTrendSub = document.getElementById('s-trend-sub');
   if (sma) {
+    const diffPct = (sma.lastVal - sma.sma) / sma.sma * 100;
     const above = sma.lastVal >= sma.sma;
-    elTrend.textContent = above ? '📈 ขาขึ้น' : '📉 ขาลง';
-    elTrend.style.color = 'var(--text)';
-    elTrendSub.textContent = `NAV ${above ? '>' : '<'} SMA20 (${sma.diff >= 0 ? '+' : ''}${sma.diff.toFixed(2)}%)`;
-    elTrendSub.className = above ? 'stat-sub badge green' : 'stat-sub badge red';
+    
+    if (Math.abs(diffPct) < 0.05) {
+      elTrend.textContent = '➖ ไซด์เวย์';
+      elTrend.style.color = 'var(--muted)';
+      elTrendSub.innerHTML = `ไม่มีเทรนด์ชัดเจน <br><span style="font-size:9px;font-weight:normal;">(อ้างอิง: ${target.label})</span>`;
+      elTrendSub.className = 'stat-sub badge gray';
+    } else {
+      elTrend.textContent = above ? '📈 ขาขึ้น' : '📉 ขาลง';
+      elTrend.style.color = 'var(--text)';
+      elTrendSub.innerHTML = `NAV ${above ? '>' : '<'} SMA20 (${sma.diff >= 0 ? '+' : ''}${sma.diff.toFixed(2)}%) <br><span style="font-size:9px;font-weight:normal;">(อ้างอิง: ${target.label})</span>`;
+      elTrendSub.className = above ? 'stat-sub badge green' : 'stat-sub badge red';
+    }
   } else {
     elTrend.textContent = '—';
     elTrendSub.textContent = 'ข้อมูลไม่พอ';
@@ -1930,7 +1967,7 @@ if ('serviceWorker' in navigator) {
     const updateYearToThai = (instance) => {
       if (!instance.currentYearElement) return;
       // แอบเปลี่ยนตัวเลขในกล่องปีของปฏิทินให้เป็น พ.ศ.
-      instance.currentYearElement.value = instance.currentYear + 543;
+      instance.currentYearElement.value = toBE(instance.currentYear);
     };
 
     flatpickr(".cmp-date-input", {
@@ -1943,7 +1980,7 @@ if ('serviceWorker' in navigator) {
         if (format === "j M Y") {
           const d = date.getDate();
           const m = locale.months.shorthand[date.getMonth()];
-          const y = date.getFullYear() + 543;
+          const y = toBE(date.getFullYear());
           return `${d} ${m} ${y}`;
         }
         return flatpickr.formatDate(date, format);

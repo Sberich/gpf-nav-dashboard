@@ -19,6 +19,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -508,10 +509,9 @@
   </div>
 </div>
 
+<script src="config.js"></script>
 <script>
 function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
-// Use the original GAS_URL endpoint
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
 let allData = null;
 
 function getLastValidValue(arr) {

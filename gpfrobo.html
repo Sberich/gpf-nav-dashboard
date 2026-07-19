@@ -548,6 +548,7 @@
   <!-- Toast Notification -->
   <div id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg"></span></div>
 
+  <script src="config.js"></script>
   <script>
   function requestPin() {
     return new Promise(resolve => {
@@ -601,7 +602,7 @@
     window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
   }
 
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";
+  // Backend (GAS) endpoint moved to config.js
   
   const LOCK_100_PLANS = [
     'แผนเกษียณสบายใจ 2569', 'แผนกองทุนรวมวายุภักษ์', 'แผนลงทุนพื้นฐานทั่วไป',

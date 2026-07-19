@@ -2,7 +2,7 @@
   "name": "GPF NAV Dashboard",
   "short_name": "GPF NAV",
   "id": "/gpf-nav-dashboard",
-  "scope": "./",
+  "scope": "./index.html",
   "start_url": "./index.html?pwa=1",
   "display": "standalone",
   "background_color": "#0d1117",

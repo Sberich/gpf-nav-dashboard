@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gpf-app-cache-v5';
+const CACHE_NAME = 'gpf-app-cache-v6';
 const URLS_TO_CACHE = [
   './',
   './index.html',

@@ -1751,7 +1751,7 @@ function restorePins() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js?v=port')
+    navigator.serviceWorker.register('service-worker.js')
       .then(reg => console.log('SW (Port) registered', reg))
       .catch(err => console.error('Service Worker ลงทะเบียนล้มเหลว', err));
   });

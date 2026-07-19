@@ -151,7 +151,7 @@
     .pulse-box { animation: pulseGlow 2s infinite; border-color: rgba(139,92,246,0.5) !important; background: linear-gradient(145deg, rgba(139,92,246,0.1) 0%, rgba(255,255,255,0.01) 100%); }
     
     /* Toast */
-    #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(15, 22, 41, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 0.8rem 1.5rem; border-radius: 30px; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; z-index: 10000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); white-space: nowrap; pointer-events: none; }
+    #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(15, 22, 41, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 0.8rem 1.5rem; border-radius: 30px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; z-index: 10000; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; width: 90%; max-width: 400px; text-align: center; justify-content: center; line-height: 1.4; }
     #toast.show { bottom: 30px; }
     
     /* Allocation Bar */
@@ -274,47 +274,51 @@
                 <input type="number" id="currentAge" required min="20" max="59" value="38" placeholder="เช่น 35">
               </div>
               <div class="form-group" style="margin-bottom:0">
+                <label><i class="fa-solid fa-user-clock"></i> อายุเริ่มรับราชการ (ปี)</label>
+                <input type="number" id="startServiceAge" required min="18" max="55" step="1" value="29" title="อายุตอนที่บรรจุเข้ารับราชการ">
+              </div>
+            </div>
+            
+            <div class="grid-2-mobile" style="margin-bottom:1.5rem">
+              <div class="form-group" style="margin-bottom:0">
                 <label><i class="fa-solid fa-coins"></i> ยอด กบข. (บาท)</label>
                 <input type="number" id="currentBalance" required min="0" placeholder="กำลังโหลด..." readonly>
               </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label><i class="fa-solid fa-piggy-bank"></i> เงินเดือนปัจจุบัน (บาท)</label>
+                <input type="number" id="currentSalary" required min="1000" placeholder="เช่น 30000" value="32000">
+              </div>
             </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-piggy-bank"></i> เงินเดือนปัจจุบัน (บาท)</label>
-              <input type="number" id="currentSalary" required min="1000" placeholder="เช่น 30000" value="32000">
-            </div>
-            <div class="grid-2-mobile">
-              <div class="form-group">
-                <label><i class="fa-solid fa-percent"></i> สะสม (%) <span style="font-size:.7rem;color:var(--muted)">(3% บังคับ + ออมเพิ่มได้ถึง 27%)</span></label>
+
+            <div class="grid-2-mobile" style="margin-bottom:1.5rem">
+              <div class="form-group" style="margin-bottom:0">
+                <label><i class="fa-solid fa-percent"></i> สะสม (%) <i class="fa-solid fa-wand-magic-sparkles" onclick="showToast('💡 AI Info: หักสะสม 3% บังคับ + ออมเพิ่มได้ถึง 27% (รวมเพดานสูงสุด 30%)', 'info')" style="cursor:pointer; color:var(--primary); margin-left:4px;" title="คลิกดูข้อมูล"></i></label>
                 <input type="number" id="memberContribution" required min="3" max="30" step="1" value="12" title="หักสะสม 3% บังคับ + ออมเพิ่มสมัครใจสูงสุด 27% = รวมเพดาน 30%">
               </div>
-              <div class="form-group">
+              <div class="form-group" style="margin-bottom:0">
                 <label><i class="fa-solid fa-arrow-trend-up"></i> เงินเดือนขึ้น (%)</label>
                 <input type="number" id="salaryGrowth" required min="0" max="15" step="0.1" value="6.0">
               </div>
             </div>
-            <div class="grid-2-mobile" style="margin-bottom:.5rem">
-              <div class="form-group">
-                <label><i class="fa-solid fa-calendar-check"></i> บรรจุรับราชการ</label>
-                <div class="custom-select-wrapper">
-                  <div class="custom-select">
-                    <div class="custom-select-trigger"><span style="color:#fff">หลัง 27 มี.ค. 2540 (สมทบ 3%)</span> <i class="fa-solid fa-chevron-down"></i></div>
-                    <div class="custom-options">
-                      <div class="custom-option selected" data-value="no">หลัง 27 มี.ค. 2540 (สมทบ 3%)</div>
-                      <div class="custom-option" data-value="yes">ก่อน 27 มี.ค. 2540 (สมทบ 3% + ชดเชย 2%)</div>
-                    </div>
+
+            <div class="form-group" style="margin-bottom:1rem">
+              <label><i class="fa-solid fa-calendar-check"></i> บรรจุรับราชการ</label>
+              <div class="custom-select-wrapper">
+                <div class="custom-select">
+                  <div class="custom-select-trigger"><span style="color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; width:100%; font-size:0.9rem;">หลัง 27 มี.ค. 40 (สมทบ 3%)</span> <i class="fa-solid fa-chevron-down" style="flex-shrink:0; margin-left:8px;"></i></div>
+                  <div class="custom-options">
+                    <div class="custom-option selected" data-value="no" style="font-size:0.9rem;">หลัง 27 มี.ค. 40 (สมทบ 3%)</div>
+                    <div class="custom-option" data-value="yes" style="font-size:0.9rem;">ก่อน 27 มี.ค. 40 (สมทบ 3% + ชดเชย 2%)</div>
                   </div>
-                  <input type="hidden" id="isPre1997" required value="no">
                 </div>
-              </div>
-              <div class="form-group">
-                <label><i class="fa-solid fa-user-clock"></i> อายุตอนเริ่มรับราชการ (ปี)</label>
-                <input type="number" id="startServiceAge" required min="18" max="55" step="1" value="29" title="อายุตอนที่บรรจุเข้ารับราชการ">
+                <input type="hidden" id="isPre1997" required value="no">
               </div>
             </div>
-            <div class="form-group" style="margin-bottom:.5rem">
-              <label style="cursor:pointer;user-select:none">
-                <input type="checkbox" id="adjustInflation" style="width:auto;margin-right:.5rem;accent-color:var(--primary)">
-                <i class="fa-solid fa-chart-line"></i> ปรับลดด้วยเงินเฟ้อ (Real Terms ~3%/ปี)
+
+            <div class="form-group" style="margin-bottom:1.5rem">
+              <label style="cursor:pointer;user-select:none; display:flex; align-items:center;">
+                <input type="checkbox" id="adjustInflation" style="width:auto;margin-right:.5rem;accent-color:var(--primary); flex-shrink:0;">
+                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.9rem;"><i class="fa-solid fa-chart-line"></i> ปรับลดด้วยเงินเฟ้อ (Real Terms 3%/ปี)</span>
               </label>
             </div>
             <div class="form-group">
@@ -574,11 +578,24 @@
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toastMsg');
     const icon = toast.querySelector('i');
-    icon.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
-    icon.style.color = type === 'success' ? 'var(--green)' : 'var(--red)';
+    
+    if (type === 'success') {
+      icon.className = 'fa-solid fa-circle-check';
+      icon.style.color = 'var(--green)';
+    } else if (type === 'info') {
+      icon.className = 'fa-solid fa-wand-magic-sparkles';
+      icon.style.color = 'var(--primary)';
+    } else {
+      icon.className = 'fa-solid fa-circle-exclamation';
+      icon.style.color = 'var(--red)';
+    }
+    
     toastMsg.innerText = msg;
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
+    
+    // Clear any existing timeout
+    if (window.toastTimeout) clearTimeout(window.toastTimeout);
+    window.toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
   }
 
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwiQQ7b56hZSdJ3FzScZGKbuWToJOJVFfTyExBIDvIPfuDAKLLEieXo7xsT8CB4eYbm/exec";

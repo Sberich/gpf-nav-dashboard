@@ -854,9 +854,23 @@
 // ─────────────────────────────────────────
 // Backend (GAS) endpoint moved to config.js
 
+// Catch unhandled errors on mobile to display them instead of freezing endlessly
+window.addEventListener('error', function(e) {
+  const loader = document.getElementById('loader');
+  if (loader) {
+    loader.innerHTML = '<div style="color:#f85149; padding:20px; font-size:12px; word-wrap:break-word; text-align:left;"><b>CRASH:</b> ' + e.message + '<br>Line: ' + e.lineno + '</div>';
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  const loader = document.getElementById('loader');
+  if (loader) {
+    loader.innerHTML = '<div style="color:#f85149; padding:20px; font-size:12px; word-wrap:break-word; text-align:left;"><b>PROMISE CRASH:</b> ' + (e.reason && e.reason.message ? e.reason.message : e.reason) + '</div>';
+  }
+});
+
 // Redirect to index.html if accessing root directory (ensures PWA scope matches)
-if (window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/GPF1')) {
-  window.location.replace('index.html' + window.location.search);
+if (window.location.pathname.endsWith('/')) {
+  window.location.replace('./index.html' + window.location.search);
 }
 
 // ─────────────────────────────────────────

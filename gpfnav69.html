@@ -163,27 +163,61 @@
           </div>
         </div>
 
-        <div class="card" style="margin-bottom: 12px; padding: 8px 12px; display:flex; flex-direction:column; gap:6px;">
-          <!-- Snapshots List (Top) -->
-          <div style="display:flex; flex-direction:column; width:100%;">
-            <div id="snap-1d" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
-              <span style="color:var(--muted);">1D</span><span style="font-weight:600; color:var(--muted);">-</span>
+        <!-- XIRR: อัตราผลตอบแทนเฉลี่ยต่อปี -->
+        <div id="xirr-card" class="card" style="margin-bottom: 8px; padding: 10px 12px; display:none; flex-direction:column; gap:0;">
+          <details>
+            <summary style="display:flex; justify-content:space-between; align-items:center; list-style:none; cursor:pointer; outline:none; user-select:none;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:16px; margin-top:-2px;">📈</span>
+                <div style="font-size:14px; font-weight:800; color:#58a6ff; letter-spacing:-0.3px;">อัตราผลตอบแทนเฉลี่ยต่อปี</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div id="overall-xirr-val" style="font-size:16px; font-weight:800;">-</div>
+                <span style="font-size:10px; color:var(--muted);">▼</span>
+              </div>
+            </summary>
+            
+            <div id="xirr-list" style="display:flex; flex-direction:column; gap:0px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:6px; margin-top:8px;">
+              <!-- Injected dynamically -->
             </div>
-            <div id="snap-1w" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
-              <span style="color:var(--muted);">1W</span><span style="font-weight:600; color:var(--muted);">-</span>
-            </div>
-            <div id="snap-1m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
-              <span style="color:var(--muted);">1M</span><span style="font-weight:600; color:var(--muted);">-</span>
-            </div>
-            <div id="snap-3m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0; border-bottom:1px dashed var(--border);">
-              <span style="color:var(--muted);">3M</span><span style="font-weight:600; color:var(--muted);">-</span>
-            </div>
-            <div id="snap-6m" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:2px 0;">
-              <span style="color:var(--muted);">6M</span><span style="font-weight:600; color:var(--muted);">-</span>
-            </div>
-          </div>
+          </details>
+        </div>
+        <style>
+          #xirr-card details > summary::-webkit-details-marker,
+          #snapshot-card details > summary::-webkit-details-marker { display: none; }
+          .dashed-row { border-bottom: 1px dashed rgba(255,255,255,0.08); }
+          .dashed-row:last-child { border-bottom: none; }
+        </style>
 
-          <div style="height:1px; background:#30363d; width:100%;"></div>
+        <div id="snapshot-card" class="card" style="margin-bottom: 12px; padding: 10px 12px; display:flex; flex-direction:column; gap:0;">
+          <!-- Snapshots List (Top) -->
+          <details>
+            <summary style="display:flex; justify-content:space-between; align-items:center; list-style:none; cursor:pointer; outline:none; user-select:none;">
+              <div id="snap-1d-container" style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:8px;">
+                <div id="snap-1d" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px;">
+                   <span style="color:var(--muted); margin-right:4px;">1D</span> <span style="color:var(--muted); font-weight:600;">-</span>
+                </div>
+                <span style="font-size:10px; color:var(--muted);">▼</span>
+              </div>
+            </summary>
+            
+            <div style="display:flex; flex-direction:column; width:100%; gap:0px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:6px; margin-top:8px;">
+              <div id="snap-1w" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">1W</span><span style="font-weight:600; color:var(--muted);">-</span>
+              </div>
+              <div id="snap-1m" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">1M</span><span style="font-weight:600; color:var(--muted);">-</span>
+              </div>
+              <div id="snap-3m" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">3M</span><span style="font-weight:600; color:var(--muted);">-</span>
+              </div>
+              <div id="snap-6m" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">6M</span><span style="font-weight:600; color:var(--muted);">-</span>
+              </div>
+            </div>
+          </details>
+
+          <div style="height:1px; background:#30363d; width:100%; margin-top:8px; margin-bottom:8px;"></div>
 
           <!-- Main PnL (Bottom) -->
           <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -513,6 +547,203 @@
 <script>
 function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
 let allData = null;
+
+// ─── XIRR: คำนวณอัตราผลตอบแทนเฉลี่ยต่อปี (Newton-Raphson) ───
+// cashflows = [{ date: Date, amount: Number }]
+// เงินออก (นำส่ง) = ค่าลบ, มูลค่าปัจจุบัน = ค่าบวก (รายการสุดท้าย)
+function calcXIRR(cashflows, guess) {
+  if (!cashflows || cashflows.length < 2) return null;
+  
+  const dayMs = 24 * 60 * 60 * 1000;
+  const d0 = cashflows[0].date.getTime();
+  
+  let rate = guess || 0.1;
+  const maxIter = 100;
+  const tol = 1e-7;
+  
+  for (let iter = 0; iter < maxIter; iter++) {
+    let fVal = 0;
+    let fDeriv = 0;
+    
+    for (let i = 0; i < cashflows.length; i++) {
+      const t = (cashflows[i].date.getTime() - d0) / (365.25 * dayMs);
+      const denom = Math.pow(1 + rate, t);
+      if (!isFinite(denom) || denom === 0) return null;
+      fVal += cashflows[i].amount / denom;
+      fDeriv -= t * cashflows[i].amount / (denom * (1 + rate));
+    }
+    
+    if (Math.abs(fDeriv) < 1e-14) return null;
+    const newRate = rate - fVal / fDeriv;
+    if (Math.abs(newRate - rate) < tol) return newRate;
+    rate = newRate;
+    
+    if (rate < -0.99 || rate > 10) return null;
+  }
+  return null;
+}
+
+// สร้างและแสดง XIRR หลายช่วงเวลา
+function renderXIRRs(port, totalValue) {
+  const xirrCard = document.getElementById('xirr-card');
+  const xirrList = document.getElementById('xirr-list');
+  if (!port || !port.contribs || port.contribs.length < 1 || totalValue <= 0) {
+    xirrCard.style.display = 'none';
+    return;
+  }
+  
+  const allCashflows = [];
+  port.contribs.forEach(c => {
+    const parts = c.date.split('/');
+    if (parts.length === 2) {
+      const m = parseInt(parts[0]) - 1;
+      let y = parseInt(parts[1]);
+      if (y > 2500) y = y - 543;
+      allCashflows.push({ date: new Date(y, m, 28), amount: -c.amount });
+    }
+  });
+  if (port.startingCost > 1) {
+    allCashflows.push({ date: new Date(2021, 11, 31), amount: -port.startingCost });
+  }
+  allCashflows.sort((a, b) => a.date.getTime() - b.date.getTime());
+  
+  if (allCashflows.length === 0) {
+    xirrCard.style.display = 'none';
+    return;
+  }
+  
+  const firstDate = allCashflows[0].date;
+  const now = new Date();
+  const overallCashflows = [...allCashflows, { date: now, amount: totalValue }];
+  const overallXirr = calcXIRR(overallCashflows, 0.05);
+  
+  if (overallXirr === null || !isFinite(overallXirr)) {
+    xirrCard.style.display = 'none';
+    return;
+  }
+  
+  const dayMs = 24 * 60 * 60 * 1000;
+  const periods = [
+    { label: '1 เดือนย้อนหลัง', months: 1 },
+    { label: '6 เดือนย้อนหลัง', months: 6 },
+    { label: '1 ปีย้อนหลัง', months: 12 },
+    { label: '3 ปีย้อนหลัง', months: 36 },
+    { label: '5 ปีย้อนหลัง', months: 60 }
+  ];
+  
+  const snaps = port.snapshots || [];
+  let html = '';
+  
+  // Update overall XIRR in the header
+  const overallXirrElement = document.getElementById('overall-xirr-val');
+  if (overallXirrElement) {
+    overallXirrElement.textContent = (overallXirr*100).toFixed(2) + '%';
+    overallXirrElement.style.color = overallXirr >= 0 ? '#4caf50' : '#f44336';
+  }
+
+  // ดึงมูลค่าพอร์ตย้อนหลัง
+  const getHistVal = (tDate) => {
+    // 1. หา Snapshot ที่ตรงกับวันที่เป๊ะๆ (บวกลบไม่เกิน 15 วัน)
+    const closestSnap = snaps.reduce((closest, snap) => {
+        const diff = Math.abs(snap.date - tDate.getTime());
+        if (diff < 15 * dayMs && diff < closest.diff) {
+            return { snap: snap, diff: diff };
+        }
+        return closest;
+    }, { snap: null, diff: Infinity });
+    if (closestSnap.snap) return closestSnap.snap.value;
+    
+    // 2. ถ้าไม่มี ให้หา Snapshot ก่อนหน้า และ หลังจาก วันที่ต้องการ เพื่อทำ Interpolation
+    let snapBefore = null;
+    let snapAfter = null;
+    snaps.forEach(snap => {
+      if (snap.date <= tDate.getTime()) {
+        if (!snapBefore || snap.date > snapBefore.date) snapBefore = snap;
+      }
+      if (snap.date > tDate.getTime()) {
+        if (!snapAfter || snap.date < snapAfter.date) snapAfter = snap;
+      }
+    });
+
+    if (snapBefore) {
+      const v0 = snapBefore.value;
+      const t0 = snapBefore.date;
+      
+      let v1 = totalValue;
+      let t1 = now.getTime();
+      
+      if (snapAfter) {
+        v1 = snapAfter.value;
+        t1 = snapAfter.date;
+      }
+
+      let cBeforeT = 0;
+      let cTotal = 0;
+      allCashflows.forEach(cf => {
+        const cfTime = cf.date.getTime();
+        if (cfTime > t0 && cfTime <= t1) {
+          cTotal += cf.amount;
+          if (cfTime <= tDate.getTime()) {
+            cBeforeT += cf.amount;
+          }
+        }
+      });
+
+      // ประมาณการกำไรตามสัดส่วนเวลา
+      const totalProfit = v1 - v0 - cTotal;
+      const timeRatio = (tDate.getTime() - t0) / (t1 - t0);
+      const estimatedProfit = totalProfit * timeRatio;
+      
+      return v0 + cBeforeT + estimatedProfit;
+    }
+    
+    return null; // ไม่มีข้อมูลอ้างอิง
+  };
+  
+  let pastPeriodsHtml = '';
+  
+  periods.forEach(p => {
+    const targetDate = new Date(now.getFullYear(), now.getMonth() - p.months, now.getDate());
+    if (targetDate > firstDate) {
+      const startVal = getHistVal(targetDate);
+      if (startVal !== null) {
+        const periodCashflows = [{ date: targetDate, amount: -startVal }];
+        allCashflows.forEach(cf => {
+          if (cf.date > targetDate && cf.date <= now) {
+            periodCashflows.push({ date: cf.date, amount: cf.amount });
+          }
+        });
+        periodCashflows.push({ date: now, amount: totalValue });
+        
+        const pXirr = calcXIRR(periodCashflows, overallXirr);
+        if (pXirr !== null && isFinite(pXirr)) {
+          pastPeriodsHtml += `
+            <div class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; padding: 6px 4px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+              <div style="font-size:13px; color:var(--text); opacity:0.8;">${p.label}</div>
+              <div style="font-size:14px; font-weight:600; color:${pXirr >= 0 ? '#4caf50' : '#f44336'};">${(pXirr*100).toFixed(2)}%</div>
+            </div>
+          `;
+        }
+      } else {
+        // ไม่มีข้อมูลให้แสดงบอกตรงๆ แทนการประมาณค่า
+        pastPeriodsHtml += `
+          <div class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; padding: 6px 4px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+            <div style="font-size:13px; color:var(--text); opacity:0.8;">${p.label}</div>
+            <div style="font-size:11px; color:var(--muted); font-style:italic;">ไม่มีข้อมูล</div>
+          </div>
+        `;
+      }
+    }
+  });
+  
+  if (pastPeriodsHtml === '') {
+    // ถ้าไม่มีข้อมูลเลย ให้แสดงว่าไม่มี
+    pastPeriodsHtml = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:4px;">ไม่มีประวัติย้อนหลัง</div>`;
+  }
+  
+  xirrList.innerHTML = pastPeriodsHtml;
+  xirrCard.style.display = 'flex';
+}
 
 function getLastValidValue(arr) {
   if (!arr) return null;
@@ -984,9 +1215,16 @@ function initDashboard() {
   document.getElementById('val-pl-pct').textContent = plPct.toFixed(2) + '%';
   document.getElementById('val-pl-pct').style.color = plPct >= 0 ? '#4caf50' : '#f44336';
 
-  let sumUnitCost = port.units.reduce((s, u) => s + (u.cost || 0), 0);
+   let sumUnitCost = port.units.reduce((s, u) => s + (u.cost || 0), 0);
   if (Math.abs(sumUnitCost - totalCost) > 1 && totalCost > 0) {
     console.warn(`[P/L Warning] ผลรวมต้นทุนรายแผน (${formatMoney(sumUnitCost)} ฿) ไม่ตรงกับต้นทุนรวมจากกระแสเงินสด (${formatMoney(totalCost)} ฿) อาจทำให้กำไรแยกส่วนไม่เท่ากับกำไรรวม`);
+  }
+
+  // ─── คำนวณและแสดงผล XIRR ย้อนหลังหลายช่วงเวลา ───
+  try {
+    renderXIRRs(port, totalValue);
+  } catch(e) {
+    console.warn('[XIRR] เรนเดอร์ไม่สำเร็จ:', e);
   }
 
   // Calculate Historical Snapshot PnL
@@ -1003,9 +1241,9 @@ function initDashboard() {
       
       let snap;
       if (p === '1d') {
-        // For 1D, prefer the most recent snapshot that has a different profit (last trading day)
-        // bounded by 7 days to avoid comparing with ancient data if no recent changes exist.
-        snap = snaps.find(s => Math.abs(s.profit - plBaht) > 0.01 && s.date >= now - (7 * dayMs));
+        // For 1D, find the most recent snapshot with a different value (last trading day)
+        // bounded by 7 days
+        snap = snaps.find(s => Math.abs(s.value - totalValue) > 0.01 && s.date >= now - (7 * dayMs));
         if (!snap) snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
       } else {
         snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
@@ -1014,24 +1252,20 @@ function initDashboard() {
       const el = document.getElementById('snap-' + p);
       if (el) {
         if (snap) {
-          let safeSnapProfit = snap.profit;
-          // Failsafe: if the snapshot was saved with 0 cost (making profit = value),
-          // we recalculate its real profit using the current totalCost to avoid massive negative drops.
-          if (snap.cost === 0 && totalCost > 0) {
-             safeSnapProfit = snap.value - totalCost;
-          }
-          const profitDiff = plBaht - safeSnapProfit;
-          const pctDiff = snap.value > 0 ? (profitDiff / snap.value) * 100 : 0;
+          // ใช้ value-based comparison: เปรียบเทียบมูลค่าพอร์ตโดยตรง
+          // ไม่ขึ้นกับ totalCost ที่อาจเปลี่ยนไปเมื่อแก้ไขข้อมูลย้อนหลัง
+          const valueDiff = totalValue - snap.value;
+          const pctDiff = snap.value > 0 ? (valueDiff / snap.value) * 100 : 0;
           let color = '#8b949e';
           let sign = '';
-          if (profitDiff > 0.01) { color = '#4caf50'; sign = '+'; }
-          else if (profitDiff < -0.01) { color = '#f44336'; }
+          if (valueDiff > 0.01) { color = '#4caf50'; sign = '+'; }
+          else if (valueDiff < -0.01) { color = '#f44336'; }
           let label = p.toUpperCase();
           if (p === '1d') {
             const diffDays = Math.round((now - snap.date) / dayMs);
             if (diffDays > 1) label = `1D <span style="font-size:9px; font-weight:normal;">(ย้อน ${diffDays} วัน)</span>`;
           }
-          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${color}; font-size:16px; font-weight:700; margin-right:4px;">${sign}${formatMoney(profitDiff)}฿</span><span style="color:${color}; font-size:11px; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
+          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${color}; font-size:16px; font-weight:700; margin-right:4px;">${sign}${formatMoney(valueDiff)}฿</span><span style="color:${color}; font-size:11px; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
         } else {
           el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <span style="color:var(--muted); font-weight:600;">-</span>`;
         }

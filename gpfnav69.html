@@ -201,7 +201,6 @@
               </div>
             </summary>
             
-            <div style="display:flex; flex-direction:column; width:100%; gap:0px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:6px; margin-top:8px;">
               <div id="snap-1w" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
                 <span style="color:var(--muted); margin-right:4px;">1W</span><span style="font-weight:600; color:var(--muted);">-</span>
               </div>
@@ -545,6 +544,7 @@
 
 <script src="config.js"></script>
 <script>
+const CONTRIB_DAY = 25; // วันที่ตัดเงินเดือน กบข. โดยประมาณ
 function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
 let allData = null;
 
@@ -599,7 +599,7 @@ function renderXIRRs(port, totalValue) {
       const m = parseInt(parts[0]) - 1;
       let y = parseInt(parts[1]);
       if (y > 2500) y = y - 543;
-      allCashflows.push({ date: new Date(y, m, 28), amount: -c.amount });
+      allCashflows.push({ date: new Date(y, m, CONTRIB_DAY), amount: -c.amount });
     }
   });
   if (port.startingCost > 1) {
@@ -682,19 +682,22 @@ function renderXIRRs(port, totalValue) {
       allCashflows.forEach(cf => {
         const cfTime = cf.date.getTime();
         if (cfTime > t0 && cfTime <= t1) {
-          cTotal += cf.amount;
+          const contribAmt = -cf.amount; // flip กลับเป็นบวก เพราะนี่คือเงินที่ "เข้า" พอร์ต
+          cTotal += contribAmt;
           if (cfTime <= tDate.getTime()) {
-            cBeforeT += cf.amount;
+            cBeforeT += contribAmt;
           }
         }
       });
+      
+      if (t1 === t0) return v0 + cBeforeT; // ป้องกัน Divide-by-zero ถ้ามีเวลาผ่านไป 0 วัน
 
       // ประมาณการกำไรตามสัดส่วนเวลา
-      const totalProfit = v1 - v0 - cTotal;
+      const totalProfit = (v1 - v0) - cTotal; // กำไรจริง ไม่รวมเงินนำส่งใหม่
       const timeRatio = (tDate.getTime() - t0) / (t1 - t0);
       const estimatedProfit = totalProfit * timeRatio;
       
-      return v0 + cBeforeT + estimatedProfit;
+      return v0 + cBeforeT + estimatedProfit; // บวกเงินนำส่งที่เกิดไปแล้ว + กำไรตามสัดส่วน
     }
     
     return null; // ไม่มีข้อมูลอ้างอิง
@@ -940,7 +943,7 @@ function renderMockPort(mockData, suffix = '') {
       if (parts.length === 2) {
         let year = parseInt(parts[1]);
         year = toGregorianYear(year);
-        const cTime = new Date(`${year}-${parts[0]}-25`).getTime();
+        const cTime = new Date(year, parseInt(parts[0]) - 1, CONTRIB_DAY).getTime();
         if (cTime > mockData.startDate) {
           validContribs.push({ amount: c.amount, time: cTime });
         }
@@ -1236,6 +1239,19 @@ function initDashboard() {
     // Sort descending
     const snaps = [...port.snapshots].sort((a,b) => b.date - a.date);
     
+    // สร้าง allCashflows เพื่อใช้สำหรับ Dietz
+    const allCashflows = [];
+    if (port.contribs) {
+       port.contribs.forEach(c => {
+         const parts = c.date.split('/');
+         if (parts.length === 2) {
+           let y = parseInt(parts[1]);
+           if (y > 2500) y -= 543;
+           allCashflows.push({ date: new Date(y, parseInt(parts[0])-1, CONTRIB_DAY), amount: -c.amount });
+         }
+       });
+    }
+
     for (let p in periods) {
       const targetTime = now - (periods[p] * dayMs);
       
@@ -1252,20 +1268,57 @@ function initDashboard() {
       const el = document.getElementById('snap-' + p);
       if (el) {
         if (snap) {
-          // ใช้ value-based comparison: เปรียบเทียบมูลค่าพอร์ตโดยตรง
-          // ไม่ขึ้นกับ totalCost ที่อาจเปลี่ยนไปเมื่อแก้ไขข้อมูลย้อนหลัง
           const valueDiff = totalValue - snap.value;
-          const pctDiff = snap.value > 0 ? (valueDiff / snap.value) * 100 : 0;
-          let color = '#8b949e';
-          let sign = '';
-          if (valueDiff > 0.01) { color = '#4caf50'; sign = '+'; }
-          else if (valueDiff < -0.01) { color = '#f44336'; }
-          let label = p.toUpperCase();
-          if (p === '1d') {
-            const diffDays = Math.round((now - snap.date) / dayMs);
-            if (diffDays > 1) label = `1D <span style="font-size:9px; font-weight:normal;">(ย้อน ${diffDays} วัน)</span>`;
+          
+          // Modified Dietz Return Calculation
+          const periodStartMs = snap.date;
+          const periodEndMs = now;
+          const totalDays = (periodEndMs - periodStartMs) / dayMs;
+          
+          let netCF = 0, weightedCF = 0;
+          if (totalDays > 0) {
+            allCashflows.forEach(cf => {
+              const contribAmt = -cf.amount; 
+              if (cf.date.getTime() >= periodStartMs && cf.date.getTime() <= periodEndMs) {
+                const daysRemaining = (periodEndMs - cf.date.getTime()) / dayMs;
+                const weight = daysRemaining / totalDays;
+                netCF += contribAmt;
+                weightedCF += contribAmt * weight;
+              }
+            });
           }
-          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${color}; font-size:16px; font-weight:700; margin-right:4px;">${sign}${formatMoney(valueDiff)}฿</span><span style="color:${color}; font-size:11px; font-weight:600;">(${sign}${pctDiff.toFixed(2)}%)</span></div>`;
+          
+          const denom = snap.value + weightedCF;
+          let dietzPct = 0;
+          if (denom > 0) {
+             dietzPct = ((totalValue - snap.value - netCF) / denom) * 100;
+          } else {
+             dietzPct = snap.value > 0 ? ((totalValue - snap.value - netCF) / snap.value) * 100 : 0;
+          }
+          
+          let valColor = '#8b949e';
+          let valSign = '';
+          if (valueDiff > 0.01) { valColor = '#4caf50'; valSign = '+'; }
+          else if (valueDiff < -0.01) { valColor = '#f44336'; }
+          
+          let pctColor = '#8b949e';
+          let pctSign = '';
+          if (dietzPct > 0.01) { pctColor = '#4caf50'; pctSign = '+'; }
+          else if (dietzPct < -0.01) { pctColor = '#f44336'; }
+          
+          let label = p.toUpperCase();
+          const diffDays = Math.round((now - snap.date) / dayMs);
+          
+          if (p === '1d') {
+            if (diffDays > 1) label = `1D <span style="font-size:9px; font-weight:normal;">(ย้อน ${diffDays} วัน)</span>`;
+          } else {
+             const periodDays = periods[p];
+             if (Math.abs(diffDays - periodDays) > (periodDays * 0.5)) {
+                label = `${p.toUpperCase()} <span style="font-size:9px; font-weight:normal;">(อิงข้อมูล ${diffDays} วันก่อน)</span>`;
+             }
+          }
+          
+          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${valColor}; font-size:14px; font-weight:600; margin-right:4px;">${valSign}${formatMoney(valueDiff)}฿</span><span style="color:${pctColor}; font-size:11px; font-weight:500;">(${pctSign}${dietzPct.toFixed(2)}%)</span></div>`;
         } else {
           el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <span style="color:var(--muted); font-weight:600;">-</span>`;
         }

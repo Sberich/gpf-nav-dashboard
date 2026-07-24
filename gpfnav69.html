@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ระบบพอร์ตส่วนตัว (GPF Portfolio)</title>
-  
+
   <!-- PWA & Mobile App Settings -->
   <link rel="manifest" href="manifest-port.json?v=3">
   <meta name="theme-color" content="#0d1117">
@@ -12,9 +13,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GPF Port">
-  
+
   <!-- Glowing Neon Briefcase Favicon (Sleek Dark Mode) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='n' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%230ea5e9'/><stop offset='100%25' stop-color='%233b82f6'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='%23111827'/><rect x='10' y='38' width='80' height='52' rx='12' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linejoin='round'/><path d='M34 38 L34 22 C34 12 66 12 66 22 L66 38' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linecap='round'/><path d='M24 64 C40 80 60 80 76 64' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linecap='round'/><circle cx='76' cy='64' r='6' fill='%23ffffff'/></svg>">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='n' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%230ea5e9'/><stop offset='100%25' stop-color='%233b82f6'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='%23111827'/><rect x='10' y='38' width='80' height='52' rx='12' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linejoin='round'/><path d='M34 38 L34 22 C34 12 66 12 66 22 L66 38' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linecap='round'/><path d='M24 64 C40 80 60 80 76 64' fill='none' stroke='url(%23n)' stroke-width='10' stroke-linecap='round'/><circle cx='76' cy='64' r='6' fill='%23ffffff'/></svg>">
   <link rel="apple-touch-icon" href="icon-port-Copy.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,81 +25,262 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg: #0d1117; --bg2: #161b22;
-      --text: #c9d1d9; --border: #30363d;
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --text: #c9d1d9;
+      --border: #30363d;
       --muted: #8b949e;
     }
-    body {
-      position: relative; min-height: 100vh;
-      margin: 0; padding: 20px;
-      background-color: var(--bg); color: var(--text);
-      font-family: 'Sarabun', sans-serif;
-      display: flex; justify-content: center;
-    }
-    .container { width: 500px; max-width: 100%; }
-    .box {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 12px; width: 100%; margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5); overflow: hidden;
-    }
-    .header {
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      background: rgba(255,255,255,0.02);
-    }
-    .title { font-weight: 600; font-size: clamp(13px, 3.5vw, 15px); display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
-    .title > span:first-child { display: flex; align-items: center; min-width: 0; overflow: hidden; }
-    .title > span:first-child > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .title > span:last-child { flex-shrink: 0; white-space: nowrap; }
-    .body { padding: 12px 16px; }
-    
-    .badge { padding: 4px 8px; border-radius: 12px; display: inline-block; font-weight: 600; }
-    .badge.green { background: rgba(63,185,80,0.15); color: #3fb950; }
-    .badge.red { background: rgba(248,81,73,0.15); color: #f85149; }
-    
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .card { background: var(--bg); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); }
-    .card-title { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-    .card-val { font-size: 16px; font-weight: 600; }
-    
-    .table-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-    .table-row:last-child { border-bottom: none; }
-    
-    .form-group { margin-bottom: 12px; }
-    .form-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; display: block; }
-    .input {
-      width: 100%; background: var(--bg); border: 1px solid var(--border);
-      color: var(--text); border-radius: 5px; padding: 8px 10px;
-      font-size: 13px; font-family: 'Sarabun', sans-serif; box-sizing: border-box;
-    }
-    .input:focus { outline: none; border-color: #388bfd; }
-    .btn {
-      width: 100%; padding: 12px; border-radius: 8px; border: none;
-      background: #238636; color: #fff; font-size: 14px; font-weight: 700; font-family: inherit;
-      cursor: pointer; transition: all 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-    .btn:hover { background: #2ea043; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
-    .btn:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .btn:disabled { background: #1c4428; color: #8b949e; cursor: not-allowed; transform: none; box-shadow: none; }
-    
-    details > summary { transition: background 0.2s; }
-    details > summary:hover { background: rgba(255,255,255,0.05); }
-    details[open] > summary { background: rgba(88, 166, 255, 0.1); }
-    details[open] > summary .toggle-icon { transform: rotate(180deg); }
-    .toggle-icon { transition: transform 0.3s; display: inline-block; font-size: 10px; }
-    .pin-btn { cursor: pointer; opacity: 0.3; transition: 0.2s; font-size: 14px; user-select: none; }
-    .pin-btn:hover { opacity: 0.8; transform: scale(1.1); }
-    .pin-btn.active { opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.8)); }
 
-    #loader { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
-    .back-btn {
-      padding: 6px 12px; border-radius: 5px; border: 1px solid var(--border);
-      background: transparent; color: var(--muted); font-size: 12px;
-      cursor: pointer; text-decoration: none; display: inline-block;
-      margin-bottom: 16px; transition: all 0.2s;
+    body {
+      position: relative;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Sarabun', sans-serif;
+      display: flex;
+      justify-content: center;
     }
-    .back-btn:hover { color: #fff; border-color: #8b949e; }
+
+    .container {
+      width: 500px;
+      max-width: 100%;
+    }
+
+    .box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: clamp(13px, 3.5vw, 15px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .title>span:first-child {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .title>span:first-child>span:last-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .title>span:last-child {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .body {
+      padding: 12px 16px;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: inline-block;
+      font-weight: 600;
+    }
+
+    .badge.green {
+      background: rgba(63, 185, 80, 0.15);
+      color: #3fb950;
+    }
+
+    .badge.red {
+      background: rgba(248, 81, 73, 0.15);
+      color: #f85149;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .card {
+      background: var(--bg);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .card-val {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .table-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 5px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: 'Sarabun', sans-serif;
+      box-sizing: border-box;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: #388bfd;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #238636;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:hover {
+      background: #2ea043;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:disabled {
+      background: #1c4428;
+      color: #8b949e;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    details>summary {
+      transition: background 0.2s;
+    }
+
+    details>summary:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    details[open]>summary {
+      background: rgba(88, 166, 255, 0.1);
+    }
+
+    details[open]>summary .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .toggle-icon {
+      transition: transform 0.3s;
+      display: inline-block;
+      font-size: 10px;
+    }
+
+    .pin-btn {
+      cursor: pointer;
+      opacity: 0.3;
+      transition: 0.2s;
+      font-size: 14px;
+      user-select: none;
+    }
+
+    .pin-btn:hover {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+
+    .pin-btn.active {
+      opacity: 1;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+    }
+
+    #loader {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .back-btn {
+      padding: 6px 12px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      color: #fff;
+      border-color: #8b949e;
+    }
+
     .rainbow-anim {
       background: linear-gradient(90deg, #ff6b6b, #feca57, #1dd1a1, #48dbfb, #ff9ff3, #ff6b6b);
       background-size: 200% auto;
@@ -105,9 +288,13 @@
       -webkit-text-fill-color: transparent;
       animation: gradient-scroll 3s linear infinite;
     }
+
     @keyframes gradient-scroll {
-      to { background-position: 200% center; }
+      to {
+        background-position: 200% center;
+      }
     }
+
     .custom-toast {
       position: absolute;
       background: rgba(35, 134, 54, 0.95);
@@ -116,120 +303,178 @@
       border-radius: 8px;
       font-size: 13px;
       font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(4px);
       z-index: 10000;
       pointer-events: none;
       opacity: 0;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       white-space: nowrap;
     }
-    .custom-toast.error { background: rgba(248, 81, 73, 0.95); }
-    .custom-toast.btn-toast { transform: translateY(10px) scale(0.95); }
-    .custom-toast.btn-toast.show { opacity: 1; transform: translateY(0) scale(1); }
+
+    .custom-toast.error {
+      background: rgba(248, 81, 73, 0.95);
+    }
+
+    .custom-toast.btn-toast {
+      transform: translateY(10px) scale(0.95);
+    }
+
+    .custom-toast.btn-toast.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
     .custom-toast.global-toast {
       position: absolute;
       bottom: 40px;
       left: 50%;
       transform: translate(-50%, 20px) scale(0.95);
     }
-    .custom-toast.global-toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
+    .custom-toast.global-toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
   </style>
 </head>
+
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <div id="loader">กำลังโหลดข้อมูลและเชื่อมต่อฐานข้อมูล...</div>
+    <div id="loader">กำลังโหลดข้อมูลและเชื่อมต่อฐานข้อมูล...</div>
 
-  <div id="main-content" style="display: none;">
-    <!-- Dashboard Box -->
-    <div class="box">
-      <div class="header" style="display:flex; justify-content:space-between; align-items:flex-end; padding-bottom: 6px;">
-        <div class="title"><a href="index.html" style="text-decoration:none; margin-right:4px;" title="กลับไปหน้าหลัก">💼</a><span class="rainbow-anim" style="font-weight: 800; font-size: 16px;">GPF Dashboard</span></div>
-        <div style="font-size: 10px; color: var(--muted); font-weight: 400; text-align:right; line-height:1;" id="update-date-text"></div>
-      </div>
-      <div class="body">
-        
-        <div class="grid-2" style="margin-bottom: 12px;">
-          <div class="card">
-            <div class="card-title" style="white-space:nowrap; font-size:clamp(9px, 3.5vw, 11px); letter-spacing:-0.3px;">ต้นทุนรวม (ยกมา + นำส่ง)</div>
-            <div class="card-val" id="val-cost">0.00</div>
-          </div>
-          <div class="card">
-            <div class="card-title">มูลค่าปัจจุบัน</div>
-            <div class="card-val" id="val-current" style="color: #58a6ff;">0.00</div>
-          </div>
+    <div id="main-content" style="display: none;">
+      <!-- Dashboard Box -->
+      <div class="box">
+        <div class="header"
+          style="display:flex; justify-content:space-between; align-items:flex-end; padding-bottom: 6px;">
+          <div class="title"><a href="index.html" style="text-decoration:none; margin-right:4px;"
+              title="กลับไปหน้าหลัก">💼</a><span class="rainbow-anim" style="font-weight: 800; font-size: 16px;">GPF
+              Dashboard</span></div>
+          <div style="font-size: 10px; color: var(--muted); font-weight: 400; text-align:right; line-height:1;"
+            id="update-date-text"></div>
         </div>
+        <div class="body">
 
-        <!-- XIRR: อัตราผลตอบแทนเฉลี่ยต่อปี -->
-        <div id="xirr-card" class="card" style="margin-bottom: 8px; padding: 10px 12px; display:none; flex-direction:column; gap:0;">
-          <details>
-            <summary style="display:flex; justify-content:space-between; align-items:center; list-style:none; cursor:pointer; outline:none; user-select:none;">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span style="font-size:16px; margin-top:-2px;">📈</span>
-                <div style="font-size:14px; font-weight:800; color:#58a6ff; letter-spacing:-0.3px;">อัตราผลตอบแทนเฉลี่ยต่อปี</div>
-              </div>
-              <div style="display:flex; align-items:center; gap:6px;">
-                <div id="overall-xirr-val" style="font-size:16px; font-weight:800;">-</div>
-                <span style="font-size:10px; color:var(--muted);">▼</span>
-              </div>
-            </summary>
-            
-            <div id="xirr-list" style="display:flex; flex-direction:column; gap:0px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:6px; margin-top:8px;">
-              <!-- Injected dynamically -->
+          <div class="grid-2" style="margin-bottom: 12px;">
+            <div class="card">
+              <div class="card-title"
+                style="white-space:nowrap; font-size:clamp(9px, 3.5vw, 11px); letter-spacing:-0.3px;">ต้นทุนรวม (ยกมา +
+                นำส่ง)</div>
+              <div class="card-val" id="val-cost">0.00</div>
             </div>
-          </details>
-        </div>
-        <style>
-          #xirr-card details > summary::-webkit-details-marker,
-          #snapshot-card details > summary::-webkit-details-marker { display: none; }
-          .dashed-row { border-bottom: 1px dashed rgba(255,255,255,0.08); }
-          .dashed-row:last-child { border-bottom: none; }
-        </style>
+            <div class="card">
+              <div class="card-title">มูลค่าปัจจุบัน</div>
+              <div class="card-val" id="val-current" style="color: #58a6ff;">0.00</div>
+            </div>
+          </div>
 
-        <div id="snapshot-card" class="card" style="margin-bottom: 12px; padding: 10px 12px; display:flex; flex-direction:column; gap:0;">
-          <!-- Snapshots List (Top) -->
-          <details>
-            <summary style="display:flex; justify-content:space-between; align-items:center; list-style:none; cursor:pointer; outline:none; user-select:none;">
-              <div id="snap-1d-container" style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:8px;">
-                <div id="snap-1d" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px;">
-                   <span style="color:var(--muted); margin-right:4px;">1D</span> <span style="color:var(--muted); font-weight:600;">-</span>
+          <!-- XIRR: อัตราผลตอบแทนเฉลี่ยต่อปี -->
+          <div id="xirr-card" class="card"
+            style="margin-bottom: 8px; padding: 10px 12px; display:none; flex-direction:column; gap:0;">
+            <details>
+              <summary
+                style="display:flex; justify-content:space-between; align-items:center; list-style:none; cursor:pointer; outline:none; user-select:none;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:14px; margin-top:-2px;">📈</span>
+                  <div style="font-size:12px; font-weight:800; color:#58a6ff; letter-spacing:-0.3px;">
+                    อัตราผลตอบแทนเฉลี่ยต่อปี</div>
                 </div>
-                <span style="font-size:10px; color:var(--muted);">▼</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <div id="overall-xirr-val" style="font-size:16px; font-weight:800;">-</div>
+                  <span style="font-size:8px; color:var(--muted);">▼</span>
+                </div>
+              </summary>
+
+              <div id="xirr-list"
+                style="display:flex; flex-direction:column; gap:0px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:6px; margin-top:8px;">
+                <!-- Injected dynamically -->
               </div>
-            </summary>
-            
-              <div id="snap-1w" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                <span style="color:var(--muted); margin-right:4px;">1W</span><span style="font-weight:600; color:var(--muted);">-</span>
+            </details>
+          </div>
+          <style>
+            #xirr-card details>summary::-webkit-details-marker,
+            #snapshot-card details>summary::-webkit-details-marker {
+              display: none;
+            }
+
+            .dashed-row {
+              border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            }
+
+            .dashed-row:last-child {
+              border-bottom: none;
+            }
+          </style>
+
+          <div id="snapshot-card" class="card"
+            style="margin-bottom: 12px; padding: 10px 12px; display:flex; flex-direction:column; gap:0;">
+            <!-- Snapshots List (Top) -->
+            <details>
+              <summary
+                style="display:flex; justify-content:space-between; align-items:center; list-style:none; cursor:pointer; outline:none; user-select:none;">
+                <div id="snap-1d-container"
+                  style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:8px;">
+                  <div id="snap-1d"
+                    style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:14px;">
+                    <span style="color:var(--muted); margin-right:4px;">1D</span> <span
+                      style="color:var(--muted); font-weight:600;">-</span>
+                  </div>
+                  <span style="font-size:10px; color:var(--muted);">▼</span>
+                </div>
+              </summary>
+
+              <div id="snap-1w" class="dashed-row"
+                style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">1W</span><span
+                  style="font-weight:600; color:var(--muted);">-</span>
               </div>
-              <div id="snap-1m" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                <span style="color:var(--muted); margin-right:4px;">1M</span><span style="font-weight:600; color:var(--muted);">-</span>
+              <div id="snap-1m" class="dashed-row"
+                style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">1M</span><span
+                  style="font-weight:600; color:var(--muted);">-</span>
               </div>
-              <div id="snap-3m" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                <span style="color:var(--muted); margin-right:4px;">3M</span><span style="font-weight:600; color:var(--muted);">-</span>
+              <div id="snap-3m" class="dashed-row"
+                style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">3M</span><span
+                  style="font-weight:600; color:var(--muted);">-</span>
               </div>
-              <div id="snap-6m" class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                <span style="color:var(--muted); margin-right:4px;">6M</span><span style="font-weight:600; color:var(--muted);">-</span>
+              <div id="snap-6m" class="dashed-row"
+                style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:13px; padding:6px 4px; border-radius:4px; transition:background 0.2s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="color:var(--muted); margin-right:4px;">6M</span><span
+                  style="font-weight:600; color:var(--muted);">-</span>
               </div>
-            </div>
+
+              <!-- Main PnL (Moved inside details, below 6M) -->
+              <div style="height:1px; background:#30363d; width:100%; margin-top:8px; margin-bottom:8px;"></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:4px;">
+                <div style="display:flex; align-items:baseline; gap:6px;">
+                  <div class="card-title" style="margin-bottom:0; font-size:9px;">กำไรสุทธิ</div>
+                  <div class="card-val" id="val-pl" style="font-size:13px; line-height:1.2;">0.00</div>
+                  <div><span id="val-pl-pct" style="font-size:9px; font-weight:600;">0.00%</span></div>
+                </div>
+                <button class="btn"
+                  style="width:auto; padding:4px 4px; font-size:9px; background:var(--bg3); color:var(--text); border:1px solid var(--border);"
+                  onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
+              </div>
+
+          </div>
           </details>
 
-          <div style="height:1px; background:#30363d; width:100%; margin-top:8px; margin-bottom:8px;"></div>
-
-          <!-- Main PnL (Bottom) -->
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:baseline; gap:6px;">
-              <div class="card-title" style="margin-bottom:0; font-size:9px;">กำไรสุทธิ</div>
-              <div class="card-val" id="val-pl" style="font-size:13px; line-height:1.2;">0.00</div>
-              <div><span id="val-pl-pct" style="font-size:9px; font-weight:600;">0.00%</span></div>
-            </div>
-            <button class="btn" style="width:auto; padding:4px 8px; font-size:9px; background:var(--bg3); color:var(--text); border:1px solid var(--border);" onclick="saveSnapshot()" id="btn-snapshot">📸 บันทึก</button>
-          </div>
-          
           <!-- Portfolio Growth Chart -->
-          <div id="chart-container" style="display:none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+          <div id="chart-container"
+            style="display:none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
               <div style="font-size: 11px; color: var(--muted);">กราฟมูลค่าพอร์ต (จากที่บันทึกไว้)</div>
             </div>
@@ -239,20 +484,23 @@
           </div>
         </div>
 
-        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600;">สัดส่วนแผนที่ถือครอง (My Plans)</div>
-        
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600; margin-left: 24px;">
+          สัดส่วนแผนที่ถือครอง (My Plans)</div>
+
         <!-- Donut Chart Container -->
-        <div id="donut-container" class="card" style="display:none; padding: 12px; margin-bottom: 12px; justify-content:center; align-items:center; position:relative;">
+        <div id="donut-container" class="card"
+          style="display:none; padding: 16px; margin-bottom: 12px; justify-content:center; align-items:center; position:relative; border: 1px solid var(--border); background: var(--bg);">
           <div style="width:160px; height:160px;">
             <canvas id="donutChart"></canvas>
           </div>
           <!-- Center Text Overlay -->
-          <div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none;">
+          <div
+            style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none;">
             <span style="font-size:10px; color:var(--muted);">พอร์ตปัจจุบัน</span>
             <span id="donut-center-val" style="font-size:14px; font-weight:bold; color:var(--text);">0 ฿</span>
           </div>
         </div>
-        
+
         <div id="plan-breakdown" class="card" style="padding: 0 12px; margin-bottom: 16px;">
           <!-- Plan rows injected here -->
         </div>
@@ -263,11 +511,13 @@
     <!-- Admin: Mock Port -->
     <details class="box" style="cursor:pointer; border-left: 4px solid #58a6ff;" id="mockport-box">
       <summary class="header" style="outline:none; padding:12px;">
-        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:14px;">
+        <div class="title"
+          style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:14px;">
           <span><span style="margin-right:6px;">🧪</span><span>พอร์ตจำลอง 1</span></span>
           <span>
             <span class="pin-btn" onclick="togglePin(event, 'mockport-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
-            <span style="font-size:11px; color:#8b949e; font-weight:normal; margin-left:6px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+            <span style="font-size:11px; color:#8b949e; font-weight:normal; margin-left:6px;">เปิด/ปิด <span
+                class="toggle-icon">▼</span></span>
           </span>
         </div>
       </summary>
@@ -276,14 +526,17 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
             <div>
               <div style="font-size:11px; color:var(--muted);">มูลค่าปัจจุบัน</div>
-              <div id="mock-val" style="font-size:20px; font-weight:700; color:var(--text); line-height:1.2;">0.00 ฿</div>
+              <div id="mock-val" style="font-size:20px; font-weight:700; color:var(--text); line-height:1.2;">0.00 ฿
+              </div>
               <div id="mock-pl" style="font-size:12px; font-weight:600;">+0.00 ฿ (0.00%)</div>
             </div>
-            <button class="btn" style="width:auto; padding:4px 10px; font-size:11px; background:var(--bg3); border:1px solid var(--border);" onclick="toggleMockEdit()">⚙️ ตั้งค่า</button>
+            <button class="btn"
+              style="width:auto; padding:4px 10px; font-size:11px; background:var(--bg3); border:1px solid var(--border);"
+              onclick="toggleMockEdit()">⚙️ ตั้งค่า</button>
           </div>
           <div id="mock-breakdown" style="margin-top:12px;"></div>
         </div>
-        
+
         <div id="mock-edit">
           <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">ตั้งค่าเริ่มจำลองพอร์ต</div>
           <div class="grid-2" style="gap:8px;">
@@ -293,20 +546,27 @@
             </div>
             <div class="form-group" style="margin-bottom:8px;">
               <label class="form-label" style="font-size:11px; margin-bottom:4px;">เงินลงทุน (฿)</label>
-              <input type="number" id="inp-mock-capital" class="input" placeholder="100000" style="padding:6px 8px; font-size:12px;">
+              <input type="number" id="inp-mock-capital" class="input" placeholder="100000"
+                style="padding:6px 8px; font-size:12px;">
             </div>
           </div>
           <div class="form-group" style="margin-bottom:8px;">
             <label class="form-label" style="font-size:11px; margin-bottom:4px;">สัดส่วนแผน (%)</label>
             <div id="mock-plan-list"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-              <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); border:1px solid var(--border); color:var(--text); border-radius:15px;" onclick="addMockPlanRow()">+ เพิ่มแผน</button>
+              <button class="btn"
+                style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); border:1px solid var(--border); color:var(--text); border-radius:15px;"
+                onclick="addMockPlanRow()">+ เพิ่มแผน</button>
               <div id="mock-plan-sum" style="font-size:12px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
           <div style="display:flex; gap:8px; margin-top:8px;">
-            <button id="btn-clear-mock" class="btn" style="flex:1; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:6px; font-size:13px;" onclick="clearMockPort('')">🗑️ ล้างค่า</button>
-            <button id="btn-save-mock" class="btn" style="flex:2; background:#58a6ff; color:#0d1117; padding:6px; font-size:13px;" onclick="saveMockPort()">บันทึกพอร์ต 1</button>
+            <button id="btn-clear-mock" class="btn"
+              style="flex:1; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:6px; font-size:13px;"
+              onclick="clearMockPort('')">🗑️ ล้างค่า</button>
+            <button id="btn-save-mock" class="btn"
+              style="flex:2; background:#58a6ff; color:#0d1117; padding:6px; font-size:13px;"
+              onclick="saveMockPort()">บันทึกพอร์ต 1</button>
           </div>
         </div>
       </div>
@@ -315,11 +575,13 @@
     <!-- Admin: Mock Port 2 -->
     <details class="box" style="cursor:pointer; border-left: 4px solid #e34c26;" id="mockport-box-2">
       <summary class="header" style="outline:none; padding:12px;">
-        <div class="title" style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:14px;">
+        <div class="title"
+          style="display:flex; justify-content:space-between; width:100%; align-items:center; font-size:14px;">
           <span><span style="margin-right:6px;">🧪</span><span>พอร์ตจำลอง 2</span></span>
           <span>
             <span class="pin-btn" onclick="togglePin(event, 'mockport-box-2')" title="ปักหมุดเปิดค้างไว้">📌</span>
-            <span style="font-size:11px; color:#8b949e; font-weight:normal; margin-left:6px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+            <span style="font-size:11px; color:#8b949e; font-weight:normal; margin-left:6px;">เปิด/ปิด <span
+                class="toggle-icon">▼</span></span>
           </span>
         </div>
       </summary>
@@ -328,14 +590,17 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
             <div>
               <div style="font-size:11px; color:var(--muted);">มูลค่าปัจจุบัน</div>
-              <div id="mock-val-2" style="font-size:20px; font-weight:700; color:var(--text); line-height:1.2;">0.00 ฿</div>
+              <div id="mock-val-2" style="font-size:20px; font-weight:700; color:var(--text); line-height:1.2;">0.00 ฿
+              </div>
               <div id="mock-pl-2" style="font-size:12px; font-weight:600;">+0.00 ฿ (0.00%)</div>
             </div>
-            <button class="btn" style="width:auto; padding:4px 10px; font-size:11px; background:var(--bg3); border:1px solid var(--border);" onclick="toggleMockEdit('-2')">⚙️ ตั้งค่า</button>
+            <button class="btn"
+              style="width:auto; padding:4px 10px; font-size:11px; background:var(--bg3); border:1px solid var(--border);"
+              onclick="toggleMockEdit('-2')">⚙️ ตั้งค่า</button>
           </div>
           <div id="mock-breakdown-2" style="margin-top:12px;"></div>
         </div>
-        
+
         <div id="mock-edit-2">
           <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">ตั้งค่าเริ่มจำลองพอร์ต</div>
           <div class="grid-2" style="gap:8px;">
@@ -345,20 +610,27 @@
             </div>
             <div class="form-group" style="margin-bottom:8px;">
               <label class="form-label" style="font-size:11px; margin-bottom:4px;">เงินลงทุน (฿)</label>
-              <input type="number" id="inp-mock-capital-2" class="input" placeholder="100000" style="padding:6px 8px; font-size:12px;">
+              <input type="number" id="inp-mock-capital-2" class="input" placeholder="100000"
+                style="padding:6px 8px; font-size:12px;">
             </div>
           </div>
           <div class="form-group" style="margin-bottom:8px;">
             <label class="form-label" style="font-size:11px; margin-bottom:4px;">สัดส่วนแผน (%)</label>
             <div id="mock-plan-list-2"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-              <button class="btn" style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); border:1px solid var(--border); color:var(--text); border-radius:15px;" onclick="addMockPlanRow('-2')">+ เพิ่มแผน</button>
+              <button class="btn"
+                style="width:auto; padding:6px 12px; font-size:11px; background:var(--bg3); border:1px solid var(--border); color:var(--text); border-radius:15px;"
+                onclick="addMockPlanRow('-2')">+ เพิ่มแผน</button>
               <div id="mock-plan-sum-2" style="font-size:12px; font-weight:bold; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
           <div style="display:flex; gap:8px; margin-top:8px;">
-            <button id="btn-clear-mock-2" class="btn" style="flex:1; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:6px; font-size:13px;" onclick="clearMockPort('-2')">🗑️ ล้างค่า</button>
-            <button id="btn-save-mock-2" class="btn" style="flex:2; background:#e34c26; color:#0d1117; padding:6px; font-size:13px;" onclick="saveMockPort('-2')">บันทึกพอร์ต 2</button>
+            <button id="btn-clear-mock-2" class="btn"
+              style="flex:1; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:6px; font-size:13px;"
+              onclick="clearMockPort('-2')">🗑️ ล้างค่า</button>
+            <button id="btn-save-mock-2" class="btn"
+              style="flex:2; background:#e34c26; color:#0d1117; padding:6px; font-size:13px;"
+              onclick="saveMockPort('-2')">บันทึกพอร์ต 2</button>
           </div>
         </div>
       </div>
@@ -367,11 +639,13 @@
     <!-- Trade History & What-If -->
     <div class="box">
       <div class="header">
-        <div class="title"><span><span style="margin-right:8px;">🔮</span><span>ประวัติและวิเคราะห์การเปลี่ยนแผน (What-If)</span></span></div>
+        <div class="title"><span><span style="margin-right:8px;">🔮</span><span>ประวัติและวิเคราะห์การเปลี่ยนแผน
+              (What-If)</span></span></div>
       </div>
       <div class="body">
         <div style="font-size:10px; color:var(--muted); margin-bottom:12px; line-height:1.4;">
-          *หมายเหตุ: การวิเคราะห์ What-If สมมติให้เงินอยู่แผนเดิมจนถึงปัจจุบัน หากมีการสับเปลี่ยนซ้อนกันหลายรอบ (ย้ายต่อ) ค่าส่วนต่างอาจมีความคลาดเคลื่อนเนื่องจากไม่ได้ติดตามเงินเป็นรายก้อน
+          *หมายเหตุ: การวิเคราะห์ What-If สมมติให้เงินอยู่แผนเดิมจนถึงปัจจุบัน หากมีการสับเปลี่ยนซ้อนกันหลายรอบ
+          (ย้ายต่อ) ค่าส่วนต่างอาจมีความคลาดเคลื่อนเนื่องจากไม่ได้ติดตามเงินเป็นรายก้อน
         </div>
         <div id="trade-history-list" style="display:flex; flex-direction:column; gap:12px;">
           <!-- Trade rows injected here -->
@@ -386,7 +660,8 @@
           <span><span style="margin-right:8px;">💸</span><span>บันทึกเงินนำส่ง (Add Contribution)</span></span>
           <span>
             <span class="pin-btn" onclick="togglePin(event, 'contrib-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
-            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span
+                class="toggle-icon">▼</span></span>
           </span>
         </div>
       </summary>
@@ -416,15 +691,19 @@
           <span><span style="margin-right:8px;">📝</span><span>บันทึกการเปลี่ยนแผน (Log Switch)</span></span>
           <span>
             <span class="pin-btn" onclick="togglePin(event, 'trade-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
-            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span
+                class="toggle-icon">▼</span></span>
           </span>
         </div>
       </summary>
       <div class="body" style="cursor:default;">
         <!-- Tabs -->
         <div style="display:flex; margin-bottom: 16px; border-bottom: 1px solid #30363d;">
-          <div id="tab-simple" style="padding: 8px 16px; cursor: pointer; color:#8b949e;" onclick="switchTab('simple')">แบบปกติ (A ➔ B)</div>
-          <div id="tab-smart" style="padding: 8px 16px; cursor: pointer; border-bottom: 2px solid #58a6ff; font-weight:bold; color:#c9d1d9;" onclick="switchTab('smart')">Smart Rebalance (แบบสัดส่วน %)</div>
+          <div id="tab-simple" style="padding: 8px 16px; cursor: pointer; color:#8b949e;" onclick="switchTab('simple')">
+            แบบปกติ (A ➔ B)</div>
+          <div id="tab-smart"
+            style="padding: 8px 16px; cursor: pointer; border-bottom: 2px solid #58a6ff; font-weight:bold; color:#c9d1d9;"
+            onclick="switchTab('smart')">Smart Rebalance (แบบสัดส่วน %)</div>
         </div>
 
         <!-- Simple Form -->
@@ -476,17 +755,20 @@
             <div class="form-group">
               <label class="form-label" style="color:#f48225;">สัดส่วน ก่อนย้าย (%)</label>
               <div id="smart-before-list"></div>
-              <button class="btn" style="padding:4px; margin-top:4px;" onclick="addSmartRow('before')">+ เพิ่มแผน (ก่อนย้าย)</button>
+              <button class="btn" style="padding:4px; margin-top:4px;" onclick="addSmartRow('before')">+ เพิ่มแผน
+                (ก่อนย้าย)</button>
               <div id="smart-before-sum" style="font-size:12px; margin-top:4px; color:#8b949e;">รวม: 0%</div>
             </div>
             <div class="form-group">
               <label class="form-label" style="color:#4caf50;">สัดส่วน หลังย้าย (%)</label>
               <div id="smart-after-list"></div>
-              <button class="btn" style="padding:4px; margin-top:4px;" onclick="addSmartRow('after')">+ เพิ่มแผน (หลังย้าย)</button>
+              <button class="btn" style="padding:4px; margin-top:4px;" onclick="addSmartRow('after')">+ เพิ่มแผน
+                (หลังย้าย)</button>
               <div id="smart-after-sum" style="font-size:12px; margin-top:4px; color:#8b949e;">รวม: 0%</div>
             </div>
           </div>
-          <button id="btn-save-smart" class="btn" style="background:#238636; margin-top:16px;" onclick="saveSmartRebalance()">วิเคราะห์และบันทึก</button>
+          <button id="btn-save-smart" class="btn" style="background:#238636; margin-top:16px;"
+            onclick="saveSmartRebalance()">วิเคราะห์และบันทึก</button>
         </div>
       </div>
     </details>
@@ -498,7 +780,8 @@
           <span><span style="margin-right:8px;">🔄</span><span>อัปเดตจำนวนหน่วย (Update Units)</span></span>
           <span>
             <span class="pin-btn" onclick="togglePin(event, 'update-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
-            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span
+                class="toggle-icon">▼</span></span>
           </span>
         </div>
       </summary>
@@ -528,445 +811,449 @@
           <span><span style="margin-right:8px;">📊</span><span>สร้างรายงาน (Reports)</span></span>
           <span>
             <span class="pin-btn" onclick="togglePin(event, 'report-box')" title="ปักหมุดเปิดค้างไว้">📌</span>
-            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span class="toggle-icon">▼</span></span>
+            <span style="font-size:12px; color:#8b949e; font-weight:normal; margin-left:8px;">เปิด/ปิด <span
+                class="toggle-icon">▼</span></span>
           </span>
         </div>
       </summary>
       <div class="body" style="cursor:default;">
-        <p style="color:#8b949e; font-size:14px; margin-bottom:12px;">สร้างสมุดบัญชี (Statement) สรุปยอดเงินนำส่ง ทุนสะสม รายการสับเปลี่ยน และกำไรขาดทุนรายเดือนย้อนหลัง ลงใน Google Sheet</p>
-        <button id="btn-seed-data" class="btn" style="background:#238636; margin-bottom:8px;" onclick="seedData()">1. นำเข้าข้อมูลประวัติทั้งหมดลง MyPort (กดครั้งเดียว)</button>
-        <button id="btn-export-statement" class="btn" style="background:#58a6ff; color:#0d1117;" onclick="exportStatement()">2. 📥 สร้าง Sheet Statement ตอนนี้เลย</button>
+        <p style="color:#8b949e; font-size:14px; margin-bottom:12px;">สร้างสมุดบัญชี (Statement) สรุปยอดเงินนำส่ง
+          ทุนสะสม รายการสับเปลี่ยน และกำไรขาดทุนรายเดือนย้อนหลัง ลงใน Google Sheet</p>
+        <button id="btn-seed-data" class="btn" style="background:#238636; margin-bottom:8px;" onclick="seedData()">1.
+          นำเข้าข้อมูลประวัติทั้งหมดลง MyPort (กดครั้งเดียว)</button>
+        <button id="btn-export-statement" class="btn" style="background:#58a6ff; color:#0d1117;"
+          onclick="exportStatement()">2. 📥 สร้าง Sheet Statement ตอนนี้เลย</button>
       </div>
     </details>
 
   </div>
-</div>
+  </div>
 
-<script src="config.js"></script>
-<script>
-const CONTRIB_DAY = 25; // วันที่ตัดเงินเดือน กบข. โดยประมาณ
-function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
-let allData = null;
+  <script src="config.js"></script>
+  <script>
+    const CONTRIB_DAY = 25; // วันที่ตัดเงินเดือน กบข. โดยประมาณ
+    function toGregorianYear(y) { return y > 2500 ? y - 543 : y; }
+    let allData = null;
 
-// ─── XIRR: คำนวณอัตราผลตอบแทนเฉลี่ยต่อปี (Newton-Raphson) ───
-// cashflows = [{ date: Date, amount: Number }]
-// เงินออก (นำส่ง) = ค่าลบ, มูลค่าปัจจุบัน = ค่าบวก (รายการสุดท้าย)
-function calcXIRR(cashflows, guess) {
-  if (!cashflows || cashflows.length < 2) return null;
-  
-  const dayMs = 24 * 60 * 60 * 1000;
-  const d0 = cashflows[0].date.getTime();
-  
-  let rate = guess || 0.1;
-  const maxIter = 100;
-  const tol = 1e-7;
-  
-  for (let iter = 0; iter < maxIter; iter++) {
-    let fVal = 0;
-    let fDeriv = 0;
-    
-    for (let i = 0; i < cashflows.length; i++) {
-      const t = (cashflows[i].date.getTime() - d0) / (365.25 * dayMs);
-      const denom = Math.pow(1 + rate, t);
-      if (!isFinite(denom) || denom === 0) return null;
-      fVal += cashflows[i].amount / denom;
-      fDeriv -= t * cashflows[i].amount / (denom * (1 + rate));
-    }
-    
-    if (Math.abs(fDeriv) < 1e-14) return null;
-    const newRate = rate - fVal / fDeriv;
-    if (Math.abs(newRate - rate) < tol) return newRate;
-    rate = newRate;
-    
-    if (rate < -0.99 || rate > 10) return null;
-  }
-  return null;
-}
+    // ─── XIRR: คำนวณอัตราผลตอบแทนเฉลี่ยต่อปี (Newton-Raphson) ───
+    // cashflows = [{ date: Date, amount: Number }]
+    // เงินออก (นำส่ง) = ค่าลบ, มูลค่าปัจจุบัน = ค่าบวก (รายการสุดท้าย)
+    function calcXIRR(cashflows, guess) {
+      if (!cashflows || cashflows.length < 2) return null;
 
-// สร้างและแสดง XIRR หลายช่วงเวลา
-function renderXIRRs(port, totalValue) {
-  const xirrCard = document.getElementById('xirr-card');
-  const xirrList = document.getElementById('xirr-list');
-  if (!port || !port.contribs || port.contribs.length < 1 || totalValue <= 0) {
-    xirrCard.style.display = 'none';
-    return;
-  }
-  
-  const allCashflows = [];
-  port.contribs.forEach(c => {
-    const parts = c.date.split('/');
-    if (parts.length === 2) {
-      const m = parseInt(parts[0]) - 1;
-      let y = parseInt(parts[1]);
-      if (y > 2500) y = y - 543;
-      allCashflows.push({ date: new Date(y, m, CONTRIB_DAY), amount: -c.amount });
-    }
-  });
-  if (port.startingCost > 1) {
-    allCashflows.push({ date: new Date(2021, 11, 31), amount: -port.startingCost });
-  }
-  allCashflows.sort((a, b) => a.date.getTime() - b.date.getTime());
-  
-  if (allCashflows.length === 0) {
-    xirrCard.style.display = 'none';
-    return;
-  }
-  
-  const firstDate = allCashflows[0].date;
-  const now = new Date();
-  const overallCashflows = [...allCashflows, { date: now, amount: totalValue }];
-  const overallXirr = calcXIRR(overallCashflows, 0.05);
-  
-  if (overallXirr === null || !isFinite(overallXirr)) {
-    xirrCard.style.display = 'none';
-    return;
-  }
-  
-  const dayMs = 24 * 60 * 60 * 1000;
-  const periods = [
-    { label: '1 เดือนย้อนหลัง', months: 1 },
-    { label: '6 เดือนย้อนหลัง', months: 6 },
-    { label: '1 ปีย้อนหลัง', months: 12 },
-    { label: '3 ปีย้อนหลัง', months: 36 },
-    { label: '5 ปีย้อนหลัง', months: 60 }
-  ];
-  
-  const snaps = port.snapshots || [];
-  let html = '';
-  
-  // Update overall XIRR in the header
-  const overallXirrElement = document.getElementById('overall-xirr-val');
-  if (overallXirrElement) {
-    overallXirrElement.textContent = (overallXirr*100).toFixed(2) + '%';
-    overallXirrElement.style.color = overallXirr >= 0 ? '#4caf50' : '#f44336';
-  }
+      const dayMs = 24 * 60 * 60 * 1000;
+      const d0 = cashflows[0].date.getTime();
 
-  // ดึงมูลค่าพอร์ตย้อนหลัง
-  const getHistVal = (tDate) => {
-    // 1. หา Snapshot ที่ตรงกับวันที่เป๊ะๆ (บวกลบไม่เกิน 15 วัน)
-    const closestSnap = snaps.reduce((closest, snap) => {
-        const diff = Math.abs(snap.date - tDate.getTime());
-        if (diff < 15 * dayMs && diff < closest.diff) {
-            return { snap: snap, diff: diff };
+      let rate = guess || 0.1;
+      const maxIter = 100;
+      const tol = 1e-7;
+
+      for (let iter = 0; iter < maxIter; iter++) {
+        let fVal = 0;
+        let fDeriv = 0;
+
+        for (let i = 0; i < cashflows.length; i++) {
+          const t = (cashflows[i].date.getTime() - d0) / (365.25 * dayMs);
+          const denom = Math.pow(1 + rate, t);
+          if (!isFinite(denom) || denom === 0) return null;
+          fVal += cashflows[i].amount / denom;
+          fDeriv -= t * cashflows[i].amount / (denom * (1 + rate));
         }
-        return closest;
-    }, { snap: null, diff: Infinity });
-    if (closestSnap.snap) return closestSnap.snap.value;
-    
-    // 2. ถ้าไม่มี ให้หา Snapshot ก่อนหน้า และ หลังจาก วันที่ต้องการ เพื่อทำ Interpolation
-    let snapBefore = null;
-    let snapAfter = null;
-    snaps.forEach(snap => {
-      if (snap.date <= tDate.getTime()) {
-        if (!snapBefore || snap.date > snapBefore.date) snapBefore = snap;
-      }
-      if (snap.date > tDate.getTime()) {
-        if (!snapAfter || snap.date < snapAfter.date) snapAfter = snap;
-      }
-    });
 
-    if (snapBefore) {
-      const v0 = snapBefore.value;
-      const t0 = snapBefore.date;
-      
-      let v1 = totalValue;
-      let t1 = now.getTime();
-      
-      if (snapAfter) {
-        v1 = snapAfter.value;
-        t1 = snapAfter.date;
+        if (Math.abs(fDeriv) < 1e-14) return null;
+        const newRate = rate - fVal / fDeriv;
+        if (Math.abs(newRate - rate) < tol) return newRate;
+        rate = newRate;
+
+        if (rate < -0.99 || rate > 10) return null;
+      }
+      return null;
+    }
+
+    // สร้างและแสดง XIRR หลายช่วงเวลา
+    function renderXIRRs(port, totalValue) {
+      const xirrCard = document.getElementById('xirr-card');
+      const xirrList = document.getElementById('xirr-list');
+      if (!port || !port.contribs || port.contribs.length < 1 || totalValue <= 0) {
+        xirrCard.style.display = 'none';
+        return;
       }
 
-      let cBeforeT = 0;
-      let cTotal = 0;
-      allCashflows.forEach(cf => {
-        const cfTime = cf.date.getTime();
-        if (cfTime > t0 && cfTime <= t1) {
-          const contribAmt = -cf.amount; // flip กลับเป็นบวก เพราะนี่คือเงินที่ "เข้า" พอร์ต
-          cTotal += contribAmt;
-          if (cfTime <= tDate.getTime()) {
-            cBeforeT += contribAmt;
-          }
+      const allCashflows = [];
+      port.contribs.forEach(c => {
+        const parts = c.date.split('/');
+        if (parts.length === 2) {
+          const m = parseInt(parts[0]) - 1;
+          let y = parseInt(parts[1]);
+          if (y > 2500) y = y - 543;
+          allCashflows.push({ date: new Date(y, m, CONTRIB_DAY), amount: -c.amount });
         }
       });
-      
-      if (t1 === t0) return v0 + cBeforeT; // ป้องกัน Divide-by-zero ถ้ามีเวลาผ่านไป 0 วัน
+      if (port.startingCost > 1) {
+        allCashflows.push({ date: new Date(2021, 11, 31), amount: -port.startingCost });
+      }
+      allCashflows.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-      // ประมาณการกำไรตามสัดส่วนเวลา
-      const totalProfit = (v1 - v0) - cTotal; // กำไรจริง ไม่รวมเงินนำส่งใหม่
-      const timeRatio = (tDate.getTime() - t0) / (t1 - t0);
-      const estimatedProfit = totalProfit * timeRatio;
-      
-      return v0 + cBeforeT + estimatedProfit; // บวกเงินนำส่งที่เกิดไปแล้ว + กำไรตามสัดส่วน
-    }
-    
-    return null; // ไม่มีข้อมูลอ้างอิง
-  };
-  
-  let pastPeriodsHtml = '';
-  
-  periods.forEach(p => {
-    const targetDate = new Date(now.getFullYear(), now.getMonth() - p.months, now.getDate());
-    if (targetDate > firstDate) {
-      const startVal = getHistVal(targetDate);
-      if (startVal !== null) {
-        const periodCashflows = [{ date: targetDate, amount: -startVal }];
-        allCashflows.forEach(cf => {
-          if (cf.date > targetDate && cf.date <= now) {
-            periodCashflows.push({ date: cf.date, amount: cf.amount });
+      if (allCashflows.length === 0) {
+        xirrCard.style.display = 'none';
+        return;
+      }
+
+      const firstDate = allCashflows[0].date;
+      const now = new Date();
+      const overallCashflows = [...allCashflows, { date: now, amount: totalValue }];
+      const overallXirr = calcXIRR(overallCashflows, 0.05);
+
+      if (overallXirr === null || !isFinite(overallXirr)) {
+        xirrCard.style.display = 'none';
+        return;
+      }
+
+      const dayMs = 24 * 60 * 60 * 1000;
+      const periods = [
+        { label: '1 เดือนย้อนหลัง', months: 1 },
+        { label: '6 เดือนย้อนหลัง', months: 6 },
+        { label: '1 ปีย้อนหลัง', months: 12 },
+        { label: '3 ปีย้อนหลัง', months: 36 },
+        { label: '5 ปีย้อนหลัง', months: 60 }
+      ];
+
+      const snaps = port.snapshots || [];
+      let html = '';
+
+      // Update overall XIRR in the header
+      const overallXirrElement = document.getElementById('overall-xirr-val');
+      if (overallXirrElement) {
+        overallXirrElement.textContent = (overallXirr * 100).toFixed(2) + '%';
+        overallXirrElement.style.color = overallXirr >= 0 ? '#4caf50' : '#f44336';
+      }
+
+      // ดึงมูลค่าพอร์ตย้อนหลัง
+      const getHistVal = (tDate) => {
+        // 1. หา Snapshot ที่ตรงกับวันที่เป๊ะๆ (บวกลบไม่เกิน 15 วัน)
+        const closestSnap = snaps.reduce((closest, snap) => {
+          const diff = Math.abs(snap.date - tDate.getTime());
+          if (diff < 15 * dayMs && diff < closest.diff) {
+            return { snap: snap, diff: diff };
+          }
+          return closest;
+        }, { snap: null, diff: Infinity });
+        if (closestSnap.snap) return closestSnap.snap.value;
+
+        // 2. ถ้าไม่มี ให้หา Snapshot ก่อนหน้า และ หลังจาก วันที่ต้องการ เพื่อทำ Interpolation
+        let snapBefore = null;
+        let snapAfter = null;
+        snaps.forEach(snap => {
+          if (snap.date <= tDate.getTime()) {
+            if (!snapBefore || snap.date > snapBefore.date) snapBefore = snap;
+          }
+          if (snap.date > tDate.getTime()) {
+            if (!snapAfter || snap.date < snapAfter.date) snapAfter = snap;
           }
         });
-        periodCashflows.push({ date: now, amount: totalValue });
-        
-        const pXirr = calcXIRR(periodCashflows, overallXirr);
-        if (pXirr !== null && isFinite(pXirr)) {
-          pastPeriodsHtml += `
+
+        if (snapBefore) {
+          const v0 = snapBefore.value;
+          const t0 = snapBefore.date;
+
+          let v1 = totalValue;
+          let t1 = now.getTime();
+
+          if (snapAfter) {
+            v1 = snapAfter.value;
+            t1 = snapAfter.date;
+          }
+
+          let cBeforeT = 0;
+          let cTotal = 0;
+          allCashflows.forEach(cf => {
+            const cfTime = cf.date.getTime();
+            if (cfTime > t0 && cfTime <= t1) {
+              const contribAmt = -cf.amount; // flip กลับเป็นบวก เพราะนี่คือเงินที่ "เข้า" พอร์ต
+              cTotal += contribAmt;
+              if (cfTime <= tDate.getTime()) {
+                cBeforeT += contribAmt;
+              }
+            }
+          });
+
+          if (t1 === t0) return v0 + cBeforeT; // ป้องกัน Divide-by-zero ถ้ามีเวลาผ่านไป 0 วัน
+
+          // ประมาณการกำไรตามสัดส่วนเวลา
+          const totalProfit = (v1 - v0) - cTotal; // กำไรจริง ไม่รวมเงินนำส่งใหม่
+          const timeRatio = (tDate.getTime() - t0) / (t1 - t0);
+          const estimatedProfit = totalProfit * timeRatio;
+
+          return v0 + cBeforeT + estimatedProfit; // บวกเงินนำส่งที่เกิดไปแล้ว + กำไรตามสัดส่วน
+        }
+
+        return null; // ไม่มีข้อมูลอ้างอิง
+      };
+
+      let pastPeriodsHtml = '';
+
+      periods.forEach(p => {
+        const targetDate = new Date(now.getFullYear(), now.getMonth() - p.months, now.getDate());
+        if (targetDate > firstDate) {
+          const startVal = getHistVal(targetDate);
+          if (startVal !== null) {
+            const periodCashflows = [{ date: targetDate, amount: -startVal }];
+            allCashflows.forEach(cf => {
+              if (cf.date > targetDate && cf.date <= now) {
+                periodCashflows.push({ date: cf.date, amount: cf.amount });
+              }
+            });
+            periodCashflows.push({ date: now, amount: totalValue });
+
+            const pXirr = calcXIRR(periodCashflows, overallXirr);
+            if (pXirr !== null && isFinite(pXirr)) {
+              pastPeriodsHtml += `
             <div class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; padding: 6px 4px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
               <div style="font-size:13px; color:var(--text); opacity:0.8;">${p.label}</div>
-              <div style="font-size:14px; font-weight:600; color:${pXirr >= 0 ? '#4caf50' : '#f44336'};">${(pXirr*100).toFixed(2)}%</div>
+              <div style="font-size:14px; font-weight:600; color:${pXirr >= 0 ? '#4caf50' : '#f44336'};">${(pXirr * 100).toFixed(2)}%</div>
             </div>
           `;
-        }
-      } else {
-        // ไม่มีข้อมูลให้แสดงบอกตรงๆ แทนการประมาณค่า
-        pastPeriodsHtml += `
+            }
+          } else {
+            // ไม่มีข้อมูลให้แสดงบอกตรงๆ แทนการประมาณค่า
+            pastPeriodsHtml += `
           <div class="dashed-row" style="display:flex; justify-content:space-between; align-items:center; padding: 6px 4px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
             <div style="font-size:13px; color:var(--text); opacity:0.8;">${p.label}</div>
             <div style="font-size:11px; color:var(--muted); font-style:italic;">ไม่มีข้อมูล</div>
           </div>
         `;
+          }
+        }
+      });
+
+      if (pastPeriodsHtml === '') {
+        // ถ้าไม่มีข้อมูลเลย ให้แสดงว่าไม่มี
+        pastPeriodsHtml = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:4px;">ไม่มีประวัติย้อนหลัง</div>`;
       }
+
+      xirrList.innerHTML = pastPeriodsHtml;
+      xirrCard.style.display = 'flex';
     }
-  });
-  
-  if (pastPeriodsHtml === '') {
-    // ถ้าไม่มีข้อมูลเลย ให้แสดงว่าไม่มี
-    pastPeriodsHtml = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:4px;">ไม่มีประวัติย้อนหลัง</div>`;
-  }
-  
-  xirrList.innerHTML = pastPeriodsHtml;
-  xirrCard.style.display = 'flex';
-}
 
-function getLastValidValue(arr) {
-  if (!arr) return null;
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (arr[i] !== null && arr[i] !== undefined && arr[i] > 0) return arr[i];
-  }
-  return null;
-}
+    function getLastValidValue(arr) {
+      if (!arr) return null;
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] !== null && arr[i] !== undefined && arr[i] > 0) return arr[i];
+      }
+      return null;
+    }
 
-// --- Mock Port Logic ---
-function addMockPlanRow(suffix = '', planName = '', pct = '') {
-  const div = document.createElement('div');
-  div.style.display = 'flex';
-  div.style.gap = '8px';
-  div.style.marginBottom = '8px';
-  
-  let selectHtml = '<option value="">-- เลือกแผน --</option>';
-  const sortedPlans = [...allData.plans].sort((a,b) => a.label.localeCompare(b.label));
-  sortedPlans.forEach(p => {
-    selectHtml += `<option value="${p.label}" ${planName === p.label ? 'selected' : ''}>${p.label}</option>`;
-  });
-  
-  div.innerHTML = `
+    // --- Mock Port Logic ---
+    function addMockPlanRow(suffix = '', planName = '', pct = '') {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.gap = '8px';
+      div.style.marginBottom = '8px';
+
+      let selectHtml = '<option value="">-- เลือกแผน --</option>';
+      const sortedPlans = [...allData.plans].sort((a, b) => a.label.localeCompare(b.label));
+      sortedPlans.forEach(p => {
+        selectHtml += `<option value="${p.label}" ${planName === p.label ? 'selected' : ''}>${p.label}</option>`;
+      });
+
+      div.innerHTML = `
     <select class="input mock-plan-sel${suffix}" style="flex:1; min-width:0; text-overflow:ellipsis; height:34px;">${selectHtml}</select>
     <input type="number" class="input mock-plan-pct${suffix}" placeholder="%" style="width:60px; flex-shrink:0; height:34px;" value="${pct}" oninput="calcMockSum('${suffix}')">
     <button class="btn" style="width:34px; height:34px; background:var(--bg3); border:1px solid #f85149; color:#f85149; padding:0; flex-shrink:0; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px;" onclick="this.parentElement.remove(); calcMockSum('${suffix}')">×</button>
   `;
-  document.getElementById('mock-plan-list' + suffix).appendChild(div);
-  calcMockSum(suffix);
-}
+      document.getElementById('mock-plan-list' + suffix).appendChild(div);
+      calcMockSum(suffix);
+    }
 
-function calcMockSum(suffix = '') {
-  let sum = 0;
-  document.querySelectorAll('.mock-plan-pct' + suffix).forEach(el => {
-    sum += parseFloat(el.value) || 0;
-  });
-  const sumEl = document.getElementById('mock-plan-sum' + suffix);
-  sumEl.innerText = `รวม: ${sum}%`;
-  sumEl.style.color = sum === 100 ? '#4caf50' : '#f44336';
-  return sum;
-}
+    function calcMockSum(suffix = '') {
+      let sum = 0;
+      document.querySelectorAll('.mock-plan-pct' + suffix).forEach(el => {
+        sum += parseFloat(el.value) || 0;
+      });
+      const sumEl = document.getElementById('mock-plan-sum' + suffix);
+      sumEl.innerText = `รวม: ${sum}%`;
+      sumEl.style.color = sum === 100 ? '#4caf50' : '#f44336';
+      return sum;
+    }
 
-function toggleMockEdit(suffix = '') {
-  document.getElementById('mock-view' + suffix).style.display = 'none';
-  document.getElementById('mock-edit' + suffix).style.display = 'block';
-}
+    function toggleMockEdit(suffix = '') {
+      document.getElementById('mock-view' + suffix).style.display = 'none';
+      document.getElementById('mock-edit' + suffix).style.display = 'block';
+    }
 
-async function saveMockPort(suffix = '') {
-  const dateStr = document.getElementById('inp-mock-date' + suffix).value;
-  const capital = parseFloat(document.getElementById('inp-mock-capital' + suffix).value);
-  if (!dateStr || !capital) return showToast('กรุณาระบุวันที่และเงินต้น', null, 'error');
-  
-  const sum = calcMockSum(suffix);
-  if (sum !== 100) return showToast('สัดส่วนแผนต้องรวมกันให้ได้ 100% พอดี', null, 'error');
-  
-  const allocations = {};
-  const rows = document.getElementById('mock-plan-list' + suffix).children;
-  for (let i = 0; i < rows.length; i++) {
-    const sel = rows[i].querySelector('.mock-plan-sel' + suffix).value;
-    const pct = parseFloat(rows[i].querySelector('.mock-plan-pct' + suffix).value);
-    if (!sel || !pct) return showToast('กรุณาระบุแผนและ % ให้ครบ', null, 'error');
-    allocations[sel] = (allocations[sel] || 0) + pct;
-  }
-  
-  let targetTime;
-  if (dateStr.includes('-')) {
-    let parts = dateStr.split('-');
-    let year = parseInt(parts[0], 10);
-    // If user somehow enters Buddhist year directly into date picker (rare but possible)
-    year = toGregorianYear(year);
-    targetTime = new Date(`${year}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
-  } else {
-    let parts = dateStr.split('/');
-    if (parts.length !== 3) return showToast('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY หรือเลือกจากปฏิทิน', null, 'error');
-    let year = parseInt(parts[2], 10);
-    year = toGregorianYear(year);
-    targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
-  }
-  const btn = document.getElementById('btn-save-mock' + suffix);
-  btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
+    async function saveMockPort(suffix = '') {
+      const dateStr = document.getElementById('inp-mock-date' + suffix).value;
+      const capital = parseFloat(document.getElementById('inp-mock-capital' + suffix).value);
+      if (!dateStr || !capital) return showToast('กรุณาระบุวันที่และเงินต้น', null, 'error');
 
-  // Both Mock Port 1 and 2 will now save to the cloud database
-  try {
-    const res = await apiCall({
-      action: 'save_mock_port',
-      portIndex: suffix,
-      startDate: targetTime,
-      startCapital: capital,
-      allocations: allocations
-    });
-    if (res.success) {
-      // Update local state instantly without page reload!
-      const pData = {
-        startDate: targetTime,
-        startCapital: capital,
-        allocations: allocations
-      };
-      if (suffix === '-2') {
-        allData['mockPort-2'] = pData;
-        localStorage.setItem('gpf_mock_port-2', JSON.stringify(pData));
-      } else {
-        allData.mockPort = pData;
+      const sum = calcMockSum(suffix);
+      if (sum !== 100) return showToast('สัดส่วนแผนต้องรวมกันให้ได้ 100% พอดี', null, 'error');
+
+      const allocations = {};
+      const rows = document.getElementById('mock-plan-list' + suffix).children;
+      for (let i = 0; i < rows.length; i++) {
+        const sel = rows[i].querySelector('.mock-plan-sel' + suffix).value;
+        const pct = parseFloat(rows[i].querySelector('.mock-plan-pct' + suffix).value);
+        if (!sel || !pct) return showToast('กรุณาระบุแผนและ % ให้ครบ', null, 'error');
+        allocations[sel] = (allocations[sel] || 0) + pct;
       }
-      
-      // Clear main cache so next reload fetches latest from server
-      localStorage.removeItem("gpfnav_data_v3");
-      
-      btn.innerText = '✅ บันทึกสำเร็จ!';
-      setTimeout(() => {
-        btn.innerText = 'บันทึกพอร์ตจำลอง';
-        btn.disabled = false;
-        renderMockPort(pData, suffix);
-      }, 800);
-    }
-  } catch (e) {
-    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
-    btn.innerText = suffix === '-2' ? 'บันทึกพอร์ต 2' : 'บันทึกพอร์ต 1'; 
-    btn.disabled = false;
-  }
-}
 
-async function clearMockPort(suffix = '') {
-  if(!confirm('ต้องการล้างข้อมูลพอร์ตจำลองนี้ใช่หรือไม่?')) return;
-  const btn = document.getElementById('btn-clear-mock' + suffix);
-  btn.innerText = 'กำลังล้าง...'; btn.disabled = true;
-  
-  try {
-    const res = await apiCall({
-      action: 'clear_mock_port',
-      portIndex: suffix
-    });
-    if (res.success) {
-      if (suffix === '-2') {
-        allData['mockPort-2'] = null;
-        localStorage.removeItem('gpf_mock_port-2');
-      } else {
-        allData.mockPort = null;
-      }
-      localStorage.removeItem("gpfnav_data_v3");
-      showToast('ล้างข้อมูลสำเร็จ!');
-      location.reload();
-    }
-  } catch (e) {
-    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
-    btn.innerText = '🗑️ ล้างค่า'; btn.disabled = false;
-  }
-}
-
-function renderMockPort(mockData, suffix = '') {
-  if (!mockData || !mockData.startDate) {
-    document.getElementById('mock-edit' + suffix).style.display = 'block';
-    document.getElementById('mock-view' + suffix).style.display = 'none';
-    if (document.getElementById('mock-plan-list' + suffix).children.length === 0) {
-      addMockPlanRow(suffix);
-    }
-    const d = new Date();
-    document.getElementById('inp-mock-date' + suffix).value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    return;
-  }
-  
-  document.getElementById('mock-edit' + suffix).style.display = 'none';
-  document.getElementById('mock-view' + suffix).style.display = 'block';
-  
-  document.getElementById('inp-mock-capital' + suffix).value = mockData.startCapital;
-  const d = new Date(mockData.startDate);
-  document.getElementById('inp-mock-date' + suffix).value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  document.getElementById('mock-plan-list' + suffix).innerHTML = '';
-  Object.keys(mockData.allocations).forEach(plan => {
-    addMockPlanRow(suffix, plan, mockData.allocations[plan]);
-  });
-  
-  let totalMockValue = 0;
-  let breakdownHtml = '';
-  const searchDates = allData.fullDates || allData.dates;
-  
-  let closestIdx = 0;
-  let minDiff = Infinity;
-  searchDates.forEach((dStr, idx) => {
-    const diff = Math.abs(new Date(dStr).getTime() - mockData.startDate);
-    if (diff < minDiff) {
-      minDiff = diff;
-      closestIdx = idx;
-    }
-  });
-
-  const breakdownEl = document.getElementById('mock-breakdown' + suffix);
-  breakdownEl.innerHTML = '';
-  
-  const port = allData.myPort;
-  let validContribs = [];
-  if (port && port.contribs) {
-    port.contribs.forEach(c => {
-      const parts = c.date.split('/');
-      if (parts.length === 2) {
-        let year = parseInt(parts[1]);
+      let targetTime;
+      if (dateStr.includes('-')) {
+        let parts = dateStr.split('-');
+        let year = parseInt(parts[0], 10);
+        // If user somehow enters Buddhist year directly into date picker (rare but possible)
         year = toGregorianYear(year);
-        const cTime = new Date(year, parseInt(parts[0]) - 1, CONTRIB_DAY).getTime();
-        if (cTime > mockData.startDate) {
-          validContribs.push({ amount: c.amount, time: cTime });
-        }
+        targetTime = new Date(`${year}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
+      } else {
+        let parts = dateStr.split('/');
+        if (parts.length !== 3) return showToast('วันที่ต้องเป็นรูปแบบ DD/MM/YYYY หรือเลือกจากปฏิทิน', null, 'error');
+        let year = parseInt(parts[2], 10);
+        year = toGregorianYear(year);
+        targetTime = new Date(`${year}-${parts[1]}-${parts[0]}T00:00:00`).getTime();
       }
-    });
-  }
+      const btn = document.getElementById('btn-save-mock' + suffix);
+      btn.innerText = 'กำลังบันทึก...'; btn.disabled = true;
 
-  let totalContribAmt = 0;
-  validContribs.forEach(c => totalContribAmt += c.amount);
+      // Both Mock Port 1 and 2 will now save to the cloud database
+      try {
+        const res = await apiCall({
+          action: 'save_mock_port',
+          portIndex: suffix,
+          startDate: targetTime,
+          startCapital: capital,
+          allocations: allocations
+        });
+        if (res.success) {
+          // Update local state instantly without page reload!
+          const pData = {
+            startDate: targetTime,
+            startCapital: capital,
+            allocations: allocations
+          };
+          if (suffix === '-2') {
+            allData['mockPort-2'] = pData;
+            localStorage.setItem('gpf_mock_port-2', JSON.stringify(pData));
+          } else {
+            allData.mockPort = pData;
+          }
 
-  let totalAllocatedPct = 0;
-  Object.keys(mockData.allocations).forEach(plan => {
-    const pct = mockData.allocations[plan];
-    totalAllocatedPct += pct;
-    const initialCapital = mockData.startCapital * (pct / 100);
-    const pData = allData.plans.find(x => x.label === plan || x.key === plan);
-    
-      if (pData && (pData.fullData || pData.data).length > 0) {
-        const dataArr = pData.fullData || pData.data;
-        const startNav = dataArr[closestIdx];
-        
-        if (!startNav || startNav <= 0) {
-          breakdownHtml += `
+          // Clear main cache so next reload fetches latest from server
+          localStorage.removeItem("gpfnav_data_v3");
+
+          btn.innerText = '✅ บันทึกสำเร็จ!';
+          setTimeout(() => {
+            btn.innerText = 'บันทึกพอร์ตจำลอง';
+            btn.disabled = false;
+            renderMockPort(pData, suffix);
+          }, 800);
+        }
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
+        btn.innerText = suffix === '-2' ? 'บันทึกพอร์ต 2' : 'บันทึกพอร์ต 1';
+        btn.disabled = false;
+      }
+    }
+
+    async function clearMockPort(suffix = '') {
+      if (!confirm('ต้องการล้างข้อมูลพอร์ตจำลองนี้ใช่หรือไม่?')) return;
+      const btn = document.getElementById('btn-clear-mock' + suffix);
+      btn.innerText = 'กำลังล้าง...'; btn.disabled = true;
+
+      try {
+        const res = await apiCall({
+          action: 'clear_mock_port',
+          portIndex: suffix
+        });
+        if (res.success) {
+          if (suffix === '-2') {
+            allData['mockPort-2'] = null;
+            localStorage.removeItem('gpf_mock_port-2');
+          } else {
+            allData.mockPort = null;
+          }
+          localStorage.removeItem("gpfnav_data_v3");
+          showToast('ล้างข้อมูลสำเร็จ!');
+          location.reload();
+        }
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
+        btn.innerText = '🗑️ ล้างค่า'; btn.disabled = false;
+      }
+    }
+
+    function renderMockPort(mockData, suffix = '') {
+      if (!mockData || !mockData.startDate) {
+        document.getElementById('mock-edit' + suffix).style.display = 'block';
+        document.getElementById('mock-view' + suffix).style.display = 'none';
+        if (document.getElementById('mock-plan-list' + suffix).children.length === 0) {
+          addMockPlanRow(suffix);
+        }
+        const d = new Date();
+        document.getElementById('inp-mock-date' + suffix).value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        return;
+      }
+
+      document.getElementById('mock-edit' + suffix).style.display = 'none';
+      document.getElementById('mock-view' + suffix).style.display = 'block';
+
+      document.getElementById('inp-mock-capital' + suffix).value = mockData.startCapital;
+      const d = new Date(mockData.startDate);
+      document.getElementById('inp-mock-date' + suffix).value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      document.getElementById('mock-plan-list' + suffix).innerHTML = '';
+      Object.keys(mockData.allocations).forEach(plan => {
+        addMockPlanRow(suffix, plan, mockData.allocations[plan]);
+      });
+
+      let totalMockValue = 0;
+      let breakdownHtml = '';
+      const searchDates = allData.fullDates || allData.dates;
+
+      let closestIdx = 0;
+      let minDiff = Infinity;
+      searchDates.forEach((dStr, idx) => {
+        const diff = Math.abs(new Date(dStr).getTime() - mockData.startDate);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIdx = idx;
+        }
+      });
+
+      const breakdownEl = document.getElementById('mock-breakdown' + suffix);
+      breakdownEl.innerHTML = '';
+
+      const port = allData.myPort;
+      let validContribs = [];
+      if (port && port.contribs) {
+        port.contribs.forEach(c => {
+          const parts = c.date.split('/');
+          if (parts.length === 2) {
+            let year = parseInt(parts[1]);
+            year = toGregorianYear(year);
+            const cTime = new Date(year, parseInt(parts[0]) - 1, CONTRIB_DAY).getTime();
+            if (cTime > mockData.startDate) {
+              validContribs.push({ amount: c.amount, time: cTime });
+            }
+          }
+        });
+      }
+
+      let totalContribAmt = 0;
+      validContribs.forEach(c => totalContribAmt += c.amount);
+
+      let totalAllocatedPct = 0;
+      Object.keys(mockData.allocations).forEach(plan => {
+        const pct = mockData.allocations[plan];
+        totalAllocatedPct += pct;
+        const initialCapital = mockData.startCapital * (pct / 100);
+        const pData = allData.plans.find(x => x.label === plan || x.key === plan);
+
+        if (pData && (pData.fullData || pData.data).length > 0) {
+          const dataArr = pData.fullData || pData.data;
+          const startNav = dataArr[closestIdx];
+
+          if (!startNav || startNav <= 0) {
+            breakdownHtml += `
             <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
               <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
                 <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
@@ -976,41 +1263,41 @@ function renderMockPort(mockData, suffix = '') {
                 </div>
               </div>
             </div>`;
-          return;
-        }
-
-        const lastNav = getLastValidValue(dataArr);
-        if (!lastNav) return;
-        
-        let mockUnits = initialCapital / startNav;
-        let planContribAmt = 0;
-
-        validContribs.forEach(c => {
-          let cIdx = 0;
-          let cMinDiff = Infinity;
-          searchDates.forEach((dStr, idx) => {
-            const diff = Math.abs(new Date(dStr).getTime() - c.time);
-            if (diff < cMinDiff) { cMinDiff = diff; cIdx = idx; }
-          });
-          const cNav = dataArr[cIdx];
-          if (cNav && cNav > 0) {
-            const cAmt = c.amount * (pct / 100);
-            mockUnits += cAmt / cNav;
-            planContribAmt += cAmt;
+            return;
           }
-        });
 
-      const val = mockUnits * lastNav;
-      totalMockValue += val;
-      
-      const totalCostForPlan = initialCapital + planContribAmt;
-      const planPl = val - totalCostForPlan;
-      const planPlPct = totalCostForPlan > 0 ? (planPl / totalCostForPlan) * 100 : 0;
-      const color = planPl >= 0 ? '#4caf50' : '#f44336';
-      
-      let contribText = planContribAmt > 0 ? ` + เงินนำส่งใหม่ ${formatMoney(planContribAmt)} ฿` : '';
+          const lastNav = getLastValidValue(dataArr);
+          if (!lastNav) return;
 
-      breakdownHtml += `
+          let mockUnits = initialCapital / startNav;
+          let planContribAmt = 0;
+
+          validContribs.forEach(c => {
+            let cIdx = 0;
+            let cMinDiff = Infinity;
+            searchDates.forEach((dStr, idx) => {
+              const diff = Math.abs(new Date(dStr).getTime() - c.time);
+              if (diff < cMinDiff) { cMinDiff = diff; cIdx = idx; }
+            });
+            const cNav = dataArr[cIdx];
+            if (cNav && cNav > 0) {
+              const cAmt = c.amount * (pct / 100);
+              mockUnits += cAmt / cNav;
+              planContribAmt += cAmt;
+            }
+          });
+
+          const val = mockUnits * lastNav;
+          totalMockValue += val;
+
+          const totalCostForPlan = initialCapital + planContribAmt;
+          const planPl = val - totalCostForPlan;
+          const planPlPct = totalCostForPlan > 0 ? (planPl / totalCostForPlan) * 100 : 0;
+          const color = planPl >= 0 ? '#4caf50' : '#f44336';
+
+          let contribText = planContribAmt > 0 ? ` + เงินนำส่งใหม่ ${formatMoney(planContribAmt)} ฿` : '';
+
+          breakdownHtml += `
         <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
           <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
             <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
@@ -1019,7 +1306,7 @@ function renderMockPort(mockData, suffix = '') {
                 ${plan}
                 <span style="font-size:10px; color:var(--muted); font-weight:normal; margin-left:4px;">(เริ่ม ${new Date(searchDates[closestIdx]).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })})</span>
               </div>
-              <div style="color:#8b949e;font-size:11px;">${mockUnits.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} หน่วย (เงินต้นเริ่ม @${startNav.toFixed(4)}${contribText})</div>
+              <div style="color:#8b949e;font-size:11px;">${mockUnits.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })} หน่วย (เงินต้นเริ่ม @${startNav.toFixed(4)}${contribText})</div>
               <div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>
             </div>
           </div>
@@ -1029,20 +1316,20 @@ function renderMockPort(mockData, suffix = '') {
           </div>
         </div>
       `;
-    }
-  });
+        }
+      });
 
-  const unallocatedPct = Math.max(0, 100 - totalAllocatedPct);
-  if (unallocatedPct > 0.01) {
-    const unallocatedCapital = mockData.startCapital * (unallocatedPct / 100);
-    let unallocatedContrib = 0;
-    validContribs.forEach(c => unallocatedContrib += c.amount * (unallocatedPct / 100));
-    const unallocatedCash = unallocatedCapital + unallocatedContrib;
-    
-    totalMockValue += unallocatedCash;
-    let contribText = unallocatedContrib > 0 ? ` + เงินนำส่งใหม่ ${formatMoney(unallocatedContrib)} ฿` : '';
-    
-    breakdownHtml += `
+      const unallocatedPct = Math.max(0, 100 - totalAllocatedPct);
+      if (unallocatedPct > 0.01) {
+        const unallocatedCapital = mockData.startCapital * (unallocatedPct / 100);
+        let unallocatedContrib = 0;
+        validContribs.forEach(c => unallocatedContrib += c.amount * (unallocatedPct / 100));
+        const unallocatedCash = unallocatedCapital + unallocatedContrib;
+
+        totalMockValue += unallocatedCash;
+        let contribText = unallocatedContrib > 0 ? ` + เงินนำส่งใหม่ ${formatMoney(unallocatedContrib)} ฿` : '';
+
+        breakdownHtml += `
       <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
         <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
           <div style="width:10px; height:10px; border-radius:50%; background-color:#8b949e; margin-top:5px; flex-shrink:0;"></div>
@@ -1056,99 +1343,99 @@ function renderMockPort(mockData, suffix = '') {
         </div>
       </div>
     `;
-  }
-  
-  breakdownEl.innerHTML = breakdownHtml;
-  
-  let titleHtml = `<div style="font-size:11px; color:var(--muted);">มูลค่าพอร์ตจำลอง (รวมเงินนำส่งสะสม ${formatMoney(totalContribAmt)} ฿)</div>`;
-  document.getElementById('mock-val' + suffix).previousElementSibling.outerHTML = titleHtml;
-  document.getElementById('mock-val' + suffix).innerText = formatMoney(totalMockValue) + ' ฿';
-  
-  const totalCost = mockData.startCapital + totalContribAmt;
-  
-  const totalPl = totalMockValue - totalCost;
-  const totalPlPct = totalCost > 0 ? (totalPl / totalCost) * 100 : 0;
-  const plColor = totalPl >= 0 ? '#4caf50' : '#f44336';
-  document.getElementById('mock-pl' + suffix).innerHTML = `<span style="color:${plColor}">${totalPl >= 0 ? '+' : ''}${formatMoney(totalPl)} ฿ (${totalPl >= 0 ? '+' : ''}${totalPlPct.toFixed(2)}%)</span>`;
-}
+      }
 
-function formatMoney(num) {
-  return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+      breakdownEl.innerHTML = breakdownHtml;
 
-function initDashboard() {
-  const port = allData.myPort;
-  if (allData.dates && allData.dates.length > 0) {
-    const latestDateStr = allData.dates[allData.dates.length - 1];
-    const dStr = new Date(latestDateStr).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-    const elDate = document.getElementById('update-date-text');
-    if (elDate) elDate.innerHTML = `ยอดเงิน ณ วันที่ ${dStr}`;
-  }
-  if(!port) {
-    document.getElementById('loader').innerHTML = 'ไม่พบข้อมูลชีต MyPort ในระบบ<br><br>กรุณากดรัน setupDatabase() ใน Apps Script 1 ครั้ง';
-    return;
-  }
+      let titleHtml = `<div style="font-size:11px; color:var(--muted);">มูลค่าพอร์ตจำลอง (รวมเงินนำส่งสะสม ${formatMoney(totalContribAmt)} ฿)</div>`;
+      document.getElementById('mock-val' + suffix).previousElementSibling.outerHTML = titleHtml;
+      document.getElementById('mock-val' + suffix).innerText = formatMoney(totalMockValue) + ' ฿';
 
-  // Populate select
-  const sel = document.getElementById('inp-plan');
-  const selTradeO = document.getElementById('inp-trade-old');
-  const selTradeN = document.getElementById('inp-trade-new');
-  sel.innerHTML = '';
-  if (selTradeO) selTradeO.innerHTML = '';
-  if (selTradeN) selTradeN.innerHTML = '';
-  
-  allData.plans.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p.label;
-    opt.textContent = p.label;
-    sel.appendChild(opt.cloneNode(true));
-    if (selTradeO) selTradeO.appendChild(opt.cloneNode(true));
-    if (selTradeN) selTradeN.appendChild(opt.cloneNode(true));
-  });
+      const totalCost = mockData.startCapital + totalContribAmt;
 
-  // Calculate totals
-  const totalCost = port.startingCost + port.totalContrib;
-  let totalValue = 0;
-  
-  const breakdownEl = document.getElementById('plan-breakdown');
-  breakdownEl.innerHTML = '';
+      const totalPl = totalMockValue - totalCost;
+      const totalPlPct = totalCost > 0 ? (totalPl / totalCost) * 100 : 0;
+      const plColor = totalPl >= 0 ? '#4caf50' : '#f44336';
+      document.getElementById('mock-pl' + suffix).innerHTML = `<span style="color:${plColor}">${totalPl >= 0 ? '+' : ''}${formatMoney(totalPl)} ฿ (${totalPl >= 0 ? '+' : ''}${totalPlPct.toFixed(2)}%)</span>`;
+    }
 
-  if(port.units.length === 0) {
-    breakdownEl.innerHTML = '<div class="table-row" style="color:#8b949e">ยังไม่มีข้อมูลแผน (โปรดอัปเดตจำนวนหน่วยด้านล่าง)</div>';
-  } else {
-    const donutLabels = [];
-    const donutData = [];
-    const donutColors = [];
+    function formatMoney(num) {
+      return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
-    port.units.forEach(u => {
-      // Find latest NAV for this plan
-      const pData = allData.plans.find(x => x.label === u.plan || x.key === u.plan);
-      if(pData && pData.data.length > 0) {
-        const lastNav = getLastValidValue(pData.data);
-        const val = u.units * lastNav;
-        totalValue += val;
-        
-        if (val > 0) {
-          donutLabels.push(u.plan);
-          donutData.push(val);
-          donutColors.push(pData.color || '#58a6ff');
-        }
-        
-        if (u.units > 0) {
-          let plHtml = '';
-          if (u.cost > 0) {
-            const planPl = val - u.cost;
-            const planPlPct = (planPl / u.cost) * 100;
-            const color = planPl >= 0 ? '#4caf50' : '#f44336';
-            plHtml = `<div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>`;
-          }
-          breakdownEl.innerHTML += `
+    function initDashboard() {
+      const port = allData.myPort;
+      if (allData.dates && allData.dates.length > 0) {
+        const latestDateStr = allData.dates[allData.dates.length - 1];
+        const dStr = new Date(latestDateStr).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+        const elDate = document.getElementById('update-date-text');
+        if (elDate) elDate.innerHTML = `ยอดเงิน ณ วันที่ ${dStr}`;
+      }
+      if (!port) {
+        document.getElementById('loader').innerHTML = 'ไม่พบข้อมูลชีต MyPort ในระบบ<br><br>กรุณากดรัน setupDatabase() ใน Apps Script 1 ครั้ง';
+        return;
+      }
+
+      // Populate select
+      const sel = document.getElementById('inp-plan');
+      const selTradeO = document.getElementById('inp-trade-old');
+      const selTradeN = document.getElementById('inp-trade-new');
+      sel.innerHTML = '';
+      if (selTradeO) selTradeO.innerHTML = '';
+      if (selTradeN) selTradeN.innerHTML = '';
+
+      allData.plans.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.label;
+        opt.textContent = p.label;
+        sel.appendChild(opt.cloneNode(true));
+        if (selTradeO) selTradeO.appendChild(opt.cloneNode(true));
+        if (selTradeN) selTradeN.appendChild(opt.cloneNode(true));
+      });
+
+      // Calculate totals
+      const totalCost = port.startingCost + port.totalContrib;
+      let totalValue = 0;
+
+      const breakdownEl = document.getElementById('plan-breakdown');
+      breakdownEl.innerHTML = '';
+
+      if (port.units.length === 0) {
+        breakdownEl.innerHTML = '<div class="table-row" style="color:#8b949e">ยังไม่มีข้อมูลแผน (โปรดอัปเดตจำนวนหน่วยด้านล่าง)</div>';
+      } else {
+        const donutLabels = [];
+        const donutData = [];
+        const donutColors = [];
+
+        port.units.forEach(u => {
+          // Find latest NAV for this plan
+          const pData = allData.plans.find(x => x.label === u.plan || x.key === u.plan);
+          if (pData && pData.data.length > 0) {
+            const lastNav = getLastValidValue(pData.data);
+            const val = u.units * lastNav;
+            totalValue += val;
+
+            if (val > 0) {
+              donutLabels.push(u.plan);
+              donutData.push(val);
+              donutColors.push(pData.color || '#58a6ff');
+            }
+
+            if (u.units > 0) {
+              let plHtml = '';
+              if (u.cost > 0) {
+                const planPl = val - u.cost;
+                const planPlPct = (planPl / u.cost) * 100;
+                const color = planPl >= 0 ? '#4caf50' : '#f44336';
+                plHtml = `<div style="font-size:12px;color:${color};">กำไร: ${planPl >= 0 ? '+' : ''}${formatMoney(planPl)} ฿ (${planPlPct.toFixed(2)}%)</div>`;
+              }
+              breakdownEl.innerHTML += `
             <div class="table-row" style="align-items: flex-start; justify-content: space-between;">
               <div style="display:flex; gap:8px; flex:1; min-width:0; padding-right:8px;">
                 <div style="width:10px; height:10px; border-radius:50%; background-color:${pData.color || '#58a6ff'}; margin-top:5px; flex-shrink:0;"></div>
                 <div style="flex:1; min-width:0;">
                   <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-0.3px;">${u.plan}</div>
-                  <div style="color:#8b949e;font-size:11px;">${u.units.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 4})} หน่วย</div>
+                  <div style="color:#8b949e;font-size:11px;">${u.units.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })} หน่วย</div>
                   ${plHtml}
                 </div>
               </div>
@@ -1158,293 +1445,293 @@ function initDashboard() {
               </div>
             </div>
           `;
-        }
-      }
-    });
+            }
+          }
+        });
 
-    if (donutData.length > 0 && window.Chart) {
-      document.getElementById('donut-container').style.display = 'flex';
-      document.getElementById('donut-center-val').innerText = formatMoney(totalValue);
-      const ctx = document.getElementById('donutChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: donutLabels,
-          datasets: [{
-            data: donutData,
-            backgroundColor: donutColors,
-            borderWidth: 0,
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '75%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              displayColors: false,
-              backgroundColor: 'rgba(22, 27, 34, 0.9)',
-              borderColor: '#30363d',
-              borderWidth: 1,
-              padding: 8,
-              bodyFont: { size: 14, weight: 'bold', family: "'Sarabun', sans-serif" },
-              callbacks: {
-                title: function() { return null; },
-                label: function(context) { 
-                  const val = context.raw;
-                  const pct = ((val / totalValue) * 100).toFixed(1);
-                  return `${pct}%`; 
+        if (donutData.length > 0 && window.Chart) {
+          document.getElementById('donut-container').style.display = 'flex';
+          document.getElementById('donut-center-val').innerText = formatMoney(totalValue);
+          const ctx = document.getElementById('donutChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: donutLabels,
+              datasets: [{
+                data: donutData,
+                backgroundColor: donutColors,
+                borderWidth: 0,
+                hoverOffset: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: '75%',
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  displayColors: false,
+                  backgroundColor: 'rgba(22, 27, 34, 0.9)',
+                  borderColor: '#30363d',
+                  borderWidth: 1,
+                  padding: 8,
+                  bodyFont: { size: 14, weight: 'bold', family: "'Sarabun', sans-serif" },
+                  callbacks: {
+                    title: function () { return null; },
+                    label: function (context) {
+                      const val = context.raw;
+                      const pct = ((val / totalValue) * 100).toFixed(1);
+                      return `${pct}%`;
+                    }
+                  }
                 }
               }
             }
+          });
+        }
+      }
+
+      const plBaht = totalValue - totalCost;
+      const plPct = totalCost > 0 ? (plBaht / totalCost) * 100 : 0;
+
+      window.globalTotalValue = totalValue;
+      window.globalTotalCost = totalCost;
+
+      document.getElementById('val-cost').textContent = formatMoney(totalCost);
+      document.getElementById('val-current').textContent = formatMoney(totalValue);
+      document.getElementById('val-pl').textContent = formatMoney(plBaht);
+      document.getElementById('val-pl').style.color = plBaht >= 0 ? '#4caf50' : '#f44336';
+      document.getElementById('val-pl-pct').textContent = plPct.toFixed(2) + '%';
+      document.getElementById('val-pl-pct').style.color = plPct >= 0 ? '#4caf50' : '#f44336';
+
+      let sumUnitCost = port.units.reduce((s, u) => s + (u.cost || 0), 0);
+      if (Math.abs(sumUnitCost - totalCost) > 1 && totalCost > 0) {
+        console.warn(`[P/L Warning] ผลรวมต้นทุนรายแผน (${formatMoney(sumUnitCost)} ฿) ไม่ตรงกับต้นทุนรวมจากกระแสเงินสด (${formatMoney(totalCost)} ฿) อาจทำให้กำไรแยกส่วนไม่เท่ากับกำไรรวม`);
+      }
+
+      // ─── คำนวณและแสดงผล XIRR ย้อนหลังหลายช่วงเวลา ───
+      try {
+        renderXIRRs(port, totalValue);
+      } catch (e) {
+        console.warn('[XIRR] เรนเดอร์ไม่สำเร็จ:', e);
+      }
+
+      // Calculate Historical Snapshot PnL
+      if (port.snapshots && port.snapshots.length > 0) {
+        const now = new Date().getTime();
+        const dayMs = 24 * 60 * 60 * 1000;
+        const periods = { '1d': 1, '1w': 7, '1m': 30, '3m': 90, '6m': 180 };
+
+        // Sort descending
+        const snaps = [...port.snapshots].sort((a, b) => b.date - a.date);
+
+        // สร้าง allCashflows เพื่อใช้สำหรับ Dietz
+        const allCashflows = [];
+        if (port.contribs) {
+          port.contribs.forEach(c => {
+            const parts = c.date.split('/');
+            if (parts.length === 2) {
+              let y = parseInt(parts[1]);
+              if (y > 2500) y -= 543;
+              allCashflows.push({ date: new Date(y, parseInt(parts[0]) - 1, CONTRIB_DAY), amount: -c.amount });
+            }
+          });
+        }
+
+        for (let p in periods) {
+          const targetTime = now - (periods[p] * dayMs);
+
+          let snap;
+          if (p === '1d') {
+            // For 1D, find the most recent snapshot with a different value (last trading day)
+            // bounded by 7 days
+            snap = snaps.find(s => Math.abs(s.value - totalValue) > 0.01 && s.date >= now - (7 * dayMs));
+            if (!snap) snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
+          } else {
+            snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
+          }
+
+          const el = document.getElementById('snap-' + p);
+          if (el) {
+            if (snap) {
+              const valueDiff = totalValue - snap.value;
+
+              // Modified Dietz Return Calculation
+              const periodStartMs = snap.date;
+              const periodEndMs = now;
+              const totalDays = (periodEndMs - periodStartMs) / dayMs;
+
+              let netCF = 0, weightedCF = 0;
+              if (totalDays > 0) {
+                allCashflows.forEach(cf => {
+                  const contribAmt = -cf.amount;
+                  if (cf.date.getTime() >= periodStartMs && cf.date.getTime() <= periodEndMs) {
+                    const daysRemaining = (periodEndMs - cf.date.getTime()) / dayMs;
+                    const weight = daysRemaining / totalDays;
+                    netCF += contribAmt;
+                    weightedCF += contribAmt * weight;
+                  }
+                });
+              }
+
+              const denom = snap.value + weightedCF;
+              let dietzPct = 0;
+              if (denom > 0) {
+                dietzPct = ((totalValue - snap.value - netCF) / denom) * 100;
+              } else {
+                dietzPct = snap.value > 0 ? ((totalValue - snap.value - netCF) / snap.value) * 100 : 0;
+              }
+
+              let valColor = '#8b949e';
+              let valSign = '';
+              if (valueDiff > 0.01) { valColor = '#4caf50'; valSign = '+'; }
+              else if (valueDiff < -0.01) { valColor = '#f44336'; }
+
+              let pctColor = '#8b949e';
+              let pctSign = '';
+              if (dietzPct > 0.01) { pctColor = '#4caf50'; pctSign = '+'; }
+              else if (dietzPct < -0.01) { pctColor = '#f44336'; }
+
+              let label = p.toUpperCase();
+              const diffDays = Math.round((now - snap.date) / dayMs);
+
+              if (p === '1d') {
+                if (diffDays > 1) label = `1D <span style="font-size:9px; font-weight:normal;">(ย้อน ${diffDays} วัน)</span>`;
+              } else {
+                const periodDays = periods[p];
+                if (Math.abs(diffDays - periodDays) > (periodDays * 0.5)) {
+                  label = `${p.toUpperCase()} <span style="font-size:9px; font-weight:normal;">(อิงข้อมูล ${diffDays} วันก่อน)</span>`;
+                }
+              }
+
+              el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${valColor}; font-size:14px; font-weight:600; margin-right:4px;">${valSign}${formatMoney(valueDiff)}฿</span><span style="color:${pctColor}; font-size:11px; font-weight:500;">(${pctSign}${dietzPct.toFixed(2)}%)</span></div>`;
+            } else {
+              el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <span style="color:var(--muted); font-weight:600;">-</span>`;
+            }
           }
         }
-      });
-    }
-  }
+        // Render Chart
+        const chartDataDates = [];
+        const chartDataValues = [];
+        const chartSnaps = [...snaps].reverse();
 
-  const plBaht = totalValue - totalCost;
-  const plPct = totalCost > 0 ? (plBaht / totalCost) * 100 : 0;
+        let finalSnaps = chartSnaps;
+        if (chartSnaps.length > 60) {
+          const step = Math.ceil(chartSnaps.length / 60);
+          finalSnaps = chartSnaps.filter((s, i) => i % step === 0 || i === chartSnaps.length - 1);
+        }
 
-  window.globalTotalValue = totalValue;
-  window.globalTotalCost = totalCost;
+        finalSnaps.forEach(s => {
+          const d = new Date(s.date);
+          chartDataDates.push(`${d.getDate()}/${d.getMonth() + 1}`);
+          chartDataValues.push(s.value);
+        });
 
-  document.getElementById('val-cost').textContent = formatMoney(totalCost);
-  document.getElementById('val-current').textContent = formatMoney(totalValue);
-  document.getElementById('val-pl').textContent = formatMoney(plBaht);
-  document.getElementById('val-pl').style.color = plBaht >= 0 ? '#4caf50' : '#f44336';
-  document.getElementById('val-pl-pct').textContent = plPct.toFixed(2) + '%';
-  document.getElementById('val-pl-pct').style.color = plPct >= 0 ? '#4caf50' : '#f44336';
-
-   let sumUnitCost = port.units.reduce((s, u) => s + (u.cost || 0), 0);
-  if (Math.abs(sumUnitCost - totalCost) > 1 && totalCost > 0) {
-    console.warn(`[P/L Warning] ผลรวมต้นทุนรายแผน (${formatMoney(sumUnitCost)} ฿) ไม่ตรงกับต้นทุนรวมจากกระแสเงินสด (${formatMoney(totalCost)} ฿) อาจทำให้กำไรแยกส่วนไม่เท่ากับกำไรรวม`);
-  }
-
-  // ─── คำนวณและแสดงผล XIRR ย้อนหลังหลายช่วงเวลา ───
-  try {
-    renderXIRRs(port, totalValue);
-  } catch(e) {
-    console.warn('[XIRR] เรนเดอร์ไม่สำเร็จ:', e);
-  }
-
-  // Calculate Historical Snapshot PnL
-  if (port.snapshots && port.snapshots.length > 0) {
-    const now = new Date().getTime();
-    const dayMs = 24 * 60 * 60 * 1000;
-    const periods = { '1d': 1, '1w': 7, '1m': 30, '3m': 90, '6m': 180 };
-    
-    // Sort descending
-    const snaps = [...port.snapshots].sort((a,b) => b.date - a.date);
-    
-    // สร้าง allCashflows เพื่อใช้สำหรับ Dietz
-    const allCashflows = [];
-    if (port.contribs) {
-       port.contribs.forEach(c => {
-         const parts = c.date.split('/');
-         if (parts.length === 2) {
-           let y = parseInt(parts[1]);
-           if (y > 2500) y -= 543;
-           allCashflows.push({ date: new Date(y, parseInt(parts[0])-1, CONTRIB_DAY), amount: -c.amount });
-         }
-       });
-    }
-
-    for (let p in periods) {
-      const targetTime = now - (periods[p] * dayMs);
-      
-      let snap;
-      if (p === '1d') {
-        // For 1D, find the most recent snapshot with a different value (last trading day)
-        // bounded by 7 days
-        snap = snaps.find(s => Math.abs(s.value - totalValue) > 0.01 && s.date >= now - (7 * dayMs));
-        if (!snap) snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
-      } else {
-        snap = snaps.find(s => s.date <= targetTime + (12 * 60 * 60 * 1000));
-      }
-      
-      const el = document.getElementById('snap-' + p);
-      if (el) {
-        if (snap) {
-          const valueDiff = totalValue - snap.value;
-          
-          // Modified Dietz Return Calculation
-          const periodStartMs = snap.date;
-          const periodEndMs = now;
-          const totalDays = (periodEndMs - periodStartMs) / dayMs;
-          
-          let netCF = 0, weightedCF = 0;
-          if (totalDays > 0) {
-            allCashflows.forEach(cf => {
-              const contribAmt = -cf.amount; 
-              if (cf.date.getTime() >= periodStartMs && cf.date.getTime() <= periodEndMs) {
-                const daysRemaining = (periodEndMs - cf.date.getTime()) / dayMs;
-                const weight = daysRemaining / totalDays;
-                netCF += contribAmt;
-                weightedCF += contribAmt * weight;
+        if (chartDataDates.length > 1 && window.Chart) {
+          // ปิดการแสดงผลกราฟชั่วคราวตามที่ผู้ใช้ต้องการ
+          // document.getElementById('chart-container').style.display = 'block';
+          const container = document.getElementById('chart-container');
+          if (container.style.display !== 'none') {
+            const ctx = document.getElementById('portChart').getContext('2d');
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: chartDataDates,
+                datasets: [{
+                  label: 'มูลค่าพอร์ต',
+                  data: chartDataValues,
+                  borderColor: '#58a6ff',
+                  backgroundColor: 'rgba(88, 166, 255, 0.1)',
+                  borderWidth: 2,
+                  pointRadius: 0,
+                  pointHoverRadius: 4,
+                  fill: true,
+                  tension: 0.2
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      label: function (context) { return formatMoney(context.raw) + ' ฿'; }
+                    }
+                  }
+                },
+                scales: {
+                  x: { display: true, grid: { display: false, drawBorder: false }, ticks: { color: '#8b949e', font: { size: 9 }, maxTicksLimit: 6 } },
+                  y: { display: false, min: Math.min(...chartDataValues) * 0.99, max: Math.max(...chartDataValues) * 1.01 }
+                },
+                interaction: { intersect: false, mode: 'index' },
               }
             });
           }
-          
-          const denom = snap.value + weightedCF;
-          let dietzPct = 0;
-          if (denom > 0) {
-             dietzPct = ((totalValue - snap.value - netCF) / denom) * 100;
-          } else {
-             dietzPct = snap.value > 0 ? ((totalValue - snap.value - netCF) / snap.value) * 100 : 0;
-          }
-          
-          let valColor = '#8b949e';
-          let valSign = '';
-          if (valueDiff > 0.01) { valColor = '#4caf50'; valSign = '+'; }
-          else if (valueDiff < -0.01) { valColor = '#f44336'; }
-          
-          let pctColor = '#8b949e';
-          let pctSign = '';
-          if (dietzPct > 0.01) { pctColor = '#4caf50'; pctSign = '+'; }
-          else if (dietzPct < -0.01) { pctColor = '#f44336'; }
-          
-          let label = p.toUpperCase();
-          const diffDays = Math.round((now - snap.date) / dayMs);
-          
-          if (p === '1d') {
-            if (diffDays > 1) label = `1D <span style="font-size:9px; font-weight:normal;">(ย้อน ${diffDays} วัน)</span>`;
-          } else {
-             const periodDays = periods[p];
-             if (Math.abs(diffDays - periodDays) > (periodDays * 0.5)) {
-                label = `${p.toUpperCase()} <span style="font-size:9px; font-weight:normal;">(อิงข้อมูล ${diffDays} วันก่อน)</span>`;
-             }
-          }
-          
-          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${label}</span> <div><span style="color:${valColor}; font-size:14px; font-weight:600; margin-right:4px;">${valSign}${formatMoney(valueDiff)}฿</span><span style="color:${pctColor}; font-size:11px; font-weight:500;">(${pctSign}${dietzPct.toFixed(2)}%)</span></div>`;
-        } else {
-          el.innerHTML = `<span style="color:var(--muted); margin-right:4px;">${p.toUpperCase()}</span> <span style="color:var(--muted); font-weight:600;">-</span>`;
         }
       }
-    }
-    // Render Chart
-    const chartDataDates = [];
-    const chartDataValues = [];
-    const chartSnaps = [...snaps].reverse();
-    
-    let finalSnaps = chartSnaps;
-    if (chartSnaps.length > 60) {
-      const step = Math.ceil(chartSnaps.length / 60);
-      finalSnaps = chartSnaps.filter((s, i) => i % step === 0 || i === chartSnaps.length - 1);
-    }
-    
-    finalSnaps.forEach(s => {
-      const d = new Date(s.date);
-      chartDataDates.push(`${d.getDate()}/${d.getMonth()+1}`);
-      chartDataValues.push(s.value);
-    });
 
-    if (chartDataDates.length > 1 && window.Chart) {
-      // ปิดการแสดงผลกราฟชั่วคราวตามที่ผู้ใช้ต้องการ
-      // document.getElementById('chart-container').style.display = 'block';
-      const container = document.getElementById('chart-container');
-      if (container.style.display !== 'none') {
-        const ctx = document.getElementById('portChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: chartDataDates,
-            datasets: [{
-              label: 'มูลค่าพอร์ต',
-              data: chartDataValues,
-              borderColor: '#58a6ff',
-              backgroundColor: 'rgba(88, 166, 255, 0.1)',
-              borderWidth: 2,
-              pointRadius: 0,
-              pointHoverRadius: 4,
-              fill: true,
-              tension: 0.2
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: function(context) { return formatMoney(context.raw) + ' ฿'; }
-                }
-              }
-            },
-            scales: {
-              x: { display: true, grid: { display: false, drawBorder: false }, ticks: { color: '#8b949e', font: { size: 9 }, maxTicksLimit: 6 } },
-              y: { display: false, min: Math.min(...chartDataValues) * 0.99, max: Math.max(...chartDataValues) * 1.01 }
-            },
-            interaction: { intersect: false, mode: 'index' },
-          }
-        });
-      }
-    }
-  }
-
-  // Render Trade Logs
-  const tradeEl = document.getElementById('trade-history-list');
-  if (tradeEl) {
-    tradeEl.innerHTML = '';
-    if (!port.trades || port.trades.length === 0) {
-      tradeEl.innerHTML = '<div style="color:#8b949e; text-align:center;">ยังไม่มีประวัติการเปลี่ยนแผน</div>';
-    } else {
-      const dateSums = {};
-      port.trades.forEach(t => {
-        if (!dateSums[t.date]) dateSums[t.date] = 0;
-        dateSums[t.date] += t.amount;
-      });
-
-      [...port.trades].reverse().forEach(t => {
-        let whatIfHtml = '';
-        let oldNavStr = '';
-        let newNavStr = '';
-        const oldPlanData = allData.plans.find(x => x.label === t.oldPlan || x.key === t.oldPlan);
-        const newPlanData = allData.plans.find(x => x.label === t.newPlan || x.key === t.newPlan);
-        
-        let finalDate = t.date;
-        if (oldPlanData && newPlanData) {
-          const tDateParts = t.date.split('/');
-          let tDate;
-          if (tDateParts.length === 3) tDate = new Date(`${tDateParts[2]}-${tDateParts[1]}-${tDateParts[0]}`);
-          else tDate = new Date(t.date);
-          
-          if (tDate.getFullYear() > 2500) tDate.setFullYear(tDate.getFullYear() - 543);
-          finalDate = isNaN(tDate.getTime()) ? t.date : tDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
-          
-          let bestIdx = -1;
-          let minDiff = Infinity;
-          const searchDates = allData.fullDates || allData.dates;
-          searchDates.forEach((d, idx) => {
-            const diff = Math.abs(new Date(d) - tDate);
-            if (diff < minDiff && diff < 1000 * 60 * 60 * 24 * 30) { minDiff = diff; bestIdx = idx; }
+      // Render Trade Logs
+      const tradeEl = document.getElementById('trade-history-list');
+      if (tradeEl) {
+        tradeEl.innerHTML = '';
+        if (!port.trades || port.trades.length === 0) {
+          tradeEl.innerHTML = '<div style="color:#8b949e; text-align:center;">ยังไม่มีประวัติการเปลี่ยนแผน</div>';
+        } else {
+          const dateSums = {};
+          port.trades.forEach(t => {
+            if (!dateSums[t.date]) dateSums[t.date] = 0;
+            dateSums[t.date] += t.amount;
           });
-          
-          if (bestIdx >= 0) {
-            const oldDataArr = oldPlanData.fullData || oldPlanData.data;
-            const newDataArr = newPlanData.fullData || newPlanData.data;
-            const navOldThen = oldDataArr[bestIdx];
-            const navOldNow = getLastValidValue(oldPlanData.data);
-            const navNewThen = newDataArr[bestIdx];
-            const navNewNow = getLastValidValue(newPlanData.data);
-            
-            if (navOldThen && navOldNow && navNewThen && navNewNow) {
-              oldNavStr = ` <span style="font-size:10px; color:#58a6ff; font-weight:normal;">@${navOldThen.toFixed(4)}</span>`;
-              newNavStr = ` <span style="font-size:10px; color:#58a6ff; font-weight:normal;">@${navNewThen.toFixed(4)}</span>`;
-              const valueIfKept = (t.amount / navOldThen) * navOldNow;
-              const valueNow = (t.amount / navNewThen) * navNewNow;
-              const diff = valueNow - valueIfKept;
-              const cDiff = diff >= 0 ? '#4caf50' : '#f44336';
-              const sign = diff >= 0 ? '+' : '';
-              
-              const diffPercent = (valueIfKept > 0) ? ((diff / valueIfKept) * 100).toFixed(2) : 0;
-              const dateTotal = dateSums[t.date] || t.amount;
-              const percentOfTotal = ((t.amount / dateTotal) * 100).toFixed(0);
-              
-              whatIfHtml = `
+
+          [...port.trades].reverse().forEach(t => {
+            let whatIfHtml = '';
+            let oldNavStr = '';
+            let newNavStr = '';
+            const oldPlanData = allData.plans.find(x => x.label === t.oldPlan || x.key === t.oldPlan);
+            const newPlanData = allData.plans.find(x => x.label === t.newPlan || x.key === t.newPlan);
+
+            let finalDate = t.date;
+            if (oldPlanData && newPlanData) {
+              const tDateParts = t.date.split('/');
+              let tDate;
+              if (tDateParts.length === 3) tDate = new Date(`${tDateParts[2]}-${tDateParts[1]}-${tDateParts[0]}`);
+              else tDate = new Date(t.date);
+
+              if (tDate.getFullYear() > 2500) tDate.setFullYear(tDate.getFullYear() - 543);
+              finalDate = isNaN(tDate.getTime()) ? t.date : tDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+
+              let bestIdx = -1;
+              let minDiff = Infinity;
+              const searchDates = allData.fullDates || allData.dates;
+              searchDates.forEach((d, idx) => {
+                const diff = Math.abs(new Date(d) - tDate);
+                if (diff < minDiff && diff < 1000 * 60 * 60 * 24 * 30) { minDiff = diff; bestIdx = idx; }
+              });
+
+              if (bestIdx >= 0) {
+                const oldDataArr = oldPlanData.fullData || oldPlanData.data;
+                const newDataArr = newPlanData.fullData || newPlanData.data;
+                const navOldThen = oldDataArr[bestIdx];
+                const navOldNow = getLastValidValue(oldPlanData.data);
+                const navNewThen = newDataArr[bestIdx];
+                const navNewNow = getLastValidValue(newPlanData.data);
+
+                if (navOldThen && navOldNow && navNewThen && navNewNow) {
+                  oldNavStr = ` <span style="font-size:10px; color:#58a6ff; font-weight:normal;">@${navOldThen.toFixed(4)}</span>`;
+                  newNavStr = ` <span style="font-size:10px; color:#58a6ff; font-weight:normal;">@${navNewThen.toFixed(4)}</span>`;
+                  const valueIfKept = (t.amount / navOldThen) * navOldNow;
+                  const valueNow = (t.amount / navNewThen) * navNewNow;
+                  const diff = valueNow - valueIfKept;
+                  const cDiff = diff >= 0 ? '#4caf50' : '#f44336';
+                  const sign = diff >= 0 ? '+' : '';
+
+                  const diffPercent = (valueIfKept > 0) ? ((diff / valueIfKept) * 100).toFixed(2) : 0;
+                  const dateTotal = dateSums[t.date] || t.amount;
+                  const percentOfTotal = ((t.amount / dateTotal) * 100).toFixed(0);
+
+                  whatIfHtml = `
                 <div style="margin-top:8px; padding-top:8px; border-top:1px solid #30363d; font-size:12px;">
                   <div style="color:#8b949e">🔮 <b>ถ้ารู้งี้ไม่ย้าย ${t.note ? `(สำหรับเงินก้อน ${t.note})` : `(ก้อนนี้คิดเป็น ${percentOfTotal}% ของยอดสับเปลี่ยนในวันนั้น)`}</b></div>
                   <div style="display:flex; justify-content:space-between; margin-top:4px;">
@@ -1461,31 +1748,31 @@ function initDashboard() {
                   </div>
                 </div>
               `;
+                }
+              }
+            } else {
+              // If oldPlan is missing (e.g. แผนผสม), just format date correctly
+              const tDateParts = t.date.split('/');
+              let tDate;
+              if (tDateParts.length === 3) tDate = new Date(`${tDateParts[2]}-${tDateParts[1]}-${tDateParts[0]}`);
+              else tDate = new Date(t.date);
+              if (tDate.getFullYear() > 2500) tDate.setFullYear(tDate.getFullYear() - 543);
+              finalDate = isNaN(tDate.getTime()) ? t.date : tDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
             }
-          }
-        } else {
-          // If oldPlan is missing (e.g. แผนผสม), just format date correctly
-          const tDateParts = t.date.split('/');
-          let tDate;
-          if (tDateParts.length === 3) tDate = new Date(`${tDateParts[2]}-${tDateParts[1]}-${tDateParts[0]}`);
-          else tDate = new Date(t.date);
-          if (tDate.getFullYear() > 2500) tDate.setFullYear(tDate.getFullYear() - 543);
-          finalDate = isNaN(tDate.getTime()) ? t.date : tDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
-        }
-        
-        let realizedHtml = '';
-        if (t.realized !== 0 && t.realized !== undefined && !isNaN(t.realized)) {
-          const isProfit = t.realized > 0;
-          const cColor = isProfit ? '#4caf50' : '#f44336';
-          const cLabel = isProfit ? 'กำไร' : 'ขาดทุน';
-          const cSign = isProfit ? '+' : '';
-          realizedHtml = `<div style="color:${cColor}; font-size:12px; text-align:right;">${cLabel}: ${cSign}${formatMoney(t.realized)} ฿</div>`;
-        }
 
-        const dateTotal = dateSums[t.date] || t.amount;
-        const percent = ((t.amount / dateTotal) * 100).toFixed(0);
+            let realizedHtml = '';
+            if (t.realized !== 0 && t.realized !== undefined && !isNaN(t.realized)) {
+              const isProfit = t.realized > 0;
+              const cColor = isProfit ? '#4caf50' : '#f44336';
+              const cLabel = isProfit ? 'กำไร' : 'ขาดทุน';
+              const cSign = isProfit ? '+' : '';
+              realizedHtml = `<div style="color:${cColor}; font-size:12px; text-align:right;">${cLabel}: ${cSign}${formatMoney(t.realized)} ฿</div>`;
+            }
 
-        tradeEl.innerHTML += `
+            const dateTotal = dateSums[t.date] || t.amount;
+            const percent = ((t.amount / dateTotal) * 100).toFixed(0);
+
+            tradeEl.innerHTML += `
           <div class="table-row" style="flex-direction:column; align-items:stretch;">
             <div style="font-weight:bold; margin-bottom:4px;">
               ${t.oldPlan}${oldNavStr} ➔ ${t.newPlan}${newNavStr}
@@ -1501,452 +1788,452 @@ function initDashboard() {
             ${whatIfHtml}
           </div>
         `;
-      });
+          });
+        }
+      }
+      renderMockPort(allData.mockPort);
+
+      const mockPort2Raw = localStorage.getItem('gpf_mock_port-2');
+      if (mockPort2Raw) {
+        allData['mockPort-2'] = JSON.parse(mockPort2Raw);
+      }
+      renderMockPort(allData['mockPort-2'], '-2');
     }
-  }
-  renderMockPort(allData.mockPort);
-  
-  const mockPort2Raw = localStorage.getItem('gpf_mock_port-2');
-  if (mockPort2Raw) {
-    allData['mockPort-2'] = JSON.parse(mockPort2Raw);
-  }
-  renderMockPort(allData['mockPort-2'], '-2');
-}
 
-// Auth Helper
-function getDeviceId() {
-  let id = localStorage.getItem('gpf_device_id');
-  if (!id) {
-    id = 'dev_' + Math.random().toString(36).substr(2, 9) + '_' + new Date().getTime();
-    localStorage.setItem('gpf_device_id', id);
-  }
-  return id;
-}
-
-function fetchWithTimeout(url, opts, ms = 20000) {
-  return Promise.race([
-    fetch(url, opts),
-    new Promise((_, rej) => setTimeout(() => rej(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ โปรดลองอีกครั้ง')), ms))
-  ]);
-}
-
-async function apiCall(payload) {
-  payload.deviceId = getDeviceId();
-  const res = await fetchWithTimeout(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
-  const result = await res.json();
-  if (result.error === "Unauthorized_Device") {
-    showToast("🔒 อุปกรณ์นี้ไม่ได้รับอนุญาตหรือเซสชันหมดอายุ ระบบจะทำการโหลดใหม่", null, 'error');
-    location.reload();
-    throw new Error("Unauthorized");
-  }
-  if (result.error) throw new Error(result.error);
-  return result;
-}
-
-// Post Functions
-function showToast(msg, btnId, type = 'success') {
-  document.querySelectorAll('.custom-toast').forEach(t => t.remove());
-  const toast = document.createElement('div');
-  toast.innerText = msg;
-  let btn = null;
-  if (btnId) btn = typeof btnId === 'string' ? document.getElementById(btnId) : btnId;
-
-  if (btn) {
-    toast.className = `custom-toast btn-toast ${type === 'error' ? 'error' : ''}`;
-    document.body.appendChild(toast);
-    const rect = btn.getBoundingClientRect();
-    const scrollY = window.scrollY || window.pageYOffset;
-    const scrollX = window.scrollX || window.pageXOffset;
-    
-    requestAnimationFrame(() => {
-      const tRect = toast.getBoundingClientRect();
-      const top = rect.top + scrollY - tRect.height - 12;
-      const left = rect.left + scrollX + (rect.width / 2) - (tRect.width / 2);
-      toast.style.top = top + 'px';
-      toast.style.left = left + 'px';
-      toast.classList.add('show');
-    });
-  } else {
-    toast.className = `custom-toast global-toast ${type === 'error' ? 'error' : ''}`;
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add('show'));
-  }
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 300);
-  }, 2500);
-}
-
-async function postData(payload, btnId) {
-  const btn = document.getElementById(btnId);
-  const origText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = "กำลังบันทึก...";
-  let success = false;
-
-  try {
-    const result = await apiCall(payload);
-    if(result.success) {
-      success = true;
-      showToast("บันทึกสำเร็จ! (กำลังอัปเดต...)", btnId);
-      localStorage.removeItem("gpfnav_data_v3");
-      setTimeout(() => location.reload(), 1500);
+    // Auth Helper
+    function getDeviceId() {
+      let id = localStorage.getItem('gpf_device_id');
+      if (!id) {
+        id = 'dev_' + Math.random().toString(36).substr(2, 9) + '_' + new Date().getTime();
+        localStorage.setItem('gpf_device_id', id);
+      }
+      return id;
     }
-  } catch(e) {
-    if (e.message !== "Canceled by user") {
-      showToast("Error: " + e.message, btnId, 'error');
+
+    function fetchWithTimeout(url, opts, ms = 20000) {
+      return Promise.race([
+        fetch(url, opts),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('หมดเวลาเชื่อมต่อเซิร์ฟเวอร์ โปรดลองอีกครั้ง')), ms))
+      ]);
     }
-  }
-  
-  if (!success) {
-    btn.disabled = false;
-    btn.textContent = origText;
-  }
-}
 
-function saveContrib() {
-  const date = document.getElementById('inp-date').value.trim();
-  const amount = parseFloat(document.getElementById('inp-amount').value);
-  const note = document.getElementById('inp-note').value.trim();
-  
-  if(!date || isNaN(amount)) {
-    showToast("กรุณากรอกเดือน/ปี และยอดเงินให้ถูกต้อง", null, 'error');
-    return;
-  }
-  if (date.includes('-')) {
-    const parts = date.split('-');
-    if (parts.length === 2) date = `${parts[1]}/${parts[0]}`;
-  }
-  
-  postData({ action: 'add_contrib', date, amount, note }, 'btn-save-contrib');
-}
-
-async function saveSnapshot() {
-  const totalValue = window.globalTotalValue || 0;
-  const totalCost = window.globalTotalCost || 0;
-  
-  if (totalValue <= 0) return showToast('รอโหลดข้อมูลให้เสร็จก่อนครับ', null, 'error');
-  const btn = document.getElementById('btn-snapshot');
-  btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
-  
-  try {
-    const res = await apiCall({
-      action: 'save_snapshot',
-      value: totalValue,
-      cost: totalCost,
-      profit: totalValue - totalCost,
-      profitPct: ((totalValue - totalCost) / totalCost) * 100
-    });
-    if(res.success) {
-      showToast('บันทึกยอดพอร์ตวันนี้สำเร็จแล้ว! 🎉', 'btn-snapshot');
-      window.location.reload();
-    } else if(res.error) {
-      showToast("ไม่สามารถบันทึกได้: " + res.error + "\n\nคุณพี่อย่าลืมกด 'การทำให้ใช้งานได้รายการใหม่ (New deployment)' ใน Apps Script นะครับ!", 'btn-snapshot', 'error');
-      btn.textContent = '📸 บันทึก'; btn.disabled = false;
+    async function apiCall(payload) {
+      payload.deviceId = getDeviceId();
+      const res = await fetchWithTimeout(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const result = await res.json();
+      if (result.error === "Unauthorized_Device") {
+        showToast("🔒 อุปกรณ์นี้ไม่ได้รับอนุญาตหรือเซสชันหมดอายุ ระบบจะทำการโหลดใหม่", null, 'error');
+        location.reload();
+        throw new Error("Unauthorized");
+      }
+      if (result.error) throw new Error(result.error);
+      return result;
     }
-  } catch(e) {
-    if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
-    btn.textContent = '📸 บันทึก'; btn.disabled = false;
-  }
-}
 
-async function saveUnit() {
-  const plan = document.getElementById('inp-plan').value;
-  const units = document.getElementById('inp-units').value;
-  const cost = document.getElementById('inp-cost').value;
-  if(!plan || !units) return showToast('กรอกข้อมูลแผนและจำนวนหน่วยให้ครบ', null, 'error');
-  
-  const btn = document.getElementById('btn-save-unit');
-  btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
-  
-  const payload = { action: 'update_unit', plan: plan, units: units };
-  if (cost.trim() !== '') payload.cost = cost;
-  
-  try {
-    const res = await apiCall(payload);
-    if(res.success) {
-      localStorage.removeItem("gpfnav_data_v3");
-      window.location.reload();
+    // Post Functions
+    function showToast(msg, btnId, type = 'success') {
+      document.querySelectorAll('.custom-toast').forEach(t => t.remove());
+      const toast = document.createElement('div');
+      toast.innerText = msg;
+      let btn = null;
+      if (btnId) btn = typeof btnId === 'string' ? document.getElementById(btnId) : btnId;
+
+      if (btn) {
+        toast.className = `custom-toast btn-toast ${type === 'error' ? 'error' : ''}`;
+        document.body.appendChild(toast);
+        const rect = btn.getBoundingClientRect();
+        const scrollY = window.scrollY || window.pageYOffset;
+        const scrollX = window.scrollX || window.pageXOffset;
+
+        requestAnimationFrame(() => {
+          const tRect = toast.getBoundingClientRect();
+          const top = rect.top + scrollY - tRect.height - 12;
+          const left = rect.left + scrollX + (rect.width / 2) - (tRect.width / 2);
+          toast.style.top = top + 'px';
+          toast.style.left = left + 'px';
+          toast.classList.add('show');
+        });
+      } else {
+        toast.className = `custom-toast global-toast ${type === 'error' ? 'error' : ''}`;
+        document.body.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add('show'));
+      }
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
     }
-  } catch(e) {
-    if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
-    btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
-  }
-}
 
-function switchTab(tab) {
-  if(tab === 'simple') {
-    document.getElementById('tab-simple').style.borderBottom = '2px solid #58a6ff';
-    document.getElementById('tab-simple').style.color = '#c9d1d9';
-    document.getElementById('tab-smart').style.borderBottom = 'none';
-    document.getElementById('tab-smart').style.color = '#8b949e';
-    document.getElementById('form-simple').style.display = 'block';
-    document.getElementById('form-smart').style.display = 'none';
-  } else {
-    document.getElementById('tab-smart').style.borderBottom = '2px solid #58a6ff';
-    document.getElementById('tab-smart').style.color = '#c9d1d9';
-    document.getElementById('tab-simple').style.borderBottom = 'none';
-    document.getElementById('tab-simple').style.color = '#8b949e';
-    document.getElementById('form-simple').style.display = 'none';
-    document.getElementById('form-smart').style.display = 'block';
-    if(document.getElementById('smart-before-list').innerHTML === '') {
-      addSmartRow('before');
-      addSmartRow('after');
+    async function postData(payload, btnId) {
+      const btn = document.getElementById(btnId);
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "กำลังบันทึก...";
+      let success = false;
+
+      try {
+        const result = await apiCall(payload);
+        if (result.success) {
+          success = true;
+          showToast("บันทึกสำเร็จ! (กำลังอัปเดต...)", btnId);
+          localStorage.removeItem("gpfnav_data_v3");
+          setTimeout(() => location.reload(), 1500);
+        }
+      } catch (e) {
+        if (e.message !== "Canceled by user") {
+          showToast("Error: " + e.message, btnId, 'error');
+        }
+      }
+
+      if (!success) {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
     }
-  }
-}
 
-function addSmartRow(type) {
-  const div = document.createElement('div');
-  div.style = "display:flex; gap:8px; margin-bottom:8px;";
-  const selectHtml = document.getElementById('inp-trade-old').innerHTML; 
-  div.innerHTML = `
+    function saveContrib() {
+      const date = document.getElementById('inp-date').value.trim();
+      const amount = parseFloat(document.getElementById('inp-amount').value);
+      const note = document.getElementById('inp-note').value.trim();
+
+      if (!date || isNaN(amount)) {
+        showToast("กรุณากรอกเดือน/ปี และยอดเงินให้ถูกต้อง", null, 'error');
+        return;
+      }
+      if (date.includes('-')) {
+        const parts = date.split('-');
+        if (parts.length === 2) date = `${parts[1]}/${parts[0]}`;
+      }
+
+      postData({ action: 'add_contrib', date, amount, note }, 'btn-save-contrib');
+    }
+
+    async function saveSnapshot() {
+      const totalValue = window.globalTotalValue || 0;
+      const totalCost = window.globalTotalCost || 0;
+
+      if (totalValue <= 0) return showToast('รอโหลดข้อมูลให้เสร็จก่อนครับ', null, 'error');
+      const btn = document.getElementById('btn-snapshot');
+      btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
+
+      try {
+        const res = await apiCall({
+          action: 'save_snapshot',
+          value: totalValue,
+          cost: totalCost,
+          profit: totalValue - totalCost,
+          profitPct: ((totalValue - totalCost) / totalCost) * 100
+        });
+        if (res.success) {
+          showToast('บันทึกยอดพอร์ตวันนี้สำเร็จแล้ว! 🎉', 'btn-snapshot');
+          window.location.reload();
+        } else if (res.error) {
+          showToast("ไม่สามารถบันทึกได้: " + res.error + "\n\nคุณพี่อย่าลืมกด 'การทำให้ใช้งานได้รายการใหม่ (New deployment)' ใน Apps Script นะครับ!", 'btn-snapshot', 'error');
+          btn.textContent = '📸 บันทึก'; btn.disabled = false;
+        }
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
+        btn.textContent = '📸 บันทึก'; btn.disabled = false;
+      }
+    }
+
+    async function saveUnit() {
+      const plan = document.getElementById('inp-plan').value;
+      const units = document.getElementById('inp-units').value;
+      const cost = document.getElementById('inp-cost').value;
+      if (!plan || !units) return showToast('กรอกข้อมูลแผนและจำนวนหน่วยให้ครบ', null, 'error');
+
+      const btn = document.getElementById('btn-save-unit');
+      btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
+
+      const payload = { action: 'update_unit', plan: plan, units: units };
+      if (cost.trim() !== '') payload.cost = cost;
+
+      try {
+        const res = await apiCall(payload);
+        if (res.success) {
+          localStorage.removeItem("gpfnav_data_v3");
+          window.location.reload();
+        }
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
+        btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
+      }
+    }
+
+    function switchTab(tab) {
+      if (tab === 'simple') {
+        document.getElementById('tab-simple').style.borderBottom = '2px solid #58a6ff';
+        document.getElementById('tab-simple').style.color = '#c9d1d9';
+        document.getElementById('tab-smart').style.borderBottom = 'none';
+        document.getElementById('tab-smart').style.color = '#8b949e';
+        document.getElementById('form-simple').style.display = 'block';
+        document.getElementById('form-smart').style.display = 'none';
+      } else {
+        document.getElementById('tab-smart').style.borderBottom = '2px solid #58a6ff';
+        document.getElementById('tab-smart').style.color = '#c9d1d9';
+        document.getElementById('tab-simple').style.borderBottom = 'none';
+        document.getElementById('tab-simple').style.color = '#8b949e';
+        document.getElementById('form-simple').style.display = 'none';
+        document.getElementById('form-smart').style.display = 'block';
+        if (document.getElementById('smart-before-list').innerHTML === '') {
+          addSmartRow('before');
+          addSmartRow('after');
+        }
+      }
+    }
+
+    function addSmartRow(type) {
+      const div = document.createElement('div');
+      div.style = "display:flex; gap:8px; margin-bottom:8px;";
+      const selectHtml = document.getElementById('inp-trade-old').innerHTML;
+      div.innerHTML = `
     <select class="input smart-${type}-plan" style="flex:1;">${selectHtml}</select>
     <input type="number" class="input smart-${type}-pct" placeholder="%" style="width:60px;" oninput="calcSmartSum('${type}')">
     <button class="btn" style="background:transparent; border:1px solid #f44336; color:#f44336; padding:0 8px;" onclick="this.parentElement.remove(); calcSmartSum('${type}')">X</button>
   `;
-  document.getElementById(`smart-${type}-list`).appendChild(div);
-}
-
-function calcSmartSum(type) {
-  let sum = 0;
-  document.querySelectorAll(`.smart-${type}-pct`).forEach(inp => {
-    sum += parseFloat(inp.value) || 0;
-  });
-  const el = document.getElementById(`smart-${type}-sum`);
-  el.innerText = `รวม: ${sum}%`;
-  el.style.color = sum === 100 ? '#4caf50' : '#f44336';
-}
-
-async function saveSmartRebalance() {
-  let dateStr = document.getElementById('inp-smart-date').value;
-  const totalVal = parseFloat(document.getElementById('inp-smart-total').value);
-  if (!dateStr || !totalVal) return showToast('กรุณากรอกวันที่และมูลค่าพอร์ตให้ครบ', null, 'error');
-  
-  if (dateStr.includes('-')) {
-    const p = dateStr.split('-');
-    if (p.length === 3) dateStr = `${p[2]}/${p[1]}/${p[0]}`;
-  }
-  
-  const bList = document.querySelectorAll('.smart-before-plan');
-  const bPct = document.querySelectorAll('.smart-before-pct');
-  const aList = document.querySelectorAll('.smart-after-plan');
-  const aPct = document.querySelectorAll('.smart-after-pct');
-  
-  let bSum = 0; let aSum = 0;
-  const beforeMap = {};
-  const afterMap = {};
-  
-  for(let i=0; i<bList.length; i++) {
-    const plan = bList[i].value;
-    const pct = parseFloat(bPct[i].value) || 0;
-    if(pct > 0) { bSum += pct; beforeMap[plan] = (beforeMap[plan]||0) + pct; }
-  }
-  for(let i=0; i<aList.length; i++) {
-    const plan = aList[i].value;
-    const pct = parseFloat(aPct[i].value) || 0;
-    if(pct > 0) { aSum += pct; afterMap[plan] = (afterMap[plan]||0) + pct; }
-  }
-  
-  if (bSum !== 100 || aSum !== 100) return showToast('สัดส่วนก่อนย้ายและหลังย้าย ต้องรวมให้ได้ 100% พอดีครับ', null, 'error');
-  
-  const allPlans = new Set([...Object.keys(beforeMap), ...Object.keys(afterMap)]);
-  const sellers = []; 
-  const buyers = []; 
-  
-  allPlans.forEach(p => {
-    const b = beforeMap[p] || 0;
-    const a = afterMap[p] || 0;
-    const diffPct = a - b;
-    const diffBaht = (diffPct / 100) * totalVal;
-    if (diffBaht < -0.01) {
-      sellers.push({plan: p, amt: Math.abs(diffBaht)});
-    } else if (diffBaht > 0.01) {
-      buyers.push({plan: p, amt: diffBaht});
+      document.getElementById(`smart-${type}-list`).appendChild(div);
     }
-  });
-  
-  const trades = [];
-  for (let s of sellers) {
-    let sellRemain = s.amt;
-    for (let b of buyers) {
-      if (b.amt < 0.01 || sellRemain < 0.01) continue;
-      const amountToMove = Math.min(sellRemain, b.amt);
-      const pctStr = ((amountToMove / totalVal) * 100).toFixed(1).replace('.0', '');
-      trades.push({
-        action: 'add_trade',
-        date: dateStr,
-        oldPlan: s.plan,
-        newPlan: b.plan,
-        amount: amountToMove.toFixed(2),
-        realized: '',
-        note: `Rebalance: โยก ${pctStr}% ของพอร์ตรวม ไปเข้า ${b.plan}`
+
+    function calcSmartSum(type) {
+      let sum = 0;
+      document.querySelectorAll(`.smart-${type}-pct`).forEach(inp => {
+        sum += parseFloat(inp.value) || 0;
       });
-      sellRemain -= amountToMove;
-      b.amt -= amountToMove;
+      const el = document.getElementById(`smart-${type}-sum`);
+      el.innerText = `รวม: ${sum}%`;
+      el.style.color = sum === 100 ? '#4caf50' : '#f44336';
     }
-  }
-  
-  if(trades.length === 0) return showToast('ไม่มีการเปลี่ยนแปลงสัดส่วน', null, 'error');
-  
-  const conf = confirm(`ระบบจะสร้างรายการสับเปลี่ยนอัตโนมัติ ${trades.length} รายการ:\n` + trades.map(t => `${t.oldPlan} ➔ ${t.newPlan} (${formatMoney(parseFloat(t.amount))} ฿)`).join('\n') + `\n\nยืนยันหรือไม่?`);
-  if(!conf) return;
-  
-  const btn = document.getElementById('btn-save-smart');
-  btn.disabled = true;
-  
-  let successCount = 0;
-  try {
-    for (let i = 0; i < trades.length; i++) {
-      btn.innerText = `กำลังบันทึก (${i + 1}/${trades.length})...`;
-      await apiCall(trades[i]);
-      successCount++;
-    }
-    showToast('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
-    localStorage.removeItem("gpfnav_data_v3");
-    location.reload();
-  } catch(e) {
-    if (e.message !== "Canceled by user") {
-      showToast(`เกิดข้อผิดพลาด: บันทึกสำเร็จไปแล้ว ${successCount}/${trades.length} รายการ โปรดตรวจสอบประวัติและทำรายการส่วนที่เหลือใหม่`, null, 'error');
-      console.error(e);
-    }
-  } finally {
-    btn.innerText = 'วิเคราะห์และบันทึก';
-    btn.disabled = false;
-  }
-}
 
-async function seedData() {
-  if(!confirm('คุณต้องการนำเข้าข้อมูลประวัติทั้งหมดลงในชีต MyPort ใช่หรือไม่?\n\n(หากเคยนำเข้าแล้ว ไม่ควรกดซ้ำ)')) return;
-  const btn = document.getElementById('btn-seed-data');
-  btn.innerText = 'กำลังนำเข้าข้อมูล...';
-  btn.disabled = true;
-  
-  try {
-    const data = await apiCall({ action: 'seed_data' });
-    if (data.error) throw new Error(data.error);
-    showToast('นำเข้าข้อมูลประวัติทั้งหมดสำเร็จ! 🎉 รีเฟรชหน้าเว็บ 1 รอบ แล้วกดสร้าง Statement ได้เลยครับ');
-  } catch(e) {
-    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
-  }
-  
-  btn.innerText = '1. นำเข้าข้อมูลประวัติทั้งหมดลง MyPort (กดครั้งเดียว)';
-  btn.disabled = false;
-}
+    async function saveSmartRebalance() {
+      let dateStr = document.getElementById('inp-smart-date').value;
+      const totalVal = parseFloat(document.getElementById('inp-smart-total').value);
+      if (!dateStr || !totalVal) return showToast('กรุณากรอกวันที่และมูลค่าพอร์ตให้ครบ', null, 'error');
 
-async function exportStatement() {
-  const btn = document.getElementById('btn-export-statement');
-  btn.innerText = 'กำลังสร้าง Statement (ใช้เวลาสักครู่)...';
-  btn.disabled = true;
-  
-  try {
-    const data = await apiCall({ action: 'export_statement' });
-    if (data.error) throw new Error(data.error);
-    showToast('สร้าง Statement สำเร็จ! เปิดดู Google Sheet แท็บ Statement ได้เลยครับ 🎉');
-  } catch(e) {
-    if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
-  }
-  
-  btn.innerText = '📥 สร้าง Sheet Statement ตอนนี้เลย';
-  btn.disabled = false;
-}
-
-async function saveTrade() {
-  let date = document.getElementById('inp-trade-date').value;
-  const oldPlan = document.getElementById('inp-trade-old').value;
-  const newPlan = document.getElementById('inp-trade-new').value;
-  const amt = document.getElementById('inp-trade-amt').value;
-  const real = document.getElementById('inp-trade-realized').value;
-  const note = document.getElementById('inp-trade-note').value;
-  
-  if(!date || !oldPlan || !newPlan || !amt) return showToast('กรอกข้อมูลให้ครบ', null, 'error');
-  
-  if (date.includes('-')) {
-    const p = date.split('-');
-    if (p.length === 3) date = `${p[2]}/${p[1]}/${p[0]}`;
-  }
-  
-  const btn = document.getElementById('btn-save-trade');
-  btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
-  
-  try {
-    const res = await apiCall({
-      action: 'add_trade',
-      date: date,
-      oldPlan: oldPlan,
-      newPlan: newPlan,
-      amount: amt,
-      realized: real,
-      note: note
-    });
-    if(res.success) {
-      localStorage.removeItem("gpfnav_data_v3");
-      window.location.reload();
-    }
-  } catch(e) {
-    if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
-    btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
-  }
-}
-
-function submitAuth() {
-  const pin = document.getElementById('auth-pin').value;
-  if (!pin) return;
-  const btn = document.querySelector('#loader .btn');
-  btn.innerText = 'กำลังตรวจ...'; btn.disabled = true;
-  fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) })
-    .then(r=>r.json()).then(res => {
-      if (res.success) {
-        document.getElementById('loader').innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px;"><div style="color:#4caf50; font-size:32px;">✅</div><div style="font-size:16px; font-weight:600;">เข้าสู่ระบบสำเร็จ</div><div style="font-size:12px; color:var(--muted);">กำลังโหลดข้อมูล...</div></div>`;
-        location.reload();
-      } else {
-        showToast("❌ รหัส PIN ไม่ถูกต้อง", null, 'error');
-        btn.innerText = 'ยืนยัน'; btn.disabled = false;
-        document.getElementById('auth-pin').value = '';
+      if (dateStr.includes('-')) {
+        const p = dateStr.split('-');
+        if (p.length === 3) dateStr = `${p[2]}/${p[1]}/${p[0]}`;
       }
-    }).catch(e => {
-      showToast("Error: " + e.message, null, 'error');
-      btn.innerText = 'ยืนยัน'; btn.disabled = false;
-    });
-}
 
-// Fetch Initial Data
-let isInitialLoad = true;
+      const bList = document.querySelectorAll('.smart-before-plan');
+      const bPct = document.querySelectorAll('.smart-before-pct');
+      const aList = document.querySelectorAll('.smart-after-plan');
+      const aPct = document.querySelectorAll('.smart-after-pct');
 
-const cachedData = localStorage.getItem('gpfnav_data_v3');
-if (cachedData) {
-  try {
-    allData = JSON.parse(cachedData);
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
-    initDashboard();
-    restorePins();
-    isInitialLoad = false;
-  } catch(e) {
-    localStorage.removeItem('gpfnav_data_v3');
-  }
-}
+      let bSum = 0; let aSum = 0;
+      const beforeMap = {};
+      const afterMap = {};
 
-const loadTimeout = setTimeout(() => {
-  if (isInitialLoad) {
-    const loader = document.getElementById('loader');
-    if (loader && loader.style.display !== 'none') {
-      loader.innerHTML = `โหลดข้อมูลนานกว่าปกติ อาจเกิดจากอินเทอร์เน็ตหรือเซิร์ฟเวอร์ กบข. ตอบกลับช้า<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+      for (let i = 0; i < bList.length; i++) {
+        const plan = bList[i].value;
+        const pct = parseFloat(bPct[i].value) || 0;
+        if (pct > 0) { bSum += pct; beforeMap[plan] = (beforeMap[plan] || 0) + pct; }
+      }
+      for (let i = 0; i < aList.length; i++) {
+        const plan = aList[i].value;
+        const pct = parseFloat(aPct[i].value) || 0;
+        if (pct > 0) { aSum += pct; afterMap[plan] = (afterMap[plan] || 0) + pct; }
+      }
+
+      if (bSum !== 100 || aSum !== 100) return showToast('สัดส่วนก่อนย้ายและหลังย้าย ต้องรวมให้ได้ 100% พอดีครับ', null, 'error');
+
+      const allPlans = new Set([...Object.keys(beforeMap), ...Object.keys(afterMap)]);
+      const sellers = [];
+      const buyers = [];
+
+      allPlans.forEach(p => {
+        const b = beforeMap[p] || 0;
+        const a = afterMap[p] || 0;
+        const diffPct = a - b;
+        const diffBaht = (diffPct / 100) * totalVal;
+        if (diffBaht < -0.01) {
+          sellers.push({ plan: p, amt: Math.abs(diffBaht) });
+        } else if (diffBaht > 0.01) {
+          buyers.push({ plan: p, amt: diffBaht });
+        }
+      });
+
+      const trades = [];
+      for (let s of sellers) {
+        let sellRemain = s.amt;
+        for (let b of buyers) {
+          if (b.amt < 0.01 || sellRemain < 0.01) continue;
+          const amountToMove = Math.min(sellRemain, b.amt);
+          const pctStr = ((amountToMove / totalVal) * 100).toFixed(1).replace('.0', '');
+          trades.push({
+            action: 'add_trade',
+            date: dateStr,
+            oldPlan: s.plan,
+            newPlan: b.plan,
+            amount: amountToMove.toFixed(2),
+            realized: '',
+            note: `Rebalance: โยก ${pctStr}% ของพอร์ตรวม ไปเข้า ${b.plan}`
+          });
+          sellRemain -= amountToMove;
+          b.amt -= amountToMove;
+        }
+      }
+
+      if (trades.length === 0) return showToast('ไม่มีการเปลี่ยนแปลงสัดส่วน', null, 'error');
+
+      const conf = confirm(`ระบบจะสร้างรายการสับเปลี่ยนอัตโนมัติ ${trades.length} รายการ:\n` + trades.map(t => `${t.oldPlan} ➔ ${t.newPlan} (${formatMoney(parseFloat(t.amount))} ฿)`).join('\n') + `\n\nยืนยันหรือไม่?`);
+      if (!conf) return;
+
+      const btn = document.getElementById('btn-save-smart');
+      btn.disabled = true;
+
+      let successCount = 0;
+      try {
+        for (let i = 0; i < trades.length; i++) {
+          btn.innerText = `กำลังบันทึก (${i + 1}/${trades.length})...`;
+          await apiCall(trades[i]);
+          successCount++;
+        }
+        showToast('บันทึกเรียบร้อย! ข้อมูลเข้าระบบแล้ว');
+        localStorage.removeItem("gpfnav_data_v3");
+        location.reload();
+      } catch (e) {
+        if (e.message !== "Canceled by user") {
+          showToast(`เกิดข้อผิดพลาด: บันทึกสำเร็จไปแล้ว ${successCount}/${trades.length} รายการ โปรดตรวจสอบประวัติและทำรายการส่วนที่เหลือใหม่`, null, 'error');
+          console.error(e);
+        }
+      } finally {
+        btn.innerText = 'วิเคราะห์และบันทึก';
+        btn.disabled = false;
+      }
     }
-  }
-}, 15000);
 
-if (!isInitialLoad) {
-  document.getElementById('update-date-text').innerHTML = '<span style="color:#f39c12">กำลังเช็คข้อมูลล่าสุด...</span>';
-}
+    async function seedData() {
+      if (!confirm('คุณต้องการนำเข้าข้อมูลประวัติทั้งหมดลงในชีต MyPort ใช่หรือไม่?\n\n(หากเคยนำเข้าแล้ว ไม่ควรกดซ้ำ)')) return;
+      const btn = document.getElementById('btn-seed-data');
+      btn.innerText = 'กำลังนำเข้าข้อมูล...';
+      btn.disabled = true;
 
-fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDeviceId())
-  .then(r => r.json())
-  .then(data => {
-    clearTimeout(loadTimeout);
-    if (data.error === "Unauthorized_Device") {
-      document.getElementById('loader').innerHTML = `
+      try {
+        const data = await apiCall({ action: 'seed_data' });
+        if (data.error) throw new Error(data.error);
+        showToast('นำเข้าข้อมูลประวัติทั้งหมดสำเร็จ! 🎉 รีเฟรชหน้าเว็บ 1 รอบ แล้วกดสร้าง Statement ได้เลยครับ');
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
+      }
+
+      btn.innerText = '1. นำเข้าข้อมูลประวัติทั้งหมดลง MyPort (กดครั้งเดียว)';
+      btn.disabled = false;
+    }
+
+    async function exportStatement() {
+      const btn = document.getElementById('btn-export-statement');
+      btn.innerText = 'กำลังสร้าง Statement (ใช้เวลาสักครู่)...';
+      btn.disabled = true;
+
+      try {
+        const data = await apiCall({ action: 'export_statement' });
+        if (data.error) throw new Error(data.error);
+        showToast('สร้าง Statement สำเร็จ! เปิดดู Google Sheet แท็บ Statement ได้เลยครับ 🎉');
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast('Error: ' + e.message, null, 'error');
+      }
+
+      btn.innerText = '📥 สร้าง Sheet Statement ตอนนี้เลย';
+      btn.disabled = false;
+    }
+
+    async function saveTrade() {
+      let date = document.getElementById('inp-trade-date').value;
+      const oldPlan = document.getElementById('inp-trade-old').value;
+      const newPlan = document.getElementById('inp-trade-new').value;
+      const amt = document.getElementById('inp-trade-amt').value;
+      const real = document.getElementById('inp-trade-realized').value;
+      const note = document.getElementById('inp-trade-note').value;
+
+      if (!date || !oldPlan || !newPlan || !amt) return showToast('กรอกข้อมูลให้ครบ', null, 'error');
+
+      if (date.includes('-')) {
+        const p = date.split('-');
+        if (p.length === 3) date = `${p[2]}/${p[1]}/${p[0]}`;
+      }
+
+      const btn = document.getElementById('btn-save-trade');
+      btn.textContent = 'กำลังบันทึก...'; btn.disabled = true;
+
+      try {
+        const res = await apiCall({
+          action: 'add_trade',
+          date: date,
+          oldPlan: oldPlan,
+          newPlan: newPlan,
+          amount: amt,
+          realized: real,
+          note: note
+        });
+        if (res.success) {
+          localStorage.removeItem("gpfnav_data_v3");
+          window.location.reload();
+        }
+      } catch (e) {
+        if (e.message !== "Canceled by user") showToast("Error: " + e.message, null, 'error');
+        btn.textContent = 'บันทึกลงชีต'; btn.disabled = false;
+      }
+    }
+
+    function submitAuth() {
+      const pin = document.getElementById('auth-pin').value;
+      if (!pin) return;
+      const btn = document.querySelector('#loader .btn');
+      btn.innerText = 'กำลังตรวจ...'; btn.disabled = true;
+      fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) })
+        .then(r => r.json()).then(res => {
+          if (res.success) {
+            document.getElementById('loader').innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px;"><div style="color:#4caf50; font-size:32px;">✅</div><div style="font-size:16px; font-weight:600;">เข้าสู่ระบบสำเร็จ</div><div style="font-size:12px; color:var(--muted);">กำลังโหลดข้อมูล...</div></div>`;
+            location.reload();
+          } else {
+            showToast("❌ รหัส PIN ไม่ถูกต้อง", null, 'error');
+            btn.innerText = 'ยืนยัน'; btn.disabled = false;
+            document.getElementById('auth-pin').value = '';
+          }
+        }).catch(e => {
+          showToast("Error: " + e.message, null, 'error');
+          btn.innerText = 'ยืนยัน'; btn.disabled = false;
+        });
+    }
+
+    // Fetch Initial Data
+    let isInitialLoad = true;
+
+    const cachedData = localStorage.getItem('gpfnav_data_v3');
+    if (cachedData) {
+      try {
+        allData = JSON.parse(cachedData);
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        initDashboard();
+        restorePins();
+        isInitialLoad = false;
+      } catch (e) {
+        localStorage.removeItem('gpfnav_data_v3');
+      }
+    }
+
+    const loadTimeout = setTimeout(() => {
+      if (isInitialLoad) {
+        const loader = document.getElementById('loader');
+        if (loader && loader.style.display !== 'none') {
+          loader.innerHTML = `โหลดข้อมูลนานกว่าปกติ อาจเกิดจากอินเทอร์เน็ตหรือเซิร์ฟเวอร์ กบข. ตอบกลับช้า<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+        }
+      }
+    }, 15000);
+
+    if (!isInitialLoad) {
+      document.getElementById('update-date-text').innerHTML = '<span style="color:#f39c12">กำลังเช็คข้อมูลล่าสุด...</span>';
+    }
+
+    fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDeviceId())
+      .then(r => r.json())
+      .then(data => {
+        clearTimeout(loadTimeout);
+        if (data.error === "Unauthorized_Device") {
+          document.getElementById('loader').innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; padding: 20px;">
           <div style="font-size:32px;">🔒</div>
           <div style="font-size:16px; font-weight:600; color:var(--text);">GPF NAV Dashboard</div>
@@ -1955,101 +2242,102 @@ fetch(GAS_URL + "?action=data&t=" + new Date().getTime() + "&deviceId=" + getDev
           <button class="btn" style="width:140px; padding:10px 0; font-size:14px;" onclick="submitAuth()">ยืนยัน</button>
         </div>
       `;
-      return;
-    }
-    
-    // Check if data changed
-    const newDataStr = JSON.stringify(data);
-    const dataChanged = cachedData !== newDataStr;
-    
-    localStorage.setItem('gpfnav_data_v3', newDataStr);
-    
-    if (isInitialLoad) {
-      allData = data;
-      document.getElementById('loader').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      initDashboard();
-      restorePins();
-    } else {
-      if (dataChanged) {
-        document.getElementById('update-date-text').innerHTML = '<span style="color:#4caf50; cursor:pointer; text-decoration:underline;" onclick="location.reload()">✨ ข้อมูลใหม่มาแล้ว (คลิกเพื่อรีเฟรช)</span>';
-      } else {
-        // Just restore the normal date text
-        const dStr = allData.endDate || '';
-        const d = new Date(dStr);
-        let formatted = dStr;
-        if (!isNaN(d.getTime())) {
-          formatted = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+          return;
         }
-        document.getElementById('update-date-text').innerHTML = `ข้อมูลล่าสุด: ${formatted}`;
+
+        // Check if data changed
+        const newDataStr = JSON.stringify(data);
+        const dataChanged = cachedData !== newDataStr;
+
+        localStorage.setItem('gpfnav_data_v3', newDataStr);
+
+        if (isInitialLoad) {
+          allData = data;
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('main-content').style.display = 'block';
+          initDashboard();
+          restorePins();
+        } else {
+          if (dataChanged) {
+            document.getElementById('update-date-text').innerHTML = '<span style="color:#4caf50; cursor:pointer; text-decoration:underline;" onclick="location.reload()">✨ ข้อมูลใหม่มาแล้ว (คลิกเพื่อรีเฟรช)</span>';
+          } else {
+            // Just restore the normal date text
+            const dStr = allData.endDate || '';
+            const d = new Date(dStr);
+            let formatted = dStr;
+            if (!isNaN(d.getTime())) {
+              formatted = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+            }
+            document.getElementById('update-date-text').innerHTML = `ข้อมูลล่าสุด: ${formatted}`;
+          }
+        }
+      })
+      .catch(e => {
+        clearTimeout(loadTimeout);
+        if (isInitialLoad) {
+          document.getElementById('loader').innerHTML = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${e.message}<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
+        } else {
+          // Just restore the normal date text if background fetch fails
+          const dStr = allData.endDate || '';
+          const d = new Date(dStr);
+          let formatted = dStr;
+          if (!isNaN(d.getTime())) {
+            formatted = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+          }
+          document.getElementById('update-date-text').innerHTML = `ข้อมูลล่าสุด: ${formatted} <span style="color:#f44336">(ออฟไลน์)</span>`;
+        }
+      });
+
+    // Pin Functions
+    function togglePin(e, boxId) {
+      e.preventDefault();
+      e.stopPropagation();
+      let pinned = JSON.parse(localStorage.getItem('gpf_pinned_boxes') || '[]');
+      const idx = pinned.indexOf(boxId);
+      const btn = e.currentTarget;
+      if (idx >= 0) {
+        pinned.splice(idx, 1);
+        btn.classList.remove('active');
+      } else {
+        pinned.push(boxId);
+        btn.classList.add('active');
+        const box = document.getElementById(boxId);
+        if (box) box.open = true;
       }
+      localStorage.setItem('gpf_pinned_boxes', JSON.stringify(pinned));
     }
-  })
-  .catch(e => {
-    clearTimeout(loadTimeout);
-    if (isInitialLoad) {
-      document.getElementById('loader').innerHTML = `เกิดข้อผิดพลาดในการโหลดข้อมูล: ${e.message}<br><br><button class="btn" style="width:auto; padding:8px 16px;" onclick="location.reload()">🔄 ลองโหลดใหม่</button>`;
-    } else {
-      // Just restore the normal date text if background fetch fails
-      const dStr = allData.endDate || '';
-      const d = new Date(dStr);
-      let formatted = dStr;
-      if (!isNaN(d.getTime())) {
-        formatted = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
-      }
-      document.getElementById('update-date-text').innerHTML = `ข้อมูลล่าสุด: ${formatted} <span style="color:#f44336">(ออฟไลน์)</span>`;
+
+    function restorePins() {
+      let pinned = JSON.parse(localStorage.getItem('gpf_pinned_boxes') || '[]');
+      pinned.forEach(boxId => {
+        const box = document.getElementById(boxId);
+        if (box) {
+          box.open = true;
+          const btn = box.querySelector('.pin-btn');
+          if (btn) btn.classList.add('active');
+        }
+      });
     }
-  });
 
-// Pin Functions
-function togglePin(e, boxId) {
-  e.preventDefault();
-  e.stopPropagation();
-  let pinned = JSON.parse(localStorage.getItem('gpf_pinned_boxes') || '[]');
-  const idx = pinned.indexOf(boxId);
-  const btn = e.currentTarget;
-  if (idx >= 0) {
-    pinned.splice(idx, 1);
-    btn.classList.remove('active');
-  } else {
-    pinned.push(boxId);
-    btn.classList.add('active');
-    const box = document.getElementById(boxId);
-    if (box) box.open = true;
-  }
-  localStorage.setItem('gpf_pinned_boxes', JSON.stringify(pinned));
-}
+  </script>
 
-function restorePins() {
-  let pinned = JSON.parse(localStorage.getItem('gpf_pinned_boxes') || '[]');
-  pinned.forEach(boxId => {
-    const box = document.getElementById(boxId);
-    if (box) {
-      box.open = true;
-      const btn = box.querySelector('.pin-btn');
-      if (btn) btn.classList.add('active');
+  <!-- PWA: ลงทะเบียน Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const reg of regs) {
+          if (reg.active && !reg.active.scriptURL.includes('sw-port.js')) {
+            await reg.unregister();
+            console.log('Unregistered old SW:', reg.active.scriptURL);
+          }
+        }
+        navigator.serviceWorker.register('sw-port.js')
+          .then(reg => console.log('SW (Port) registered', reg))
+          .catch(err => console.error('SW register failed', err));
+      });
     }
-  });
-}
-
-</script>
-
-<!-- PWA: ลงทะเบียน Service Worker -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    const regs = await navigator.serviceWorker.getRegistrations();
-    for (const reg of regs) {
-      if (reg.active && !reg.active.scriptURL.includes('sw-port.js')) {
-        await reg.unregister();
-        console.log('Unregistered old SW:', reg.active.scriptURL);
-      }
-    }
-    navigator.serviceWorker.register('sw-port.js')
-      .then(reg => console.log('SW (Port) registered', reg))
-      .catch(err => console.error('SW register failed', err));
-  });
-}
-</script>
+  </script>
 </body>
+
 </html>

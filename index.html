@@ -636,6 +636,42 @@
     #pin-list::-webkit-scrollbar { width: 3px; }
     #pin-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     
+    /* ════════════════════════════════════════
+       CUSTOM MODAL (PIN)
+    ════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .modal-content {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; width: 300px; max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transform: translateY(-20px); transition: transform 0.2s;
+      text-align: center;
+    }
+    .modal-overlay.show .modal-content { transform: translateY(0); }
+    .modal-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .modal-desc { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+    .modal-input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      color: #fff; padding: 10px 12px; border-radius: 6px; font-size: 16px;
+      outline: none; box-sizing: border-box; text-align: center; font-weight: 600;
+    }
+    .modal-input:focus { border-color: var(--primary); }
+    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .modal-btn {
+      flex: 1; padding: 8px 0; border: none; border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-weight: 600; transition: 0.15s;
+    }
+    .modal-btn.cancel { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .modal-btn.cancel:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .modal-btn.confirm { background: var(--primary); color: #fff; }
+    .modal-btn.confirm:hover { background: #2f81f7; }
+
   </style>
   <!-- Flatpickr CSS (Dark Theme) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -861,6 +897,19 @@
   </div>
 </div>
 
+<!-- Custom Prompt Modal for Pinning -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal-content">
+    <div class="modal-title" id="pin-modal-title">📌 ปักหมุดราคาเป้าหมาย</div>
+    <div class="modal-desc" id="pin-modal-desc">ระบุราคา NAV ที่ต้องการปักหมุด</div>
+    <input type="number" id="pin-modal-input" class="modal-input" placeholder="0.0000" step="0.0001">
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="pin-modal-cancel">ยกเลิก</button>
+      <button class="modal-btn confirm" id="pin-modal-confirm">บันทึกหมุด</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════════ -->
@@ -966,15 +1015,49 @@ function removePin(planKey, id) {
   savePinnedLevelsToServer();
 }
 
-function pinCurrentPrice(planKey) {
+function openPinModal(planLabel, defaultVal) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('pin-modal');
+    const desc = document.getElementById('pin-modal-desc');
+    const input = document.getElementById('pin-modal-input');
+    const btnCancel = document.getElementById('pin-modal-cancel');
+    const btnConfirm = document.getElementById('pin-modal-confirm');
+
+    desc.innerHTML = `ปักหมุดสำหรับ <b>${escapeHtml(planLabel)}</b><br>ราคาล่าสุด: <span style="color:#fff">${defaultVal}</span>`;
+    input.value = defaultVal;
+    
+    modal.classList.add('show');
+    // timeout for mobile keyboard popup
+    setTimeout(() => { input.focus(); input.select(); }, 100);
+
+    const cleanup = () => {
+      modal.classList.remove('show');
+      btnCancel.removeEventListener('click', onCancel);
+      btnConfirm.removeEventListener('click', onConfirm);
+      input.removeEventListener('keydown', onKey);
+    };
+    
+    const onCancel = () => { cleanup(); resolve(null); };
+    const onConfirm = () => { cleanup(); resolve(input.value); };
+    const onKey = (e) => {
+      if (e.key === 'Enter') onConfirm();
+      if (e.key === 'Escape') onCancel();
+    };
+
+    btnCancel.addEventListener('click', onCancel);
+    btnConfirm.addEventListener('click', onConfirm);
+    input.addEventListener('keydown', onKey);
+  });
+}
+
+async function pinCurrentPrice(planKey) {
   const plan = allData.plans.find(p => p.key === planKey);
   if (!plan) return;
   const last = getLastValue(plan.data);
-  const input = prompt(
-    `ปักหมุดราคาเป้าหมายสำหรับ "${plan.label}"\n(ราคาล่าสุด: ${last ? last.toFixed(4) : '-'})`,
-    last ? last.toFixed(4) : ''
-  );
-  if (input === null) return;
+  const defaultVal = last ? last.toFixed(4) : '';
+  
+  const input = await openPinModal(plan.label, defaultVal);
+  if (input === null || input.trim() === '') return;
   const val = parseFloat(input);
   if (isNaN(val) || val <= 0) return showToast('กรุณาใส่ตัวเลขราคาที่ถูกต้องครับ');
   addPinAtValue(planKey, val);
@@ -1380,7 +1463,7 @@ function buildChart() {
       redrawOnParentResize: true, redrawOnWindowResize: true,
       toolbar: {
         show: true,
-        tools: { download: false, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: true }
+        tools: { download: false, selection: true, zoom: true, zoomin: true, zoomout: true, pan: true, reset: false }
       },
       zoom: { enabled: true, type: 'xy' },
       pan:  { enabled: true, type: 'xy' },

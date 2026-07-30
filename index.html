@@ -623,6 +623,18 @@
       .flatpickr-current-month { font-size: 110% !important; }
       span.flatpickr-weekday { font-size: 11px !important; }
     }
+    /* ════════════════════════════════════════
+       PRICE PIN UI
+    ════════════════════════════════════════ */
+    .pin-icon {
+      cursor: pointer; opacity: .35; font-size: 12px;
+      padding: 2px; flex-shrink: 0; transition: opacity .15s, transform .15s;
+    }
+    .pin-icon:hover { opacity: .9; transform: scale(1.15); }
+    #pin-mode-btn.active { background: rgba(255,255,255,0.18); color:#fff; border-color: var(--primary); }
+    .pin-count-badge { flex-shrink:0; }
+    #pin-list::-webkit-scrollbar { width: 3px; }
+    #pin-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     
   </style>
   <!-- Flatpickr CSS (Dark Theme) -->
@@ -712,6 +724,11 @@
       <button class="sb-btn" onclick="toggleAll(true)">แสดงทั้งหมด</button>
       <button class="sb-btn" onclick="toggleAll(false)">ซ่อนทั้งหมด</button>
     </div>
+    <div class="sidebar-footer" style="border-top:none; padding-top:0;">
+      <button class="sb-btn" id="pin-mode-btn" onclick="togglePinMode()"
+        title="เปิดแล้วคลิกจุดบนกราฟเพื่อปักหมุดราคา">📌 ปักหมุด</button>
+    </div>
+    <div id="pin-list" style="max-height:150px; overflow-y:auto;"></div>
   </div>
 
   <!-- CHART AREA -->
@@ -854,17 +871,20 @@
 // ─────────────────────────────────────────
 // Backend (GAS) endpoint moved to config.js
 
+// HTML escape utility (ป้องกัน XSS จากข้อความ error ที่มีอักขระพิเศษ)
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
 // Catch unhandled errors on mobile to display them instead of freezing endlessly
 window.addEventListener('error', function(e) {
   const loader = document.getElementById('loader');
   if (loader) {
-    loader.innerHTML = '<div style="color:#f85149; padding:20px; font-size:12px; word-wrap:break-word; text-align:left;"><b>CRASH:</b> ' + e.message + '<br>Line: ' + e.lineno + '</div>';
+    loader.innerHTML = '<div style="color:#f85149; padding:20px; font-size:12px; word-wrap:break-word; text-align:left;"><b>CRASH:</b> ' + escapeHtml(e.message) + '<br>Line: ' + e.lineno + '</div>';
   }
 });
 window.addEventListener('unhandledrejection', function(e) {
   const loader = document.getElementById('loader');
   if (loader) {
-    loader.innerHTML = '<div style="color:#f85149; padding:20px; font-size:12px; word-wrap:break-word; text-align:left;"><b>PROMISE CRASH:</b> ' + (e.reason && e.reason.message ? e.reason.message : e.reason) + '</div>';
+    loader.innerHTML = '<div style="color:#f85149; padding:20px; font-size:12px; word-wrap:break-word; text-align:left;"><b>PROMISE CRASH:</b> ' + escapeHtml(e.reason && e.reason.message ? e.reason.message : e.reason) + '</div>';
   }
 });
 
@@ -890,16 +910,174 @@ let curRange       = { n: 6, unit: 'M' };
 let currentMinTs   = null;  // sync กับ range ที่เลือก
 
 // ─────────────────────────────────────────
+// PRICE PIN / BUY-ZONE ALERT SYSTEM (Server-synced)
+// ─────────────────────────────────────────
+let pinnedLevels   = {};      // { planKey: [{id, value}] }
+let pinModeActive  = false;
+const PIN_TOLERANCE_PCT = 1.5; // ห่างกันเท่าไหร่ถือว่า "ใกล้เป้าหมาย" (ปรับได้)
+
+function loadPinnedLevelsFromServer() {
+  fetch(GAS_URL + '?action=getPins')
+    .then(r => r.json())
+    .then(data => {
+      pinnedLevels = data || {};
+      refreshPinUI();
+      checkPinProximity();
+    })
+    .catch(() => {
+      // fallback: ลองอ่านจาก localStorage (ถ้า server ล่ม)
+      try { pinnedLevels = JSON.parse(localStorage.getItem('gpf_pinned_levels_v1') || '{}'); } catch(e) { pinnedLevels = {}; }
+      refreshPinUI();
+    });
+}
+
+function savePinnedLevelsToServer() {
+  // เก็บ local ไว้ด้วยเป็น fallback
+  try { localStorage.setItem('gpf_pinned_levels_v1', JSON.stringify(pinnedLevels)); } catch(e) {}
+  // ส่งขึ้น server
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'setPins', data: pinnedLevels }),
+    redirect: 'follow'
+  }).catch(() => {}); // fail silently — local backup ยังอยู่
+}
+
+function togglePinMode() {
+  pinModeActive = !pinModeActive;
+  document.getElementById('pin-mode-btn').classList.toggle('active', pinModeActive);
+  showToast(pinModeActive
+    ? '📌 คลิกจุดบนกราฟ (แนะนำซ่อนแผนอื่นก่อน) หรือกดไอคอน 📌 ข้างชื่อแผน'
+    : 'ปิดโหมดปักหมุดแล้ว');
+}
+
+function addPinAtValue(planKey, value) {
+  if (!pinnedLevels[planKey]) pinnedLevels[planKey] = [];
+  pinnedLevels[planKey].push({ id: Date.now(), value });
+  refreshPinUI();
+  savePinnedLevelsToServer();
+}
+
+function removePin(planKey, id) {
+  if (!pinnedLevels[planKey]) return;
+  pinnedLevels[planKey] = pinnedLevels[planKey].filter(p => p.id !== id);
+  if (pinnedLevels[planKey].length === 0) delete pinnedLevels[planKey];
+  refreshPinUI();
+  savePinnedLevelsToServer();
+}
+
+function pinCurrentPrice(planKey) {
+  const plan = allData.plans.find(p => p.key === planKey);
+  if (!plan) return;
+  const last = getLastValue(plan.data);
+  const input = prompt(
+    `ปักหมุดราคาเป้าหมายสำหรับ "${plan.label}"\n(ราคาล่าสุด: ${last ? last.toFixed(4) : '-'})`,
+    last ? last.toFixed(4) : ''
+  );
+  if (input === null) return;
+  const val = parseFloat(input);
+  if (isNaN(val) || val <= 0) return showToast('กรุณาใส่ตัวเลขราคาที่ถูกต้องครับ');
+  addPinAtValue(planKey, val);
+  showToast(`📌 ปักหมุด ${plan.label} ที่ ${val.toFixed(4)} แล้ว`);
+}
+
+function renderPinnedAnnotations() {
+  if (!chart) return;
+  if (chartMode !== 'nav') {
+    chart.updateOptions({ annotations: { yaxis: [] } }, false, false);
+    return;
+  }
+  const yaxis = [];
+  Object.entries(pinnedLevels).forEach(([key, list]) => {
+    const plan = allData.plans.find(p => p.key === key);
+    if (!plan || hidden.has(key)) return;
+    list.forEach(pin => {
+      yaxis.push({
+        y: pin.value,
+        borderColor: plan.color,
+        strokeDashArray: 4,
+        label: {
+          borderColor: plan.color,
+          style: { color: '#0d1117', background: plan.color, fontSize: '10px', fontWeight: 700 },
+          text: `📌 ${pin.value.toFixed(4)}`,
+          position: 'left',
+          offsetX: 4
+        }
+      });
+    });
+  });
+  chart.updateOptions({ annotations: { yaxis } }, false, false);
+}
+
+function checkPinProximity() {
+  if (!allData) return;
+  Object.entries(pinnedLevels).forEach(([key, list]) => {
+    const plan = allData.plans.find(p => p.key === key);
+    if (!plan) return;
+    const last = getLastValue(plan.data);
+    if (!last) return;
+    list.forEach(pin => {
+      const diffPct = (last - pin.value) / pin.value * 100;
+      if (Math.abs(diffPct) <= PIN_TOLERANCE_PCT) {
+        showToast(`🎯 ${plan.label} เข้าใกล้จุดปักหมุด ${pin.value.toFixed(4)} แล้ว (ห่าง ${diffPct.toFixed(2)}%)`);
+      }
+    });
+  });
+}
+
+function renderPinnedList() {
+  const container = document.getElementById('pin-list');
+  if (!container) return;
+  if (!allData) { container.innerHTML = ''; return; }
+  const rows = [];
+  Object.entries(pinnedLevels).forEach(([key, list]) => {
+    const plan = allData.plans.find(p => p.key === key);
+    if (!plan) return;
+    const last = getLastValue(plan.data);
+    list.forEach(pin => {
+      const diffPct = last ? (last - pin.value) / pin.value * 100 : null;
+      rows.push({ plan, pin, diffPct });
+    });
+  });
+  if (rows.length === 0) {
+    container.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--muted)">ยังไม่มีจุดปักหมุด — กดไอคอน 📌 ข้างชื่อแผน</div>';
+    return;
+  }
+  rows.sort((a,b) => Math.abs(a.diffPct ?? 999) - Math.abs(b.diffPct ?? 999));
+  container.innerHTML = rows.map(r => {
+    const near = r.diffPct !== null && Math.abs(r.diffPct) <= PIN_TOLERANCE_PCT;
+    const diffTxt = r.diffPct === null ? '—' : (r.diffPct >= 0 ? '+' : '') + r.diffPct.toFixed(1) + '%';
+    return `
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.04)">
+      <span class="plan-dot" style="background:${r.plan.color};width:7px;height:7px;flex-shrink:0"></span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(r.plan.label)}</span>
+      <span style="color:var(--muted)">@${r.pin.value.toFixed(4)}</span>
+      <span style="color:${near ? '#3fb950' : 'var(--muted)'};font-weight:600;min-width:44px;text-align:right">${diffTxt}</span>
+      <span class="pin-remove" data-key="${escapeHtml(r.plan.key)}" data-id="${r.pin.id}" style="cursor:pointer;color:var(--muted)">✕</span>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('.pin-remove').forEach(btn => {
+    btn.addEventListener('click', () => removePin(btn.dataset.key, Number(btn.dataset.id)));
+  });
+}
+
+function refreshPinUI() {
+  renderPinnedAnnotations();
+  renderPinnedList();
+}
+
+// ─────────────────────────────────────────
 // INIT — โหลดข้อมูลเมื่อหน้าพร้อม
 // ─────────────────────────────────────────
 const CACHE_KEY = 'gpf_nav_cache_v3';
 const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 ชั่วโมง (NAV อัพเดทวันละครั้ง)
+const CACHE_SCHEMA = 2; // bump เมื่อเปลี่ยนโครงสร้างข้อมูล → ทิ้ง cache เก่าอัตโนมัติ
 
 window.addEventListener('load', () => {
   let hasCached = false;
   try {
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
-    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    if (cached && cached.__v === CACHE_SCHEMA && Date.now() - cached.ts < CACHE_TTL) {
       onDataLoaded(cached.data);
       hasCached = true;
     }
@@ -914,15 +1092,25 @@ window.addEventListener('load', () => {
     }
   }, 15000);
 
-  fetch(GAS_URL + "?action=history")
-    .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+  // Auto-retry with exponential backoff (สูงสุด 2 ครั้ง: 3 วิ, 6 วิ)
+  function fetchWithRetry(url, retries = 2, delay = 3000) {
+    return fetch(url)
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .catch(err => {
+        if (retries <= 0) throw err;
+        return new Promise(res => setTimeout(res, delay))
+          .then(() => fetchWithRetry(url, retries - 1, delay * 2));
+      });
+  }
+
+  fetchWithRetry(GAS_URL + "?action=history")
     .then(data => {
       clearTimeout(loadTimeout);
       if (!data.error) {
         try { 
           const oldData = localStorage.getItem(CACHE_KEY);
           const oldDataObj = oldData ? JSON.parse(oldData).data : null;
-          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); 
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), __v: CACHE_SCHEMA, data })); 
           
           if (hasCached && JSON.stringify(oldDataObj) !== JSON.stringify(data)) {
             showToast('✨ มีข้อมูลใหม่มาแล้ว โหลดหน้าเว็บเพื่ออัปเดต');
@@ -960,6 +1148,7 @@ function onDataLoaded(data) {
   buildSidebar();
   buildChart();
   updateStats();
+  loadPinnedLevelsFromServer(); // โหลดจุดปักหมุดจาก server (cross-device sync)
   document.getElementById('loader').style.opacity = '0';
   setTimeout(() => document.getElementById('loader').style.display = 'none', 400);
 }
@@ -1015,8 +1204,26 @@ function normalizePlan(planData) {
 // % เปลี่ยนแปลงใน range ปัจจุบัน (สำหรับ stat card)
 // ─────────────────────────────────────────
 function getPctInRange(planData) {
-  const base = getBaseValue(planData);
-  const last = getLastValue(planData);
+  let minTs = currentMinTs;
+  let maxTs = null;
+  
+  if (chart && chart.w && chart.w.globals) {
+    minTs = chart.w.globals.minX;
+    maxTs = chart.w.globals.maxX;
+  }
+
+  let base = null, last = null;
+  if (minTs !== null && maxTs !== null) {
+    for (let i = 0; i < dateTimestamps.length; i++) {
+      const ts = dateTimestamps[i];
+      if (ts >= minTs && planData[i] !== null && base === null) base = planData[i];
+      if (ts <= maxTs && planData[i] !== null) last = planData[i];
+    }
+  } else {
+    base = getBaseValue(planData);
+    last = getLastValue(planData);
+  }
+
   if (!base || !last) return null;
   return (last - base) / base * 100;
 }
@@ -1036,6 +1243,7 @@ function setMode(mode) {
   updateBestWorst();
   updateYTD();
   updateSwingStats();
+  renderPinnedAnnotations();
 }
 
 // ─────────────────────────────────────────
@@ -1054,14 +1262,26 @@ function buildSidebar() {
     const el = document.createElement('div');
     el.className = 'plan-item hidden';
     el.id = `pi-${i}`;
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
     el.innerHTML = `
       <div class="plan-dot" style="background:${plan.color}"></div>
       <div class="plan-info">
-        <div class="plan-name">${plan.label}</div>
+        <div class="plan-name">${escapeHtml(plan.label)}</div>
         <div class="plan-nav">${last ? last.toFixed(4) : '—'}</div>
       </div>
       <div class="plan-chg ${cls}">${txt}</div>`;
     el.addEventListener('click', () => togglePlan(i, plan.key));
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePlan(i, plan.key); } });
+
+    // ไอคอนปักหมุดราคา
+    const pinIcon = document.createElement('span');
+    pinIcon.className = 'pin-icon';
+    pinIcon.textContent = '📌';
+    pinIcon.title = 'ปักหมุดราคาเป้าหมาย';
+    pinIcon.addEventListener('click', (e) => { e.stopPropagation(); pinCurrentPrice(plan.key); });
+    el.insertBefore(pinIcon, el.querySelector('.plan-chg'));
+
     list.appendChild(el);
   });
 }
@@ -1080,7 +1300,7 @@ function togglePlan(idx, key) {
   updateVisibleCount();
   updateBestWorst();
   updateYTD();
-  setTimeout(() => { updateHighLow(); updateSwingStats(); }, 300);
+  setTimeout(() => { updateHighLow(); updateSwingStats(); renderPinnedAnnotations(); }, 300);
 }
 
 function toggleAll(show) {
@@ -1094,7 +1314,7 @@ function toggleAll(show) {
   updateVisibleCount();
   updateBestWorst();
   updateYTD();
-  setTimeout(() => { updateHighLow(); updateSwingStats(); }, 300);
+  setTimeout(() => { updateHighLow(); updateSwingStats(); renderPinnedAnnotations(); }, 300);
 }
 
 function updateVisibleCount() {
@@ -1112,13 +1332,30 @@ function buildSeriesData() {
   }));
 }
 
+let lastHiddenSnapshot = new Set();
+
 function rebuildSeries() {
   if (!chart) return;
   chart.updateSeries(buildSeriesData(), false);
   allData.plans.forEach(p => {
-    // 💡 ถ้าแผนไหนถูกซ่อนอยู่ ก็สั่งซ่อน (ไม่ต้องสั่งโชว์แผนที่โชว์อยู่แล้ว เพราะมันจะทำให้กราฟกระตุก 10-20 วิ)
-    if (hidden.has(p.key)) chart.hideSeries(p.label);
+    const nowHidden  = hidden.has(p.key);
+    const wasHidden  = lastHiddenSnapshot.has(p.key);
+    if (nowHidden && !wasHidden)      chart.hideSeries(p.label);
+    else if (!nowHidden && wasHidden) chart.showSeries(p.label);
   });
+  lastHiddenSnapshot = new Set(hidden);
+}
+
+// ─────────────────────────────────────────
+// CHART THEME COLORS (dynamic for light/dark)
+// ─────────────────────────────────────────
+function getChartThemeColors() {
+  const light = document.documentElement.getAttribute('data-theme') === 'light';
+  return {
+    grid:  light ? '#d0d7de' : '#21262d',
+    label: light ? '#57606a' : '#8b949e',
+    axis:  light ? '#d0d7de' : '#30363d'
+  };
 }
 
 // ─────────────────────────────────────────
@@ -1179,8 +1416,19 @@ function buildChart() {
         dataPointMouseLeave() {
           updateHighLightCard();
         },
-        zoomed()   { setTimeout(updateHighLow, 300); },
-        scrolled() { setTimeout(updateHighLow, 300); }
+        dataPointSelection(event, chartContext, config) {
+          if (!pinModeActive) return;
+          if (chartMode !== 'nav') return showToast('📌 กรุณาเปลี่ยนเป็นโหมด NAV ก่อนปักหมุดครับ');
+          const seriesIndex = config.seriesIndex;
+          const dataPointIndex = config.dataPointIndex;
+          const planKey = allData.plans[seriesIndex].key;
+          const val = allData.plans[seriesIndex].data[dataPointIndex];
+          if (val === null) return;
+          addPinAtValue(planKey, val);
+          showToast(`📌 ปักหมุด ${allData.plans[seriesIndex].label} ที่ ${val.toFixed(4)} แล้ว`);
+        },
+        zoomed()   { setTimeout(() => { updateHighLow(); updateSwingStats(); updateHighLightCard(); renderPinnedAnnotations(); }, 300); },
+        scrolled() { setTimeout(() => { updateHighLow(); updateSwingStats(); updateHighLightCard(); renderPinnedAnnotations(); }, 300); }
       }
     },
     stroke:  { curve: 'straight', width: 1.8 },
@@ -1188,7 +1436,7 @@ function buildChart() {
     xaxis: {
       categories: allData.dates, type: 'datetime', tickAmount: 10,
       labels: {
-        style: { colors: '#8b949e', fontSize: '11px' },
+        style: { colors: getChartThemeColors().label, fontSize: '11px' },
         formatter: function(val, timestamp) {
           if (!timestamp) return val;
           const d = new Date(timestamp);
@@ -1197,14 +1445,14 @@ function buildChart() {
           return `${d.getDate()} ${shortM} '${shortY}`;
         }
       },
-      axisBorder: { color: '#30363d' }, axisTicks: { color: '#30363d' },
+      axisBorder: { color: getChartThemeColors().axis }, axisTicks: { color: getChartThemeColors().axis },
       crosshairs: { stroke: { color: '#388bfd', dashArray: 4 } }
     },
     yaxis: {
-      labels: { style: { colors: '#8b949e', fontSize: '11px' }, formatter: yFormatter },
+      labels: { style: { colors: getChartThemeColors().label, fontSize: '11px' }, formatter: yFormatter },
       tooltip: { enabled: true }
     },
-    grid: { borderColor: '#21262d', strokeDashArray: 3, xaxis: { lines: { show: false } } },
+    grid: { borderColor: getChartThemeColors().grid, strokeDashArray: 3, xaxis: { lines: { show: false } } },
     tooltip: {
       theme: 'dark', shared: true, intersect: false,
       x: { formatter: function(val) { return fmtDate(val); } },
@@ -1976,7 +2224,17 @@ if ('serviceWorker' in navigator) {
     }
 
     if (chart) {
-      chart.updateOptions({ theme: { mode: next } });
+      const c = getChartThemeColors();
+      chart.updateOptions({
+        theme: { mode: next },
+        grid:  { borderColor: c.grid },
+        xaxis: {
+          labels: { style: { colors: c.label } },
+          axisBorder: { color: c.axis },
+          axisTicks:  { color: c.axis }
+        },
+        yaxis: { labels: { style: { colors: c.label } } }
+      });
     }
   }
 

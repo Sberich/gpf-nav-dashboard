@@ -966,7 +966,7 @@ let pinModeActive  = false;
 const PIN_TOLERANCE_PCT = 1.5; // ห่างกันเท่าไหร่ถือว่า "ใกล้เป้าหมาย" (ปรับได้)
 
 function loadPinnedLevelsFromServer() {
-  fetch(GAS_URL + '?action=getPins')
+  fetch(GAS_URL + '?action=getPins&t=' + Date.now())
     .then(r => r.json())
     .then(data => {
       pinnedLevels = data || {};
@@ -986,7 +986,7 @@ function savePinnedLevelsToServer() {
   // ส่งขึ้น server
   fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ป้องกัน CORS preflight 
     body: JSON.stringify({ action: 'setPins', data: pinnedLevels }),
     redirect: 'follow'
   }).catch(() => {}); // fail silently — local backup ยังอยู่

@@ -1342,6 +1342,7 @@
       result.p75.push(vals[Math.floor(numSims * 0.75)]);
       result.p90.push(vals[Math.floor(numSims * 0.90)]);
     }
+    result.paths = paths; // Attach paths to calculate success rate later based on targetBalance
     result.successRate = paths.filter(p => p[p.length-1] > balance).length / numSims;
     return result;
   }

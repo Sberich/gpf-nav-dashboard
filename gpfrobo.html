@@ -1070,6 +1070,31 @@
       const cleanSum = tiltedWeights.reduce((a,b) => a+b, 0);
       if (cleanSum > 0) tiltedWeights = tiltedWeights.map(w => w / cleanSum);
       
+      // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
+      const maxGold = 0.25;
+      const goldIdx = eligibleMix.findIndex(m => m.name === 'แผนทองคำ');
+      if (goldIdx !== -1 && tiltedWeights[goldIdx] > maxGold) {
+        const excess = tiltedWeights[goldIdx] - maxGold;
+        tiltedWeights[goldIdx] = maxGold;
+        
+        // Find best non-gold equity/alternative asset based on momentum/tilt
+        let bestTargetIdx = -1;
+        let highestMom = -Infinity;
+        eligibleMix.forEach((m, i) => {
+          if (m.name !== 'แผนทองคำ' && equityLike.includes(m.name) && momScores[i] > highestMom) {
+            highestMom = momScores[i];
+            bestTargetIdx = i;
+          }
+        });
+        
+        if (bestTargetIdx !== -1) {
+          tiltedWeights[bestTargetIdx] += excess;
+        } else {
+          const safeIdx = eligibleMix.findIndex(m => m.name.includes('ระยะสั้น')) !== -1 ? eligibleMix.findIndex(m => m.name.includes('ระยะสั้น')) : eligibleMix.findIndex(m => m.name.includes('ตราสารหนี้'));
+          if (safeIdx !== -1) tiltedWeights[safeIdx] += excess;
+        }
+      }
+      
       let portCAGR = 0, portVol2 = 0;
       for (let i = 0; i < tiltedWeights.length; i++) {
         portCAGR += tiltedWeights[i] * eligibleMix[i].cagr;
@@ -1163,6 +1188,30 @@
       const cs = weights.reduce((a, b) => a + b, 0);
       if (cs > 0) weights = weights.map(w => w / cs);
 
+      // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
+      const maxGold = 0.25;
+      const goldIdx = eligible.findIndex(m => m.name === 'แผนทองคำ');
+      if (goldIdx !== -1 && weights[goldIdx] > maxGold) {
+        const excess = weights[goldIdx] - maxGold;
+        weights[goldIdx] = maxGold;
+        
+        let bestTargetIdx = -1;
+        let highestCAGR = -Infinity;
+        eligible.forEach((m, i) => {
+          if (m.name !== 'แผนทองคำ' && equityKeywords.some(k => m.name.includes(k)) && m.cagr > highestCAGR) {
+            highestCAGR = m.cagr;
+            bestTargetIdx = i;
+          }
+        });
+        
+        if (bestTargetIdx !== -1) {
+          weights[bestTargetIdx] += excess;
+        } else {
+          const safeIdx = eligible.findIndex(m => m.name.includes('ระยะสั้น')) !== -1 ? eligible.findIndex(m => m.name.includes('ระยะสั้น')) : eligible.findIndex(m => m.name.includes('ตราสารหนี้'));
+          if (safeIdx !== -1) weights[safeIdx] += excess;
+        }
+      }
+
       let pCAGR = 0, pVol2 = 0;
       for (let i = 0; i < weights.length; i++) {
         if (weights[i] === 0) continue;
@@ -1245,6 +1294,30 @@
             allocMap.set(m.plan.name, { plan: m.plan, weight: satelliteWeight });
          }
       });
+      
+      // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
+      const maxGold = 0.25;
+      if (allocMap.has('แผนทองคำ') && allocMap.get('แผนทองคำ').weight > maxGold) {
+        const excess = allocMap.get('แผนทองคำ').weight - maxGold;
+        allocMap.get('แผนทองคำ').weight = maxGold;
+        
+        // Smart Spillover: Find the best alternative asset to receive excess
+        let bestSpilloverTarget = null;
+        let highestMom = -Infinity;
+        topPositive.forEach(m => {
+          if (m.plan.name !== 'แผนทองคำ' && m.momentum > highestMom) {
+            highestMom = m.momentum;
+            bestSpilloverTarget = m.plan.name;
+          }
+        });
+        
+        if (bestSpilloverTarget) {
+          if (allocMap.has(bestSpilloverTarget)) allocMap.get(bestSpilloverTarget).weight += excess;
+          else allocMap.set(bestSpilloverTarget, { plan: topPositive.find(m => m.plan.name === bestSpilloverTarget).plan, weight: excess });
+        } else {
+          allocMap.get(safePlanObj.name).weight += excess; // fallback to safe asset
+        }
+      }
       
       // Filter out negligible weights
       let finalAlloc = Array.from(allocMap.values()).filter(a => a.weight >= 0.01);

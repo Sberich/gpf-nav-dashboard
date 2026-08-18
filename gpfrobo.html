@@ -417,6 +417,39 @@
       <div class="grid-2">
         <div class="glass animate-in">
           <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i> AI แนะนำสัดส่วนที่เหมาะสม</div>
+          
+          <details style="margin-bottom:1rem;background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);">
+            <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> คู่มือการใช้งาน: วิธีอ่านใจ AI (Tactical)</summary>
+            <div style="font-size:.85rem;color:var(--muted);margin-top:0.8rem;line-height:1.6;">
+              <div style="font-weight:600;color:#fff;margin-bottom:0.5rem;"><i class="fa-solid fa-search"></i> 3 สัญญาณที่ต้องดู:</div>
+              <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+                <li><b>สถานะตลาด:</b> <span style="color:var(--green)">RISK-ON</span> (ลุยทำกำไร) หรือ <span style="color:var(--red)">RISK-OFF</span> (พักเงินในตราสารหนี้)</li>
+                <li><b>พระเอก (Top 1):</b> สินทรัพย์ที่ AI ให้น้ำหนักเยอะที่สุดคือเทรนด์หลักของตลาดตอนนี้</li>
+                <li><b>RSI (ความร้อนแรง):</b> ต่ำกว่า 70 = กำลังดี, เกิน 70 = เริ่มแพง, เกิน 80 = ระวังฟองสบู่แตก!</li>
+              </ul>
+              
+              <div style="margin-top:1rem;padding-top:1rem;border-top:1px dashed rgba(255,255,255,0.1);">
+                <div style="font-weight:600;color:#fff;margin-bottom:0.5rem;"><i class="fa-solid fa-lightbulb" style="color:var(--yellow)"></i> แผนปฏิบัติการ (Action Plan):</div>
+                <ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.8rem;margin:0;">
+                  <li>
+                    <b style="color:var(--green)">จังหวะเข้าซื้อ (Entry):</b><br>
+                    เมื่อ AI สั่ง <b>RISK-ON</b> และมีสินทรัพย์เสี่ยงขึ้นเป็น Top 1 (โดยที่ RSI อยู่ช่วง 50-65)<br>
+                    👉 <i>ให้เปลี่ยนแผนการลงทุนตามสัดส่วนที่ AI แนะนำทันที</i>
+                  </li>
+                  <li>
+                    <b style="color:var(--yellow)">จังหวะถือรอ (Hold):</b><br>
+                    ตราบใดที่สินทรัพย์ตัวเดิมยังเป็น Top 1-2 แม้ RSI จะเกิน 70 ก็ยังไม่ต้องรีบขาย<br>
+                    👉 <i>ให้ปล่อยกำไรไหลไปเรื่อยๆ (Let Profit Run)</i>
+                  </li>
+                  <li>
+                    <b style="color:var(--red)">จังหวะขายทำกำไร (Take Profit):</b><br>
+                    เมื่อ AI สั่ง <b>RISK-OFF</b> หรือสินทรัพย์ที่เราถืออยู่ "หลุดโผ" จากหน้าจอ (เทรนด์จบ)<br>
+                    👉 <i>ให้โยกเงินทั้งหมดกลับเข้า "แผนเงินฝาก/ตราสารหนี้ระยะสั้น" เพื่อล็อกกำไรเก็บเข้ากระเป๋าทันที!</i>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </details>
           <div class="result-card" id="recCard">
             <div id="recTitle" style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>
             <div class="plan-name" id="recPlanName" style="margin:.5rem 0">—</div>
@@ -1296,7 +1329,7 @@
     const bestMixable = mixable[0];
     
     if (!bestMixable || bestMixable.momentum <= 0.002) {
-      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "⚠️ RISK-OFF: ตลาดช่วง 2 เดือนซบเซา/ติดลบ แนะนำพักเงินในสินทรัพย์ปลอดภัย 100%" };
+      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ RISK-OFF:</span> ตลาดช่วง 2 เดือนซบเซา/ติดลบ แนะนำพักเงินในสินทรัพย์ปลอดภัย 100%" };
     } else {
       const topPositive = mixable.filter(m => m.momentum > 0).slice(0, 3);
       let allocMap = new Map();
@@ -1386,7 +1419,7 @@
       const hasOB = topPositive.some(m => m.isOB);
       const bestMixedRsi = topPositive[0].rsi.toFixed(1);
       const obText = hasOB ? `<br><span style="color:var(--red);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-fire"></i> <b>ระวัง (RSI=${bestMixedRsi}):</b> สินทรัพย์บางตัวพุ่งตึงตัว (Overbought) แนะนำให้ทยอยแบ่งไม้เข้า</span>` : `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> ความร้อนแรง (RSI) สูงสุด: ${bestMixedRsi}/100</span>`;
-      const msg = `🚀 RISK-ON (Core-Satellite): ตราสารหนี้ ${(safeTarget*100).toFixed(0)}% + สินทรัพย์เก็งกำไร ${(equityTarget*100).toFixed(0)}% ตามระดับความเสี่ยง${obText}`;
+      const msg = `<span style='color:var(--green);font-weight:bold;'>🚀 RISK-ON (Core-Satellite):</span> ตราสารหนี้ ${(safeTarget*100).toFixed(0)}% + สินทรัพย์เก็งกำไร ${(equityTarget*100).toFixed(0)}% ตามระดับความเสี่ยง${obText}`;
       
       if (finalAlloc.length === 1) {
          recommendation = { type: 'single', plan: finalAlloc[0].plan, label: finalAlloc[0].name, isTactical: true, tacticalMsg: msg };

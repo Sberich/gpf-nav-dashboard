@@ -868,7 +868,7 @@
       // Assumed returns for new plans or error cases
       const validNavs = nav.filter(n => n > 0).length;
       let isEstimatedCAGR = false;
-      if (validNavs < 252 * 2 || Math.abs(cagr) < 0.001) {
+      if (validNavs < 252 * 2) {
         isEstimatedCAGR = true;
         const pName = plan.label || plan.key;
         if (pName.includes("หุ้น") || pName.includes("เชิงรุก")) cagr = 0.065;
@@ -953,8 +953,16 @@
     return w;
   }
   function safeMomentum(navArray, lookback) {
-    const window = navArray.slice(-(lookback + 10)); // Pad for potential nulls
-    const { values } = cleanNavSeries(window);
+    if (!allData || !allData.dates) return null;
+    const dates = allData.dates;
+    const latestDate = new Date(dates[dates.length - 1]);
+    const targetDate = new Date(latestDate.getTime() - (lookback * 24 * 60 * 60 * 1000));
+    let startIndex = 0;
+    for (let i = dates.length - 1; i >= 0; i--) {
+      if (new Date(dates[i]) <= targetDate) { startIndex = i; break; }
+    }
+    const windowNav = navArray.slice(startIndex);
+    const { values } = cleanNavSeries(windowNav);
     if (values.length < 2) return null;
     return (values[values.length - 1] / values[0]) - 1;
   }
@@ -972,17 +980,29 @@
     const blendedNav = [1.0]; // Start at 1.0 (normalized)
     const blendedReturns = [null];
     
+    // Store last valid NAV for each plan
+    const lastValidNavs = navArrays.map(arr => {
+      for(let i=0; i<arr.length; i++) { if(arr[i] && arr[i]>0) return arr[i]; }
+      return 1;
+    });
+
     for (let t = 1; t < minLen; t++) {
       let dailyLogRet = 0;
-      let validDay = true;
+      let validAssetCount = 0;
       for (let i = 0; i < weights.length; i++) {
         if (weights[i] === 0) continue;
         const curr = navArrays[i][t];
-        const prev = navArrays[i][t - 1];
-        if (!curr || !prev || curr <= 0 || prev <= 0) { validDay = false; break; }
-        dailyLogRet += weights[i] * Math.log(curr / prev);
+        const prev = lastValidNavs[i];
+        
+        let assetRet = 0;
+        if (curr && curr > 0) {
+           assetRet = Math.log(curr / prev);
+           lastValidNavs[i] = curr;
+           validAssetCount++;
+        }
+        dailyLogRet += weights[i] * assetRet;
       }
-      if (validDay) {
+      if (validAssetCount > 0) {
         blendedReturns.push(dailyLogRet);
         blendedNav.push(blendedNav[blendedNav.length - 1] * Math.exp(dailyLogRet));
       } else {
@@ -1201,7 +1221,7 @@
     });
     
     const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.momentum - a.momentum);
-    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น")) || planMetrics.find(p => p.name.includes("ตราสารหนี้")) || [...planMetrics].sort((a,b) => a.vol - b.vol)[0];
+    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น") && p.isMixable) || planMetrics.find(p => p.name.includes("ตราสารหนี้") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
     
     let recommendation;
     const bestMixable = mixable[0];
@@ -1458,17 +1478,27 @@
     const totalRetirementIncome = annualWithdrawalGPF + adjustedPensionAnnual;
     // ใช้ 70% ของเงินเดือนปีสุดท้ายเป็นค่าใช้จ่ายหลังเกษียณ (Replacement Rate Standard)
     const annualExpense = finalMonthlySalary * 12 * 0.70;
-    const irr = annualExpense > 0 ? (totalRetirementIncome / annualExpense) * 100 : 0;
+    const adjustedAnnualExpense = adjustInflation ? annualExpense / inflationFactor : annualExpense;
+    
+    const irr = adjustedAnnualExpense > 0 ? (totalRetirementIncome / adjustedAnnualExpense) * 100 : 0;
     document.getElementById('statIRR').innerText = irr.toFixed(1) + '%' + inflationLabel;
     
+    // Calculate Target Balance for Monte Carlo Success Rate
+    // Target Balance is the total amount needed to produce the desired income from GPF
+    // GPF needs to provide: Target GPF Income = adjustedAnnualExpense - adjustedPensionAnnual
+    // Target Balance = Target GPF Income / 0.04 (withdrawal rate)
+    const targetGPFIncome = Math.max(0, adjustedAnnualExpense - adjustedPensionAnnual);
+    const targetBalanceNominal = adjustInflation ? (targetGPFIncome * inflationFactor) / 0.04 : targetGPFIncome / 0.04;
+    mcResult.targetBalance = targetBalanceNominal;
+    
     // Show breakdown
-    const gpfPortion = annualExpense > 0 ? (annualWithdrawalGPF / annualExpense * 100).toFixed(1) : '0';
-    const pensionPortion = annualExpense > 0 ? (adjustedPensionAnnual / annualExpense * 100).toFixed(1) : '0';
+    const gpfPortion = adjustedAnnualExpense > 0 ? (annualWithdrawalGPF / adjustedAnnualExpense * 100).toFixed(1) : '0';
+    const pensionPortion = adjustedAnnualExpense > 0 ? (adjustedPensionAnnual / adjustedAnnualExpense * 100).toFixed(1) : '0';
     document.getElementById('irrBreakdown').innerHTML = `กบข. ${gpfPortion}% + บำนาญ ${pensionPortion}% (อายุราชการ ${serviceYears} ปี)`;
     document.getElementById('irrDisclaimer').style.display = 'block';
   }
   
-  function renderMonteCarlo(mcResult, age) {
+  function renderMonteCarlo(mcResult, age, adjustInflation, inflationRate) {
     const canvas = document.getElementById('fanChart');
     const ctx = canvas.getContext('2d');
     const wrap = document.getElementById('fanChartWrap');
@@ -1853,9 +1883,13 @@
     const salaryGrowth = parseFloat(document.getElementById('salaryGrowth').value) / 100;
     const risk = parseInt(document.getElementById('riskTolerance').value);
     const style = document.getElementById('investmentStyle').value;
+    const startServiceAge = parseInt(document.getElementById('startServiceAge').value) || 25;
     
     if (isNaN(age) || isNaN(balance) || isNaN(salary) || isNaN(memberRate) || isNaN(salaryGrowth) || isNaN(risk)) { alert("กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+    if (startServiceAge > age) { alert("อายุที่เริ่มรับราชการต้องน้อยกว่าหรือเท่ากับอายุปัจจุบัน"); return; }
     if (!allData || !allData.plans) { alert('กำลังโหลดข้อมูล กรุณารอสักครู่...'); return; }
+    
+    try {
     
     const loading = document.getElementById('loading');
     const progress = document.getElementById('progressFill');
@@ -1888,7 +1922,10 @@
     
     renderMetricsTable();
     renderRecommendation(analysisResult, balance, salary, memberRate, salaryGrowth, mcResult);
-    renderMonteCarlo(mcResult, age);
+    if (mcResult.targetBalance) {
+      mcResult.successRate = mcResult.paths.filter(p => p[p.length-1] >= mcResult.targetBalance).length / mcResult.paths.length;
+    }
+    renderMonteCarlo(mcResult, age, adjustInflation, inflationRate);
     renderHeatmap();
     renderTactical();
     
@@ -1898,6 +1935,11 @@
     loading.style.display = 'none';
     
     switchMainTab('metrics');
+    } catch (e) {
+      console.error(e);
+      alert("เกิดข้อผิดพลาดในการคำนวณ: " + e.message);
+      loading.style.display = 'none';
+    }
   }
   
   function delay(ms) { return new Promise(r => setTimeout(r, ms)); }

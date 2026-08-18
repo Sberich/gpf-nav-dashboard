@@ -1926,6 +1926,8 @@
     if (mcResult.targetBalance) {
       mcResult.successRate = mcResult.paths.filter(p => p[p.length-1] >= mcResult.targetBalance).length / mcResult.paths.length;
     }
+    const adjustInflation = document.getElementById('adjustInflation').checked;
+    const inflationRate = 0.03;
     renderMonteCarlo(mcResult, age, adjustInflation, inflationRate);
     renderHeatmap();
     renderTactical();

@@ -964,7 +964,27 @@
     const windowNav = navArray.slice(startIndex);
     const { values } = cleanNavSeries(windowNav);
     if (values.length < 2) return null;
-    return (values[values.length - 1] / values[0]) - 1;
+    
+    // === UPGRADE: Linear Regression Slope (uses ALL data points, not just 2) ===
+    // Normalize NAV to start at 1.0, then fit OLS regression line
+    // Slope represents annualized trend strength, robust against single-day noise
+    const n = values.length;
+    if (n < 5) return (values[n - 1] / values[0]) - 1; // fallback for tiny windows
+    
+    const base = values[0];
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    for (let i = 0; i < n; i++) {
+      const x = i;
+      const y = values[i] / base; // normalize to 1.0
+      sumX += x;
+      sumY += y;
+      sumXY += x * y;
+      sumX2 += x * x;
+    }
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    
+    // Convert daily slope to period return: slope * (n-1) gives total normalized change
+    return slope * (n - 1);
   }
 
   // Build a synthetic blended NAV series from weighted daily log-returns
@@ -1261,7 +1281,7 @@
           let adjustedMom = mom;
           if (rsi > 70 && adjustedMom > 0) {
             isOB = true;
-            let penalty = rsi > 80 ? 0.7 : 0.4;
+            let penalty = rsi > 80 ? 0.30 : 0.15; // softened: don't kill strong trends
             adjustedMom = adjustedMom * (1 - penalty);
           }
           momentumScores.push({ plan: m, momentum: adjustedMom, rawMomentum: mom, rsi: rsi, isOB: isOB, index: i });
@@ -1278,16 +1298,18 @@
     if (!bestMixable || bestMixable.momentum <= 0.002) {
       recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "⚠️ RISK-OFF: ตลาดช่วง 2 เดือนซบเซา/ติดลบ แนะนำพักเงินในสินทรัพย์ปลอดภัย 100%" };
     } else {
-      const topPositive = mixable.filter(m => m.momentum > 0).slice(0, 2);
+      const topPositive = mixable.filter(m => m.momentum > 0).slice(0, 3);
       let allocMap = new Map();
       
       // Assign core safe weight
       allocMap.set(safePlanObj.name, { plan: safePlanObj, weight: safeTarget });
       
-      // Assign satellite weights
-      const sumMom = topPositive.reduce((a,b) => a + b.momentum, 0);
+      // Assign satellite weights using Power Tilt (momentum²)
+      // This concentrates ~70-80% of equity budget on Top 1 (strongest trend)
+      // while keeping Top 2-3 as small diversifiers
+      const sumMomSq = topPositive.reduce((a,b) => a + b.momentum * b.momentum, 0);
       topPositive.forEach(m => {
-         const satelliteWeight = equityTarget * (m.momentum / sumMom);
+         const satelliteWeight = equityTarget * (m.momentum * m.momentum / sumMomSq);
          if (allocMap.has(m.plan.name)) {
             allocMap.get(m.plan.name).weight += satelliteWeight;
          } else {
@@ -1334,8 +1356,19 @@
          cvar: a.plan.cvar
       }));
       
-      let portCAGR = 0, portVol = 0;
-      finalAlloc.forEach(a => { portCAGR += a.weight * a.cagr; portVol += a.weight * a.vol; });
+      let portCAGR = 0, portVol2 = 0;
+      finalAlloc.forEach(a => { portCAGR += a.weight * a.cagr; });
+      // Use Covariance Matrix for accurate portfolio volatility (accounts for diversification)
+      for (let i = 0; i < finalAlloc.length; i++) {
+        const idxI = planMetrics.indexOf(finalAlloc[i].plan);
+        for (let j = 0; j < finalAlloc.length; j++) {
+          const idxJ = planMetrics.indexOf(finalAlloc[j].plan);
+          if (idxI >= 0 && idxJ >= 0) {
+            portVol2 += finalAlloc[i].weight * finalAlloc[j].weight * covarianceMatrix[idxI][idxJ];
+          }
+        }
+      }
+      const portVol = Math.sqrt(Math.max(portVol2, 0));
       
       // === FIX: Use blended NAV for MDD/CVaR in tactical mode too ===
       const tacPlans = finalAlloc.map(a => a.plan);

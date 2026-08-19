@@ -870,7 +870,14 @@
   function calcCorrelation(allReturns) {
     const n = allReturns.length;
     const matrix = Array.from({length:n}, () => Array(n).fill(0));
-    const vols = allReturns.map(r => calcVolatility(r));
+    
+    // FIX: Use the same common period for vols as for cov to prevent |corr| > 1
+    const minLen = Math.min(...allReturns.map(r => r.filter(v => v !== null).length));
+    const vols = allReturns.map(r => {
+      const valid = r.filter(v => v !== null).slice(-minLen);
+      return calcVolatility(valid);
+    });
+    
     const cov = calcCovMatrix(allReturns);
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
@@ -1345,8 +1352,8 @@
           let scoreMom = isAboveNoise ? mom : (isInflectionBounce ? shortMom : 0);
           
           if (scoreMom > 0) {
-            // Sniper V2 RSI adjustments
-            if (rsi < 45) scoreMom *= 1.5; // Bonus for recovering from oversold
+            // Sniper V2 RSI adjustments (FIX: Bonus only applies to the inflection path, preventing double-counting)
+            if (rsi < 45 && !isAboveNoise) scoreMom *= 1.5; 
             if (rsi > 75) scoreMom *= 0.5; // Penalty for chasing tops
           }
           
@@ -1548,8 +1555,9 @@
         let bestSpilloverTarget = null;
         let highestMom = -Infinity;
         topPositive.forEach(m => {
-          if (m.plan.name !== 'แผนทองคำ' && m.momentum > highestMom) {
-            highestMom = m.momentum;
+          // FIX: Use m[sortMetric] instead of raw m.momentum to be consistent with user's risk profile
+          if (m.plan.name !== 'แผนทองคำ' && m[sortMetric] > highestMom) {
+            highestMom = m[sortMetric];
             bestSpilloverTarget = m.plan.name;
           }
         });
@@ -1646,14 +1654,22 @@
         const eqRatioY = Math.min(maxEq, getEquityTarget(currentAge) * riskMult);
         const blendRatio = eqRatio0 > 0.01 ? eqRatioY / eqRatio0 : 0;
         const yearMu = blendRatio * mu + (1 - blendRatio) * safeMu;
-        const yearSigma = blendRatio * sigma + (1 - blendRatio) * safeSigma;
+        
+        // FIX: Quadratic sigma blending (correct portfolio variance)
+        const rho = 0.2; // Conservative correlation between risky and safe assets
+        const yearSigma = Math.sqrt(
+          Math.pow(blendRatio * sigma, 2) + 
+          Math.pow((1 - blendRatio) * safeSigma, 2) + 
+          2 * blendRatio * (1 - blendRatio) * rho * sigma * safeSigma
+        );
         
         const u1 = Math.max(Math.random(), 1e-10), u2 = Math.random();
         const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
         const r = Math.exp((yearMu - yearSigma*yearSigma/2) + yearSigma * z);
         
-        bal = bal * r;
-        bal += (curAnnualS * (memberRate + govRate));
+        // FIX: Mid-year convention for contributions (contributions earn ~half year return)
+        const contribution = curAnnualS * (memberRate + govRate);
+        bal = (bal * r) + (contribution * Math.sqrt(r));
         curAnnualS = curAnnualS * (1 + salaryGrowth);
         
         path.push(Math.max(bal, 0));
@@ -1739,7 +1755,9 @@
     
     document.getElementById('recPlanName').innerText = rec.label;
     document.getElementById('recCagr').innerText = (m.cagr * 100).toFixed(2);
-    document.getElementById('cagrLabel').innerText = (rec.isTactical || rec.isSniper) ? 'สถิติย้อนหลัง (10ปี)' : 'CAGR คาดหวัง';
+    // FIX: Calculate actual years of data available instead of hardcoding "10 years"
+    const dataYears = Math.max(1, Math.round((planMetrics[0]?.nav?.filter(n => n !== null).length || 1260) / 252));
+    document.getElementById('cagrLabel').innerText = (rec.isTactical || rec.isSniper) ? `สถิติย้อนหลัง (~${dataYears}ปี)` : 'CAGR คาดหวัง';
     document.getElementById('recMdd').innerText = (m.mdd * 100).toFixed(2);
     document.getElementById('recSharpe').innerText = m.sharpe.toFixed(3);
     document.getElementById('recCvar').innerText = (m.cvar * 100).toFixed(2);

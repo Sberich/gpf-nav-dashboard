@@ -332,7 +332,7 @@
                   <div class="custom-options">
                     <div class="custom-option" data-value="strategic"><div style="font-weight:600">🛡️ ถือยาว (Buy & Hold)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เน้นความเสถียร ไม่เปลี่ยนบ่อย</div></div>
                     <div class="custom-option selected" data-value="tactical"><div style="font-weight:600">🚀 จับจังหวะตลาด (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div></div>
-                    <div class="custom-option" data-value="sniper"><div style="font-weight:600">🎯 เล่นสั้นสายซิ่ง (Sniper)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">สวิงเทรด ซื้อสวนตอนพักฐาน (14 วัน)</div></div>
+                    <div class="custom-option" data-value="sniper"><div style="font-weight:600">🎯 เล่นสั้นสายซิ่ง (Sniper)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">สวิงเทรด ซื้อสวนตอนพักฐาน (21 วัน + Z-score)</div></div>
                   </div>
                 </div>
                 <input type="hidden" id="investmentStyle" required value="tactical">
@@ -441,9 +441,9 @@
               <!-- Sniper -->
               <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-crosshairs" style="color:var(--green)"></i> 3. โหมดสไนเปอร์ (Sniper)</div>
               <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
-                <li><b>เป้าหมาย:</b> สวิงเทรดระยะสั้น (14 วัน) หาจังหวะเด้งของของถูก (Oversold Bounce)</li>
-                <li><b>วิธีปฏิบัติ (Action):</b> เข้าทำกำไรอย่างรวดเร็วเมื่อ AI ขึ้นป้าย "จุดพลุ Oversold Bounce"</li>
-                <li><b>ข้อควรระวัง:</b> โหมดนี้ <b style="color:var(--red)">ต้องไว!</b> ถ้าระบบแนะนำให้ซื้อ ห้ามลังเล และถ้ากำไรพอใจหรือระบบสั่งเลิก ต้องรีบหนีกลับเข้าเงินฝากทันที ห้ามแช่ยาวเด็ดขาด!</li>
+                <li><b>เป้าหมาย:</b> สวิงเทรดระยะสั้น (21 วัน) หาจังหวะเด้งของของถูก (Oversold Bounce) ผ่านเกณฑ์ Z-score กรองสัญญาณรบกวน</li>
+                <li><b>วิธีปฏิบัติ (Action):</b> เข้าทำกำไรเมื่อ AI ขึ้นป้าย "จุดพลุ Oversold Bounce" หรือ "จับจุดพลิกกลับ (5-Day Inflection)" แล้วถือรอ 2-3 สัปดาห์</li>
+                <li><b>ข้อควรระวัง:</b> โหมดนี้ <b style="color:var(--red)">ต้องไว!</b> ถ้าระบบแนะนำให้ซื้อ ห้ามลังเล และถ้ากำไรพอใจหรือระบบสั่งเลิก ต้องรีบหนีกลับเข้าเงินฝากทันที ห้ามแช่ยาวเด็ดขาด! (เผื่อ T+1~T+3 ของ กบข.)</li>
                 <li><i>* ทริคลับสายซิ่ง: หากเลือกระดับความเสี่ยง "สูงมาก" AI จะปลดล็อคลิมิตให้ลุยสินทรัพย์เสี่ยงได้ 100% เต็ม (ไม่มีเงินฝากเป็นเบาะรองรับ)</i></li>
               </ul>
             </div>
@@ -1311,7 +1311,8 @@
   
   function generateSniperRecommendation(age, riskTolerance) {
     const yearsToRetire = Math.max(1, 60 - age);
-    const LOOKBACK = 14; 
+    const LOOKBACK = 21; // V2: ~1 month to compensate T+1~T+3 switching lag
+    const SHORT_LOOKBACK = 5; // V2: Dual-timeframe — detect inflection point in last 5 days
     
     // 1. Calculate Risk-Adjusted Equity Target
     const baseEquityTarget = getEquityTarget(age);
@@ -1319,52 +1320,82 @@
     const maxEquity = riskTolerance >= 50 ? 1.0 : 0.85;
     const equityTarget = Math.min(maxEquity, baseEquityTarget * riskMultiplier);
     const safeTarget = 1 - equityTarget;
+    const isHighRisk = riskTolerance >= 35;
     
     const momentumScores = [];
     planMetrics.forEach((m, i) => {
-      if (m.nav.length > LOOKBACK) {
+      if (m.nav.length > LOOKBACK && m.vol > 0) {
         const mom = safeMomentum(m.nav, LOOKBACK);
-        if (mom !== null) {
+        const shortMom = safeMomentum(m.nav, SHORT_LOOKBACK); // V2: 5-day momentum
+        if (mom !== null && shortMom !== null) {
           const rsi = calcRSI(m.nav, 14);
-          let adjustedMom = mom;
           
-          if (adjustedMom > 0) {
-            // Sniper Logic: Buy the Dip / Mean Reversion Boost
-            if (rsi < 45) adjustedMom *= 1.5; // Bonus for recovering from oversold
-            if (rsi > 75) adjustedMom *= 0.5; // Penalty for chasing tops
+          // V2 FIX #1: Z-score noise filter — momentum must beat its own volatility
+          // volThreshold = annualVol * sqrt(LOOKBACK/252) * 0.5 (half a std dev)
+          const volThreshold = m.vol * Math.sqrt(LOOKBACK / 252) * 0.5;
+          
+          // V2 FIX #3: Dual-timeframe candidate selection
+          // A fund qualifies if EITHER:
+          // (a) 21-day momentum is positive AND above noise, OR
+          // (b) RSI < 45 (oversold) AND 5-day momentum just turned positive (inflection point)
+          const isAboveNoise = mom > volThreshold;
+          const isInflectionBounce = (rsi < 45 && shortMom > 0);
+          
+          // Use the stronger of the two signals for scoring
+          let scoreMom = isAboveNoise ? mom : (isInflectionBounce ? shortMom : 0);
+          
+          if (scoreMom > 0) {
+            // Sniper V2 RSI adjustments
+            if (rsi < 45) scoreMom *= 1.5; // Bonus for recovering from oversold
+            if (rsi > 75) scoreMom *= 0.5; // Penalty for chasing tops
           }
-          momentumScores.push({ plan: m, momentum: adjustedMom, rawMomentum: mom, rsi: rsi, isOB: rsi > 75, index: i, vol: m.vol });
+          
+          // V2 FIX #4: Risk-adjusted weighting for low-medium risk users
+          const sortMetric = isHighRisk ? scoreMom : (m.vol > 0.001 ? scoreMom / m.vol : scoreMom);
+          
+          momentumScores.push({
+            plan: m, momentum: scoreMom, rawMomentum: mom, shortMom: shortMom,
+            rsi: rsi, isOB: rsi > 75, index: i, vol: m.vol,
+            sortMetric: sortMetric,
+            isInflection: isInflectionBounce && !isAboveNoise, // true = caught via 5-day signal only
+            isAboveNoise: isAboveNoise
+          });
         }
       }
     });
     
-    const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.momentum - a.momentum);
+    const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.sortMetric - a.sortMetric);
     const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น") && p.isMixable) || planMetrics.find(p => p.name.includes("ตราสารหนี้") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
     
     const riskyMixable = mixable.filter(m => m.plan.name !== safePlanObj.name);
     
     let recommendation;
-    const bestRisky = riskyMixable[0];
+    // V2: Only consider candidates that passed Z-score OR inflection test
+    const validCandidates = riskyMixable.filter(m => m.momentum > 0);
+    const bestRisky = validCandidates[0];
     
-    // Threshold for sniper is very low, any positive bounce is considered
-    if (!bestRisky || bestRisky.momentum <= 0.001) {
-      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isSniper: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ WAIT (Wait & See):</span> ตลาดยังไม่มีจังหวะเด้งที่ชัดเจน แนะนำถือสินทรัพย์ปลอดภัย 100% เพื่อรอกระสุนนัดต่อไป" };
+    if (!bestRisky || bestRisky.sortMetric <= 0) {
+      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isSniper: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ WAIT (Wait & See):</span> ตลาดยังไม่มีจังหวะเด้งที่ชัดเจน (ไม่ผ่านเกณฑ์ Z-score) แนะนำถือสินทรัพย์ปลอดภัย 100% เพื่อรอกระสุนนัดต่อไป" };
     } else {
-      const topPositive = riskyMixable.filter(m => m.momentum > 0).slice(0, 3);
+      const topPositive = validCandidates.slice(0, 3);
       let allocMap = new Map();
       
-      allocMap.set(safePlanObj.name, { plan: safePlanObj, weight: safeTarget });
+      if (safeTarget > 0.001) {
+        allocMap.set(safePlanObj.name, { plan: safePlanObj, weight: safeTarget });
+      }
       
-      const sumMomSq = topPositive.reduce((a,b) => a + (b.momentum * b.momentum), 0);
+      const sumMetricSq = topPositive.reduce((a,b) => a + (b.sortMetric * b.sortMetric), 0);
       let rsiMsg = [];
+      let inflectionMsg = [];
       topPositive.forEach(m => {
-         const satelliteWeight = equityTarget * ((m.momentum * m.momentum) / sumMomSq);
+         const satelliteWeight = equityTarget * ((m.sortMetric * m.sortMetric) / sumMetricSq);
          if (allocMap.has(m.plan.name)) {
             allocMap.get(m.plan.name).weight += satelliteWeight;
          } else {
             allocMap.set(m.plan.name, { plan: m.plan, weight: satelliteWeight });
          }
          if (m.rsi < 45) rsiMsg.push(`${m.plan.name}`);
+         if (m.isInflection) inflectionMsg.push(`${m.plan.name}`);
       });
       
       // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
@@ -1376,8 +1407,8 @@
         let bestSpilloverTarget = null;
         let highestMom = -Infinity;
         topPositive.forEach(m => {
-          if (m.plan.name !== 'แผนทองคำ' && m.momentum > highestMom) {
-            highestMom = m.momentum;
+          if (m.plan.name !== 'แผนทองคำ' && m.sortMetric > highestMom) {
+            highestMom = m.sortMetric;
             bestSpilloverTarget = m.plan.name;
           }
         });
@@ -1385,8 +1416,8 @@
         if (bestSpilloverTarget) {
           if (allocMap.has(bestSpilloverTarget)) allocMap.get(bestSpilloverTarget).weight += excess;
           else allocMap.set(bestSpilloverTarget, { plan: topPositive.find(m => m.plan.name === bestSpilloverTarget).plan, weight: excess });
-        } else {
-          allocMap.get(safePlanObj.name).weight += excess; // fallback to safe asset
+        } else if (allocMap.has(safePlanObj.name)) {
+          allocMap.get(safePlanObj.name).weight += excess;
         }
       }
       
@@ -1419,9 +1450,10 @@
           finalAlloc.forEach(a => { portMDD += a.weight * a.mdd; portCVaR += a.weight * (a.cvar||0); });
       }
 
-      let msg = `<span style='color:var(--accent);font-weight:bold;'>🎯 SNIPER-ON (Swing Trade):</span> พบสัญญาณฟื้นตัวระยะสั้น (14 วัน) เน้นเข้าเร็วออกเร็ว`;
+      let msg = `<span style='color:var(--accent);font-weight:bold;'>🎯 SNIPER-ON (Swing Trade):</span> พบสัญญาณฟื้นตัวระยะสั้น (21 วัน) ผ่านเกณฑ์ Z-score`;
+      if (inflectionMsg.length > 0) msg += `<br><span style="color:var(--yellow);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-bolt"></i> <b>จับจุดพลิกกลับ (5-Day Inflection):</b> ${inflectionMsg.join(', ')}</span>`;
       if (rsiMsg.length > 0) msg += `<br><span style="color:var(--green);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-arrow-trend-up"></i> <b>จุดพลุ Oversold Bounce:</b> ${rsiMsg.join(', ')}</span>`;
-      else msg += `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> เกาะกระแสความแรง (Pure Momentum)</span>`;
+      else msg += `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> เกาะกระแสความแรง ${isHighRisk ? '(Pure Momentum)' : '(Risk-Adjusted Momentum)'}</span>`;
       
       recommendation = {
         type: 'mix', allocation: finalAlloc, metrics: { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: calcSharpe(portCAGR, portVol), cvar: portCVaR },
@@ -1591,14 +1623,14 @@
     return recommendation;
   }
   
-  function monteCarloSim(balance, salary, memberRate, salaryGrowth, years, mu, sigma, numSims = 10000, startAge = 38, initialEqTarget = null) {
+  function monteCarloSim(balance, salary, memberRate, salaryGrowth, years, mu, sigma, numSims = 10000, startAge = 38, initialEqTarget = null, riskMult = 1.0, maxEq = 0.85) {
     const paths = [];
     const govRate = document.getElementById('isPre1997').value === 'yes' ? 0.05 : 0.03;
     
     // === FIX: Glide Path — adjust mu/sigma each year based on equity target ===
     // At startAge the user has equityRatio0; at age 60 it should drop to ~10%
     // mu and sigma scale linearly with the equity ratio relative to the initial ratio
-    const eqRatio0 = initialEqTarget !== null ? initialEqTarget : getEquityTarget(startAge);
+    const eqRatio0 = initialEqTarget !== null ? initialEqTarget : Math.min(maxEq, getEquityTarget(startAge) * riskMult);
     // Safe asset assumptions (cash/bond-like floor)
     const safeMu = 0.02;   // ~2% return for pure bonds/deposit
     const safeSigma = 0.02; // ~2% vol for pure bonds/deposit
@@ -1610,7 +1642,8 @@
       for (let y = 0; y < years; y++) {
         // Glide Path: blend between risky portfolio and safe asset
         const currentAge = startAge + y;
-        const eqRatioY = getEquityTarget(currentAge);
+        // FIX: Apply riskMultiplier and maxEquity consistently each year (not just year 0)
+        const eqRatioY = Math.min(maxEq, getEquityTarget(currentAge) * riskMult);
         const blendRatio = eqRatio0 > 0.01 ? eqRatioY / eqRatio0 : 0;
         const yearMu = blendRatio * mu + (1 - blendRatio) * safeMu;
         const yearSigma = blendRatio * sigma + (1 - blendRatio) * safeSigma;
@@ -2252,7 +2285,10 @@
         initialEq = strategicBaseline.equityTarget !== undefined ? strategicBaseline.equityTarget : (m.eqTarget !== undefined ? m.eqTarget : getEquityTarget(age));
     }
     
-    const mcResult = monteCarloSim(balance, salary, memberRate, salaryGrowth, analysisResult.yearsToRetire, m.cagr, m.vol, 10000, age, initialEq);
+    // FIX: Pass riskMultiplier and maxEquity so Glide Path stays consistent with user's risk profile
+    const mcRiskMult = { 5: 0.3, 10: 0.6, 20: 1.0, 35: 1.2, 50: 1.5 }[risk] || 1.0;
+    const mcMaxEq = risk >= 50 ? 1.0 : 0.85;
+    const mcResult = monteCarloSim(balance, salary, memberRate, salaryGrowth, analysisResult.yearsToRetire, m.cagr, m.vol, 10000, age, initialEq, mcRiskMult, mcMaxEq);
     
     progress.style.width = '80%';
     loadText.innerText = 'PHASE 4: สร้างกราฟและ Heatmap...';

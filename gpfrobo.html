@@ -332,6 +332,7 @@
                   <div class="custom-options">
                     <div class="custom-option" data-value="strategic"><div style="font-weight:600">🛡️ ถือยาว (Buy & Hold)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เน้นความเสถียร ไม่เปลี่ยนบ่อย</div></div>
                     <div class="custom-option selected" data-value="tactical"><div style="font-weight:600">🚀 จับจังหวะตลาด (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div></div>
+                    <div class="custom-option" data-value="sniper"><div style="font-weight:600">🎯 เล่นสั้นสายซิ่ง (Sniper)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">สวิงเทรด ซื้อสวนตอนพักฐาน (14 วัน)</div></div>
                   </div>
                 </div>
                 <input type="hidden" id="investmentStyle" required value="tactical">
@@ -375,7 +376,7 @@
           <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-robot" style="color:var(--cyan)"></i> สมการที่ระบบใช้</div>
           <div style="font-size:.8rem;color:var(--muted);line-height:1.8">
             <div>📐 <b style="color:var(--text)">Markowitz MPT</b> — Efficient Frontier</div>
-            <div>🏦 <b style="color:var(--text)">Black-Litterman</b> — Goldman Sachs Model</div>
+            <div>🏦 <b style="color:var(--text)">Momentum-Tilted Risk Parity</b> — AI Engine</div>
             <div>⚖️ <b style="color:var(--text)">Risk Parity</b> — Bridgewater / Ray Dalio</div>
             <div>🎲 <b style="color:var(--text)">Monte Carlo</b> — 10,000 Simulations (GBM)</div>
             <div>📉 <b style="color:var(--text)">CVaR / MDD</b> — Tail Risk Analysis</div>
@@ -389,6 +390,7 @@
     <div class="tab-content" id="tab-metrics">
       <div class="glass animate-in">
         <div class="section-title" style="white-space:normal; line-height:1.4; font-size:clamp(0.85rem, 3.5vw, 1.3rem)"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge" style="display:inline-block">LIVE DATA</span></div>
+
         <div class="table-wrap">
           <table class="data-table" id="metricsTable">
             <thead>
@@ -401,7 +403,7 @@
                 <th onclick="sortTable('sortino')" style="cursor:pointer" title="เรียงตามผลตอบแทนต่อความเสี่ยงขาลง">Sortino Ratio <i class="fa-solid fa-sort" id="sort-sortino"></i></th>
                 <th onclick="sortTable('mdd')" style="cursor:pointer" title="เรียงตามโอกาสขาดทุนสูงสุด">Max Drawdown <i class="fa-solid fa-sort" id="sort-mdd"></i></th>
                 <th onclick="sortTable('cvar')" style="cursor:pointer" title="เรียงตามความเสี่ยงหาง">CVaR 95% <i class="fa-solid fa-sort" id="sort-cvar"></i></th>
-                <th onclick="sortTable('score')" style="cursor:pointer" title="เรียงตามคะแนนรวม">Score <i class="fa-solid fa-sort-down" id="sort-score" style="opacity:1"></i></th>
+                <th onclick="sortTable('score')" style="cursor:pointer" title="คะแนนเปรียบเทียบเบื้องต้น (ไม่ได้ใช้จัดพอร์ต AI)">Score <i class="fa-solid fa-sort-down" id="sort-score" style="opacity:1"></i></th>
               </tr>
             </thead>
             <tbody id="metricsBody">
@@ -419,42 +421,38 @@
           <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i> AI แนะนำสัดส่วนที่เหมาะสม</div>
           
           <details style="margin-bottom:1rem;background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);">
-            <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> คู่มือการใช้งาน: วิธีอ่านใจ AI (Tactical)</summary>
+            <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> คู่มือการใช้งาน: วิธีอ่านใจ AI (ครอบคลุมทั้ง 3 โหมด)</summary>
             <div style="font-size:.85rem;color:var(--muted);margin-top:0.8rem;line-height:1.6;">
-              <div style="font-weight:600;color:#fff;margin-bottom:0.5rem;"><i class="fa-solid fa-search"></i> 3 สัญญาณที่ต้องดู:</div>
+              <!-- Buy & Hold -->
+              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-shield-halved"></i> 1. โหมดถือยาว (Buy & Hold)</div>
               <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
-                <li><b>สถานะตลาด:</b> <span style="color:var(--green)">RISK-ON</span> (ลุยทำกำไร) หรือ <span style="color:var(--red)">RISK-OFF</span> (พักเงินในตราสารหนี้)</li>
-                <li><b>พระเอก (Top 1):</b> สินทรัพย์ที่ AI ให้น้ำหนักเยอะที่สุดคือเทรนด์หลักของตลาดตอนนี้</li>
-                <li><b>RSI (ความร้อนแรง):</b> ต่ำกว่า 70 = กำลังดี, เกิน 70 = เริ่มแพง, เกิน 80 = ระวังฟองสบู่แตก!</li>
+                <li><b>วิธีปฏิบัติ:</b> เลือกแผนที่ AI แนะนำ แล้ว <b>"ถือยาวๆ ไม่ต้องทำอะไรเลย"</b> จนกว่าอายุจะเปลี่ยนช่วง หรือรับความเสี่ยงได้น้อยลง</li>
+                <li><b>เหมาะกับ:</b> สายลงทุนเน้นความสงบ ไม่อยากปวดหัวตามข่าวตลาด</li>
               </ul>
               
-              <div style="margin-top:1rem;padding-top:1rem;border-top:1px dashed rgba(255,255,255,0.1);">
-                <div style="font-weight:600;color:#fff;margin-bottom:0.5rem;"><i class="fa-solid fa-lightbulb" style="color:var(--yellow)"></i> แผนปฏิบัติการ (Action Plan):</div>
-                <ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.8rem;margin:0;">
-                  <li>
-                    <b style="color:var(--green)">จังหวะเข้าซื้อ (Entry):</b><br>
-                    เมื่อ AI สั่ง <b>RISK-ON</b> และมีสินทรัพย์เสี่ยงขึ้นเป็น Top 1 (โดยที่ RSI อยู่ช่วง 50-65)<br>
-                    👉 <i>ให้เปลี่ยนแผนการลงทุนตามสัดส่วนที่ AI แนะนำทันที</i>
-                  </li>
-                  <li>
-                    <b style="color:var(--yellow)">จังหวะถือรอ (Hold):</b><br>
-                    ตราบใดที่สินทรัพย์ตัวเดิมยังเป็น Top 1-2 แม้ RSI จะเกิน 70 ก็ยังไม่ต้องรีบขาย<br>
-                    👉 <i>ให้ปล่อยกำไรไหลไปเรื่อยๆ (Let Profit Run)</i>
-                  </li>
-                  <li>
-                    <b style="color:var(--red)">จังหวะขายทำกำไร (Take Profit):</b><br>
-                    เมื่อ AI สั่ง <b>RISK-OFF</b> หรือสินทรัพย์ที่เราถืออยู่ "หลุดโผ" จากหน้าจอ (เทรนด์จบ)<br>
-                    👉 <i>ให้โยกเงินทั้งหมดกลับเข้า "แผนเงินฝาก/ตราสารหนี้ระยะสั้น" เพื่อล็อกกำไรเก็บเข้ากระเป๋าทันที!</i>
-                  </li>
-                </ul>
-              </div>
+              <!-- Tactical -->
+              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-bolt" style="color:var(--accent)"></i> 2. โหมดจับจังหวะตลาด (Tactical)</div>
+              <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+                <li><b>เป้าหมาย:</b> เกาะเทรนด์ขาขึ้นรอบ 2-3 เดือน (Let Profit Run)</li>
+                <li><b>วิธีเข้าซื้อ (Entry):</b> ซื้อตามสัดส่วนเมื่อ AI ประกาศ <span style="color:var(--green)">RISK-ON</span> และมีสินทรัพย์นั้นติดโผ Top 2</li>
+                <li><b>วิธีขาย (Exit):</b> ถือไปเรื่อยๆ จนกว่า AI จะสั่ง <span style="color:var(--red)">RISK-OFF</span> (หนีเข้าตราสารหนี้) หรือสินทรัพย์นั้นหลุดโผจากหน้าจอ</li>
+              </ul>
+              
+              <!-- Sniper -->
+              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-crosshairs" style="color:var(--green)"></i> 3. โหมดสไนเปอร์ (Sniper)</div>
+              <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+                <li><b>เป้าหมาย:</b> สวิงเทรดระยะสั้น (14 วัน) หาจังหวะเด้งของของถูก (Oversold Bounce)</li>
+                <li><b>วิธีปฏิบัติ (Action):</b> เข้าทำกำไรอย่างรวดเร็วเมื่อ AI ขึ้นป้าย "จุดพลุ Oversold Bounce"</li>
+                <li><b>ข้อควรระวัง:</b> โหมดนี้ <b style="color:var(--red)">ต้องไว!</b> ถ้าระบบแนะนำให้ซื้อ ห้ามลังเล และถ้ากำไรพอใจหรือระบบสั่งเลิก ต้องรีบหนีกลับเข้าเงินฝากทันที ห้ามแช่ยาวเด็ดขาด!</li>
+                <li><i>* ทริคลับสายซิ่ง: หากเลือกระดับความเสี่ยง "สูงมาก" AI จะปลดล็อคลิมิตให้ลุยสินทรัพย์เสี่ยงได้ 100% เต็ม (ไม่มีเงินฝากเป็นเบาะรองรับ)</i></li>
+              </ul>
             </div>
           </details>
           <div class="result-card" id="recCard">
             <div id="recTitle" style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>
             <div class="plan-name" id="recPlanName" style="margin:.5rem 0">—</div>
             <div style="font-size:.9rem;margin-top:.5rem">
-              <span style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i> CAGR คาดหวัง: <b id="recCagr">—</b>%/ปี</span>
+              <span style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i> <span id="cagrLabel">CAGR คาดหวัง</span>: <b id="recCagr">—</b>%/ปี</span>
               &nbsp;&nbsp;
               <span style="color:var(--yellow)"><i class="fa-solid fa-triangle-exclamation"></i> MDD: <b id="recMdd">—</b>%</span>
             </div>
@@ -517,7 +515,7 @@
           <div class="mc-stat"><div class="label">กรณีกลาง (P50)</div><div class="value" id="mcP50" style="color:var(--green)">—</div></div>
           <div class="mc-stat"><div class="label">กรณีดี (P75)</div><div class="value" id="mcP75" style="color:var(--cyan)">—</div></div>
           <div class="mc-stat"><div class="label">กรณีดีมาก (P90)</div><div class="value" id="mcP90" style="color:var(--accent)">—</div></div>
-          <div class="mc-stat" style="border:1px solid rgba(16,185,129,0.3)"><div class="label">อัตราสำเร็จ</div><div class="value" id="mcSuccess" style="color:var(--green)">—</div></div>
+          <div class="mc-stat" style="border:1px solid rgba(16,185,129,0.3)"><div class="label" title="โอกาสที่เงินรวมจะโตชนะเงินเฟ้อสะสม">โอกาสชนะเงินเฟ้อ</div><div class="value" id="mcSuccess" style="color:var(--green)">—</div></div>
         </div>
       </div>
     </div>
@@ -647,7 +645,7 @@
     'แผนตราสารหนี้', 'แผนหุ้นไทย', 'แผนทองคำ',
     'แผนหุ้นต่างประเทศ', 'แผนตราสารหนี้ต่างประเทศ'
   ];
-  const RF = 0.025;
+  let RF = 0.025; // Default, dynamically updated in computeAllMetrics
   
   let allData = null;
   let planMetrics = [];
@@ -760,7 +758,7 @@
   }
   function calcMACD(navArray) {
     const { values } = cleanNavSeries(navArray);
-    if (values.length < 26) return { hist: 0 };
+    if (values.length < 60) return { hist: 0, isUnreliable: true };
     const ema12 = calcEMA(values, 12);
     const ema26 = calcEMA(values, 26);
     const macdLine = [];
@@ -832,13 +830,17 @@
   function calcCovMatrix(allReturns) {
     const n = allReturns.length;
     const matrix = Array.from({length:n}, () => Array(n).fill(0));
+    
+    // === FIX: Use Common Period to ensure Covariance Matrix is PSD ===
+    const minLen = Math.max(2, Math.min(...allReturns.map(r => r.length)));
+    const commonReturns = allReturns.map(r => r.slice(-minLen));
+
     for (let i = 0; i < n; i++) {
       for (let j = 0; j <= i; j++) {
-        const ri = allReturns[i], rj = allReturns[j];
-        const len = Math.min(ri.length, rj.length);
+        const ri = commonReturns[i], rj = commonReturns[j];
         let cov = 0, count = 0, sumI = 0, sumJ = 0;
         
-        for (let k = 0; k < len; k++) {
+        for (let k = 0; k < minLen; k++) {
           if (ri[k] !== null && rj[k] !== null) {
             sumI += ri[k];
             sumJ += rj[k];
@@ -849,7 +851,7 @@
         if (count > 1) {
           const meanI = sumI / count;
           const meanJ = sumJ / count;
-          for (let k = 0; k < len; k++) {
+          for (let k = 0; k < minLen; k++) {
             if (ri[k] !== null && rj[k] !== null) {
               cov += (ri[k] - meanI) * (rj[k] - meanJ);
             }
@@ -887,6 +889,23 @@
     const allReturns = [];
     const dates = data.fullDates || data.dates;
     
+    // === FIX #12: Dynamic Risk-Free Rate from Safe Asset ===
+    const safePlanData = data.plans.find(p => {
+        const name = p.label || p.key || "";
+        return name.includes("ระยะสั้น") || name.includes("เงินฝาก");
+    });
+    if (safePlanData) {
+        const nav = safePlanData.fullData || safePlanData.data;
+        if (nav && nav.length >= 252) {
+            const { values } = cleanNavSeries(nav);
+            if (values.length >= 252) {
+                const years = values.length / 252;
+                const safeCagr = Math.pow(values[values.length - 1] / values[0], 1 / years) - 1;
+                if (safeCagr > 0 && safeCagr < 0.05) RF = safeCagr;
+            }
+        }
+    }
+
     data.plans.forEach(plan => {
       const nav = plan.fullData || plan.data;
       if (!nav || nav.length < 10) { allReturns.push([]); return; }
@@ -986,29 +1005,22 @@
     return w;
   }
   function safeMomentum(navArray, lookback) {
-    if (!allData || !allData.dates) return null;
-    const dates = allData.dates;
-    const latestDate = new Date(dates[dates.length - 1]);
-    const targetDate = new Date(latestDate.getTime() - (lookback * 24 * 60 * 60 * 1000));
-    let startIndex = 0;
-    for (let i = dates.length - 1; i >= 0; i--) {
-      if (new Date(dates[i]) <= targetDate) { startIndex = i; break; }
-    }
-    const windowNav = navArray.slice(startIndex);
-    const { values } = cleanNavSeries(windowNav);
+    // === FIX: Clean NAV series FIRST, then slice exactly `lookback` trading days ===
+    const { values } = cleanNavSeries(navArray);
     if (values.length < 2) return null;
     
-    // === UPGRADE: Linear Regression Slope (uses ALL data points, not just 2) ===
-    // Normalize NAV to start at 1.0, then fit OLS regression line
-    // Slope represents annualized trend strength, robust against single-day noise
-    const n = values.length;
-    if (n < 5) return (values[n - 1] / values[0]) - 1; // fallback for tiny windows
+    const windowValues = values.slice(-lookback);
+    const n = windowValues.length;
+    if (n < 2) return null;
     
-    const base = values[0];
+    // === UPGRADE: Linear Regression Slope (uses ALL data points, not just 2) ===
+    if (n < 5) return (windowValues[n - 1] / windowValues[0]) - 1; // fallback for tiny windows
+    
+    const base = windowValues[0];
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
     for (let i = 0; i < n; i++) {
       const x = i;
-      const y = values[i] / base; // normalize to 1.0
+      const y = windowValues[i] / base; // normalize to 1.0
       sumX += x;
       sumY += y;
       sumXY += x * y;
@@ -1080,12 +1092,14 @@
   }
   
   function generateRecommendation(age, riskTolerance, style) {
+    if (style === 'sniper') return generateSniperRecommendation(age, riskTolerance);
     if (style === 'tactical') return generateTacticalRecommendation(age, riskTolerance);
     
     const baseEquityTarget = getEquityTarget(age);
     const maxDD = riskTolerance / 100;
     const riskMultiplier = { 5: 0.3, 10: 0.6, 20: 1.0, 35: 1.2, 50: 1.5 }[riskTolerance] || 1.0;
-    const equityTarget = Math.min(0.85, baseEquityTarget * riskMultiplier);
+    const maxEquity = riskTolerance >= 50 ? 1.0 : 0.85; // Unlock 100% for very high risk
+    const equityTarget = Math.min(maxEquity, baseEquityTarget * riskMultiplier);
     
     const yearsToRetire = Math.max(1, 60 - age);
     
@@ -1196,6 +1210,7 @@
     
     recommendation.models = generateThreeModels(riskTolerance);
     recommendation.yearsToRetire = yearsToRetire;
+    if (typeof equityTarget !== 'undefined') recommendation.equityTarget = equityTarget;
     return recommendation;
   }
   
@@ -1289,19 +1304,149 @@
         name: m.name, weight: weights[eligible.indexOf(m)], color: m.color
       })).filter(a => a.weight > 0).sort((a, b) => b.weight - a.weight);
 
-      return { ...mod, cagr: pCAGR, vol: pVol, mdd: pMDD, sharpe: calcSharpe(pCAGR, pVol), allocation };
+      const isHighRisk = Math.abs(pMDD) > mod.maxMDD;
+      return { ...mod, cagr: pCAGR, vol: pVol, mdd: pMDD, sharpe: calcSharpe(pCAGR, pVol), allocation, isHighRisk };
     });
   }
   
-
-  function generateTacticalRecommendation(age, riskTolerance) {
+  function generateSniperRecommendation(age, riskTolerance) {
     const yearsToRetire = Math.max(1, 60 - age);
-    const LOOKBACK = 42; 
+    const LOOKBACK = 14; 
     
     // 1. Calculate Risk-Adjusted Equity Target
     const baseEquityTarget = getEquityTarget(age);
     const riskMultiplier = { 5: 0.3, 10: 0.6, 20: 1.0, 35: 1.2, 50: 1.5 }[riskTolerance] || 1.0;
-    const equityTarget = Math.min(0.85, baseEquityTarget * riskMultiplier);
+    const maxEquity = riskTolerance >= 50 ? 1.0 : 0.85;
+    const equityTarget = Math.min(maxEquity, baseEquityTarget * riskMultiplier);
+    const safeTarget = 1 - equityTarget;
+    
+    const momentumScores = [];
+    planMetrics.forEach((m, i) => {
+      if (m.nav.length > LOOKBACK) {
+        const mom = safeMomentum(m.nav, LOOKBACK);
+        if (mom !== null) {
+          const rsi = calcRSI(m.nav, 14);
+          let adjustedMom = mom;
+          
+          if (adjustedMom > 0) {
+            // Sniper Logic: Buy the Dip / Mean Reversion Boost
+            if (rsi < 45) adjustedMom *= 1.5; // Bonus for recovering from oversold
+            if (rsi > 75) adjustedMom *= 0.5; // Penalty for chasing tops
+          }
+          momentumScores.push({ plan: m, momentum: adjustedMom, rawMomentum: mom, rsi: rsi, isOB: rsi > 75, index: i, vol: m.vol });
+        }
+      }
+    });
+    
+    const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.momentum - a.momentum);
+    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น") && p.isMixable) || planMetrics.find(p => p.name.includes("ตราสารหนี้") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
+    
+    const riskyMixable = mixable.filter(m => m.plan.name !== safePlanObj.name);
+    
+    let recommendation;
+    const bestRisky = riskyMixable[0];
+    
+    // Threshold for sniper is very low, any positive bounce is considered
+    if (!bestRisky || bestRisky.momentum <= 0.001) {
+      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isSniper: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ WAIT (Wait & See):</span> ตลาดยังไม่มีจังหวะเด้งที่ชัดเจน แนะนำถือสินทรัพย์ปลอดภัย 100% เพื่อรอกระสุนนัดต่อไป" };
+    } else {
+      const topPositive = riskyMixable.filter(m => m.momentum > 0).slice(0, 3);
+      let allocMap = new Map();
+      
+      allocMap.set(safePlanObj.name, { plan: safePlanObj, weight: safeTarget });
+      
+      const sumMomSq = topPositive.reduce((a,b) => a + (b.momentum * b.momentum), 0);
+      let rsiMsg = [];
+      topPositive.forEach(m => {
+         const satelliteWeight = equityTarget * ((m.momentum * m.momentum) / sumMomSq);
+         if (allocMap.has(m.plan.name)) {
+            allocMap.get(m.plan.name).weight += satelliteWeight;
+         } else {
+            allocMap.set(m.plan.name, { plan: m.plan, weight: satelliteWeight });
+         }
+         if (m.rsi < 45) rsiMsg.push(`${m.plan.name}`);
+      });
+      
+      // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
+      const maxGold = 0.25;
+      if (allocMap.has('แผนทองคำ') && allocMap.get('แผนทองคำ').weight > maxGold) {
+        const excess = allocMap.get('แผนทองคำ').weight - maxGold;
+        allocMap.get('แผนทองคำ').weight = maxGold;
+        
+        let bestSpilloverTarget = null;
+        let highestMom = -Infinity;
+        topPositive.forEach(m => {
+          if (m.plan.name !== 'แผนทองคำ' && m.momentum > highestMom) {
+            highestMom = m.momentum;
+            bestSpilloverTarget = m.plan.name;
+          }
+        });
+        
+        if (bestSpilloverTarget) {
+          if (allocMap.has(bestSpilloverTarget)) allocMap.get(bestSpilloverTarget).weight += excess;
+          else allocMap.set(bestSpilloverTarget, { plan: topPositive.find(m => m.plan.name === bestSpilloverTarget).plan, weight: excess });
+        } else {
+          allocMap.get(safePlanObj.name).weight += excess; // fallback to safe asset
+        }
+      }
+      
+      let finalAlloc = Array.from(allocMap.values()).filter(a => a.weight >= 0.01);
+      const totalW = finalAlloc.reduce((sum, a) => sum + a.weight, 0);
+      finalAlloc = finalAlloc.map(a => ({
+          plan: a.plan, name: a.plan.name, color: a.plan.color, weight: a.weight / totalW,
+          cagr: a.plan.cagr, vol: a.plan.vol, mdd: a.plan.mdd, cvar: a.plan.cvar
+      }));
+      
+      let portCAGR = 0, portVol2 = 0;
+      finalAlloc.forEach(a => { portCAGR += a.weight * a.cagr; });
+      for (let i = 0; i < finalAlloc.length; i++) {
+          const idxI = planMetrics.indexOf(finalAlloc[i].plan);
+          for (let j = 0; j < finalAlloc.length; j++) {
+              const idxJ = planMetrics.indexOf(finalAlloc[j].plan);
+              if (idxI >= 0 && idxJ >= 0) portVol2 += finalAlloc[i].weight * finalAlloc[j].weight * covarianceMatrix[idxI][idxJ];
+          }
+      }
+      const portVol = Math.sqrt(Math.max(portVol2, 0));
+      
+      const tacPlans = finalAlloc.map(a => a.plan);
+      const tacWeights = finalAlloc.map(a => a.weight);
+      const blendedTac = buildBlendedNav(tacWeights, tacPlans);
+      let portMDD = 0, portCVaR = 0;
+      if (blendedTac.nav && blendedTac.nav.length >= 10) {
+          portMDD = calcMaxDrawdown(blendedTac.nav);
+          portCVaR = calcCVaR95(blendedTac.returns);
+      } else {
+          finalAlloc.forEach(a => { portMDD += a.weight * a.mdd; portCVaR += a.weight * (a.cvar||0); });
+      }
+
+      let msg = `<span style='color:var(--accent);font-weight:bold;'>🎯 SNIPER-ON (Swing Trade):</span> พบสัญญาณฟื้นตัวระยะสั้น (14 วัน) เน้นเข้าเร็วออกเร็ว`;
+      if (rsiMsg.length > 0) msg += `<br><span style="color:var(--green);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-arrow-trend-up"></i> <b>จุดพลุ Oversold Bounce:</b> ${rsiMsg.join(', ')}</span>`;
+      else msg += `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> เกาะกระแสความแรง (Pure Momentum)</span>`;
+      
+      recommendation = {
+        type: 'mix', allocation: finalAlloc, metrics: { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: calcSharpe(portCAGR, portVol), cvar: portCVaR },
+        label: "แผนผสม Sniper (Fast Swing)", isSniper: true, tacticalMsg: msg
+      };
+    }
+    recommendation.models = generateThreeModels(riskTolerance);
+    recommendation.yearsToRetire = yearsToRetire;
+    return recommendation;
+  }
+
+  function generateTacticalRecommendation(age, riskTolerance) {
+    const yearsToRetire = Math.max(1, 60 - age);
+    
+    // === FIX #14: Dynamic Tactical Risk Parameters ===
+    // High risk (>=35) uses shorter lookback (2 months) to ride trends quickly.
+    // Low/Medium risk (<=20) uses longer lookback (3 months) to avoid noise.
+    const isHighRisk = riskTolerance >= 35;
+    const LOOKBACK = isHighRisk ? 42 : 63; 
+    
+    // 1. Calculate Risk-Adjusted Equity Target
+    const baseEquityTarget = getEquityTarget(age);
+    const riskMultiplier = { 5: 0.3, 10: 0.6, 20: 1.0, 35: 1.2, 50: 1.5 }[riskTolerance] || 1.0;
+    const maxEquity = riskTolerance >= 50 ? 1.0 : 0.85;
+    const equityTarget = Math.min(maxEquity, baseEquityTarget * riskMultiplier);
     const safeTarget = 1 - equityTarget;
     
     const momentumScores = [];
@@ -1314,35 +1459,46 @@
           let adjustedMom = mom;
           if (rsi > 70 && adjustedMom > 0) {
             isOB = true;
-            let penalty = rsi > 80 ? 0.30 : 0.15; // softened: don't kill strong trends
-            adjustedMom = adjustedMom * (1 - penalty);
+            if (!isHighRisk) {
+                // Low/Medium risk: Penalize overbought to prevent drawdowns
+                let penalty = rsi > 80 ? 0.30 : 0.15; // softened: don't kill strong trends
+                adjustedMom = adjustedMom * (1 - penalty);
+            }
+            // If High Risk, no penalty is applied (0%). Let it ride the trend!
           }
-          momentumScores.push({ plan: m, momentum: adjustedMom, rawMomentum: mom, rsi: rsi, isOB: isOB, index: i });
+          // === FIX: Trend Sharpe = momentum / volatility ===
+          const trendSharpe = m.vol > 0 ? (adjustedMom / m.vol) : 0;
+          momentumScores.push({ plan: m, momentum: adjustedMom, rawMomentum: mom, trendSharpe: trendSharpe, rsi: rsi, isOB: isOB, index: i, vol: m.vol });
         }
       }
     });
     
-    const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.momentum - a.momentum);
+    // === FIX #15: High Risk uses pure momentum to avoid punishing high-volatility assets like Gold/Foreign Equity ===
+    const sortMetric = isHighRisk ? 'momentum' : 'trendSharpe';
+    const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b[sortMetric] - a[sortMetric]);
     const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น") && p.isMixable) || planMetrics.find(p => p.name.includes("ตราสารหนี้") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
     
-    let recommendation;
-    const bestMixable = mixable[0];
+    // Filter out the safe asset from satellite selection
+    const riskyMixable = mixable.filter(m => m.plan.name !== safePlanObj.name);
     
-    if (!bestMixable || bestMixable.momentum <= 0.002) {
-      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ RISK-OFF:</span> ตลาดช่วง 2 เดือนซบเซา/ติดลบ แนะนำพักเงินในสินทรัพย์ปลอดภัย 100%" };
+    let recommendation;
+    const bestRisky = riskyMixable[0];
+    
+    // === FIX #10: Use dynamic threshold (momentum > 0.005 for high risk, trendSharpe > 0.05 for low risk) ===
+    const riskOnThreshold = isHighRisk ? 0.005 : 0.05;
+    if (!bestRisky || bestRisky[sortMetric] <= riskOnThreshold) {
+      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ RISK-OFF:</span> ตลาดช่วง 2-3 เดือนซบเซา/ผันผวนสูง แนะนำพักเงินในสินทรัพย์ปลอดภัย 100%" };
     } else {
-      const topPositive = mixable.filter(m => m.momentum > 0).slice(0, 3);
+      const topPositive = riskyMixable.filter(m => m[sortMetric] > 0).slice(0, 3);
       let allocMap = new Map();
       
       // Assign core safe weight
       allocMap.set(safePlanObj.name, { plan: safePlanObj, weight: safeTarget });
       
-      // Assign satellite weights using Power Tilt (momentum²)
-      // This concentrates ~70-80% of equity budget on Top 1 (strongest trend)
-      // while keeping Top 2-3 as small diversifiers
-      const sumMomSq = topPositive.reduce((a,b) => a + b.momentum * b.momentum, 0);
+      // === FIX #9: Assign satellite weights using dynamic metric ===
+      const sumMomSq = topPositive.reduce((a,b) => a + (b[sortMetric] * b[sortMetric]), 0);
       topPositive.forEach(m => {
-         const satelliteWeight = equityTarget * (m.momentum * m.momentum / sumMomSq);
+         const satelliteWeight = equityTarget * ((m[sortMetric] * m[sortMetric]) / sumMomSq);
          if (allocMap.has(m.plan.name)) {
             allocMap.get(m.plan.name).weight += satelliteWeight;
          } else {
@@ -1435,14 +1591,14 @@
     return recommendation;
   }
   
-  function monteCarloSim(balance, salary, memberRate, salaryGrowth, years, mu, sigma, numSims = 10000, startAge = 38) {
+  function monteCarloSim(balance, salary, memberRate, salaryGrowth, years, mu, sigma, numSims = 10000, startAge = 38, initialEqTarget = null) {
     const paths = [];
     const govRate = document.getElementById('isPre1997').value === 'yes' ? 0.05 : 0.03;
     
-    // === FIX #9: Glide Path — adjust mu/sigma each year based on equity target ===
+    // === FIX: Glide Path — adjust mu/sigma each year based on equity target ===
     // At startAge the user has equityRatio0; at age 60 it should drop to ~10%
     // mu and sigma scale linearly with the equity ratio relative to the initial ratio
-    const eqRatio0 = getEquityTarget(startAge);
+    const eqRatio0 = initialEqTarget !== null ? initialEqTarget : getEquityTarget(startAge);
     // Safe asset assumptions (cash/bond-like floor)
     const safeMu = 0.02;   // ~2% return for pure bonds/deposit
     const safeSigma = 0.02; // ~2% vol for pure bonds/deposit
@@ -1481,8 +1637,19 @@
       result.p75.push(vals[Math.floor(numSims * 0.75)]);
       result.p90.push(vals[Math.floor(numSims * 0.90)]);
     }
-    result.paths = paths; // Attach paths to calculate success rate later based on targetBalance
-    result.successRate = paths.filter(p => p[p.length-1] > balance).length / numSims;
+    
+    // === FIX: Make Success Rate meaningful (Probability of Beating Inflation) ===
+    let totalInflatedPrincipal = balance * Math.pow(1.03, years);
+    let tempCurAnnualS = salary * 12;
+    for (let y = 0; y < years; y++) {
+       const yearsRemaining = years - y;
+       totalInflatedPrincipal += (tempCurAnnualS * (memberRate + govRate)) * Math.pow(1.03, yearsRemaining);
+       tempCurAnnualS = tempCurAnnualS * (1 + salaryGrowth);
+    }
+    
+    result.paths = paths;
+    result.targetBalance = totalInflatedPrincipal;
+    result.successRate = paths.filter(p => p[p.length-1] >= totalInflatedPrincipal).length / numSims;
     return result;
   }
   
@@ -1529,7 +1696,9 @@
   function renderRecommendation(rec, balance, salary, memberRate, salaryGrowth, mcResult) {
     const m = rec.type === 'mix' ? rec.metrics : rec.plan;
     const titleEl = document.getElementById('recTitle');
-    if (rec.isTactical) {
+    if (rec.isSniper) {
+      titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-crosshairs"></i> โหมดสไนเปอร์ (Sniper)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>`;
+    } else if (rec.isTactical) {
       titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-bolt"></i> โหมดจับจังหวะตลาด (Tactical)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>`;
     } else {
       titleEl.innerHTML = `<div style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>`;
@@ -1537,6 +1706,7 @@
     
     document.getElementById('recPlanName').innerText = rec.label;
     document.getElementById('recCagr').innerText = (m.cagr * 100).toFixed(2);
+    document.getElementById('cagrLabel').innerText = (rec.isTactical || rec.isSniper) ? 'สถิติย้อนหลัง (10ปี)' : 'CAGR คาดหวัง';
     document.getElementById('recMdd').innerText = (m.mdd * 100).toFixed(2);
     document.getElementById('recSharpe').innerText = m.sharpe.toFixed(3);
     document.getElementById('recCvar').innerText = (m.cvar * 100).toFixed(2);
@@ -1576,9 +1746,10 @@
               <div style="font-size:1.8rem;filter:drop-shadow(0 4px 6px ${glowColor});line-height:1;">${mod.emoji}</div>
               <div style="font-weight:700;font-size:0.9rem;letter-spacing:0.5px;margin-top:0.4rem;">${mod.name}</div>
               ${recBadge}
+              ${mod.isHighRisk ? '<div style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,0.15);padding:2px 8px;border-radius:10px;margin-top:.3rem;font-weight:600">⚠️ เสี่ยงเกินเกณฑ์</div>' : ''}
             </div>
             <div style="flex:1;font-size:.7rem;color:var(--muted);line-height:1.5;background:rgba(0,0,0,0.2);padding:0.5rem 0.6rem;border-radius:6px;">
-              <div style="display:flex;justify-content:space-between"><span>CAGR:</span> <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
+              <div style="display:flex;justify-content:space-between"><span>CAGR(10y):</span> <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
               <div style="display:flex;justify-content:space-between"><span>Vol:</span> <span>${(mod.vol*100).toFixed(1)}%</span></div>
               <div style="display:flex;justify-content:space-between"><span>MDD:</span> <span class="negative">${(mod.mdd*100).toFixed(1)}%</span></div>
             </div>
@@ -1609,8 +1780,15 @@
     const startServiceAge = parseInt(document.getElementById('startServiceAge').value) || 25;
     const serviceYears = Math.min(40, 60 - startServiceAge); // Cap at 40 years max
     const finalMonthlySalary = finalSalary; // Already monthly
-    // สูตรบำนาญ: (เงินเดือนสุดท้าย x อายุราชการ) / 50 ไม่เกิน 70% ของเงินเดือนสุดท้าย
-    const pensionMonthly = Math.min(finalMonthlySalary * serviceYears / 50, finalMonthlySalary * 0.70);
+    
+    // สูตรบำนาญ: (เงินเดือนเฉลี่ย 60 เดือนสุดท้าย x อายุราชการ) / 50 ไม่เกิน 70%
+    let sum5Years = 0;
+    for (let i = 0; i < 5; i++) {
+        const y = Math.max(0, rec.yearsToRetire - i);
+        sum5Years += salary * Math.pow(1 + salaryGrowth, y);
+    }
+    const avg60MonthlySalary = sum5Years / 5;
+    const pensionMonthly = Math.min(avg60MonthlySalary * serviceYears / 50, avg60MonthlySalary * 0.70);
     const pensionAnnual = pensionMonthly * 12;
     // ปรับเงินเฟ้อเช่นกัน (บำนาญจริงๆ ไม่ปรับตามเงินเฟ้อ แต่เพื่อเทียบค่าแท้จริง)
     const adjustedPensionAnnual = adjustInflation ? pensionAnnual / inflationFactor : pensionAnnual;
@@ -1629,7 +1807,7 @@
     // Target Balance = Target GPF Income / 0.04 (withdrawal rate)
     const targetGPFIncome = Math.max(0, adjustedAnnualExpense - adjustedPensionAnnual);
     const targetBalanceNominal = adjustInflation ? (targetGPFIncome * inflationFactor) / 0.04 : targetGPFIncome / 0.04;
-    mcResult.targetBalance = targetBalanceNominal;
+    // Removed: mcResult.targetBalance = targetBalanceNominal; (Using Beating Inflation instead)
     
     // Show breakdown
     const gpfPortion = adjustedAnnualExpense > 0 ? (annualWithdrawalGPF / adjustedAnnualExpense * 100).toFixed(1) : '0';
@@ -1648,7 +1826,14 @@
     ctx.scale(2, 2);
     
     const years = mcResult.years;
-    const allVals = [...mcResult.p10, ...mcResult.p90];
+    const factor = (i) => adjustInflation ? Math.pow(1 + inflationRate, i) : 1;
+    const rP10 = mcResult.p10.map((v, i) => v / factor(i));
+    const rP25 = mcResult.p25.map((v, i) => v / factor(i));
+    const rP50 = mcResult.p50.map((v, i) => v / factor(i));
+    const rP75 = mcResult.p75.map((v, i) => v / factor(i));
+    const rP90 = mcResult.p90.map((v, i) => v / factor(i));
+
+    const allVals = [...rP10, ...rP90];
     const maxVal = Math.max(...allVals);
     const minVal = Math.min(...allVals);
     const padL = 70, padR = 20, padT = 20, padB = 35;
@@ -1659,6 +1844,8 @@
     
     ctx.clearRect(0, 0, W, H);
     
+    const renderBands = { p10: rP10, p25: rP25, p50: rP50, p75: rP75, p90: rP90 };
+    
     const bands = [
       { top: 'p90', bot: 'p75', color: 'rgba(139,92,246,0.08)' },
       { top: 'p75', bot: 'p50', color: 'rgba(59,130,246,0.12)' },
@@ -1667,8 +1854,8 @@
     ];
     bands.forEach(b => {
       ctx.beginPath();
-      for (let i = 0; i < years; i++) ctx.lineTo(xScale(i), yScale(mcResult[b.top][i]));
-      for (let i = years-1; i >= 0; i--) ctx.lineTo(xScale(i), yScale(mcResult[b.bot][i]));
+      for (let i = 0; i < years; i++) ctx.lineTo(xScale(i), yScale(renderBands[b.top][i]));
+      for (let i = years-1; i >= 0; i--) ctx.lineTo(xScale(i), yScale(renderBands[b.bot][i]));
       ctx.closePath();
       ctx.fillStyle = b.color;
       ctx.fill();
@@ -1687,8 +1874,8 @@
       ctx.lineWidth = l.width;
       ctx.strokeStyle = l.color;
       for (let i = 0; i < years; i++) {
-        if (i === 0) ctx.moveTo(xScale(i), yScale(mcResult[l.key][i]));
-        else ctx.lineTo(xScale(i), yScale(mcResult[l.key][i]));
+        if (i === 0) ctx.moveTo(xScale(i), yScale(renderBands[l.key][i]));
+        else ctx.lineTo(xScale(i), yScale(renderBands[l.key][i]));
       }
       ctx.stroke();
       ctx.setLineDash([]);
@@ -1719,11 +1906,11 @@
     ctx.fillText('อายุ 60', xScale(years - 1), H - 8);
     
     const last = years - 1;
-    document.getElementById('mcP10').innerText = fmtM(mcResult.p10[last]) + ' ฿';
-    document.getElementById('mcP25').innerText = fmtM(mcResult.p25[last]) + ' ฿';
-    document.getElementById('mcP50').innerText = fmtM(mcResult.p50[last]) + ' ฿';
-    document.getElementById('mcP75').innerText = fmtM(mcResult.p75[last]) + ' ฿';
-    document.getElementById('mcP90').innerText = fmtM(mcResult.p90[last]) + ' ฿';
+    document.getElementById('mcP10').innerText = fmtM(renderBands.p10[last]) + ' ฿';
+    document.getElementById('mcP25').innerText = fmtM(renderBands.p25[last]) + ' ฿';
+    document.getElementById('mcP50').innerText = fmtM(renderBands.p50[last]) + ' ฿';
+    document.getElementById('mcP75').innerText = fmtM(renderBands.p75[last]) + ' ฿';
+    document.getElementById('mcP90').innerText = fmtM(renderBands.p90[last]) + ' ฿';
     document.getElementById('mcSuccess').innerText = (mcResult.successRate * 100).toFixed(1) + '%';
   }
   
@@ -2053,8 +2240,19 @@
     loadText.innerText = 'PHASE 3: Monte Carlo Simulation (10,000 paths)...';
     await delay(300);
     
-    const m = analysisResult.type === 'mix' ? analysisResult.metrics : analysisResult.plan;
-    const mcResult = monteCarloSim(balance, salary, memberRate, salaryGrowth, analysisResult.yearsToRetire, m.cagr, m.vol, 10000, age);
+    let m = analysisResult.type === 'mix' ? analysisResult.metrics : analysisResult.plan;
+    let initialEq = analysisResult.equityTarget !== undefined ? analysisResult.equityTarget : (m.eqTarget !== undefined ? m.eqTarget : getEquityTarget(age));
+    
+    // === FIX #13: Tactical Monte Carlo Baseline ===
+    // If tactical, use the user's natural Strategic baseline for the 22-year Monte Carlo projection
+    // because tactical portfolios are short-term and shouldn't be projected for 22 years.
+    if (analysisResult.isTactical || analysisResult.isSniper) {
+        const strategicBaseline = generateRecommendation(age, risk, 'mixed');
+        m = strategicBaseline.type === 'mix' ? strategicBaseline.metrics : strategicBaseline.plan;
+        initialEq = strategicBaseline.equityTarget !== undefined ? strategicBaseline.equityTarget : (m.eqTarget !== undefined ? m.eqTarget : getEquityTarget(age));
+    }
+    
+    const mcResult = monteCarloSim(balance, salary, memberRate, salaryGrowth, analysisResult.yearsToRetire, m.cagr, m.vol, 10000, age, initialEq);
     
     progress.style.width = '80%';
     loadText.innerText = 'PHASE 4: สร้างกราฟและ Heatmap...';
@@ -2062,9 +2260,7 @@
     
     renderMetricsTable();
     renderRecommendation(analysisResult, balance, salary, memberRate, salaryGrowth, mcResult);
-    if (mcResult.targetBalance) {
-      mcResult.successRate = mcResult.paths.filter(p => p[p.length-1] >= mcResult.targetBalance).length / mcResult.paths.length;
-    }
+    // Removed successRate override here, now handled dynamically in monteCarloSim
     const adjustInflation = document.getElementById('adjustInflation').checked;
     const inflationRate = 0.03;
     renderMonteCarlo(mcResult, age, adjustInflation, inflationRate);

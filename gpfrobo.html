@@ -2380,7 +2380,12 @@
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message');
         msgDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
-        msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+        
+        // Simple markdown parsing for newlines and **bold** text
+        let formattedText = text.replace(/\n/g, '<br>');
+        formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        msgDiv.innerHTML = formattedText;
         
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -2408,7 +2413,7 @@
         } else {
             // === Cloudflare / External Hosting Mode ===
             // Replace this URL with your actual Google Apps Script Web App URL
-            const scriptUrl = 'https://script.google.com/macros/s/AKfycbzD2HfBen6OR4TO71-FqjbuvPHbVtuo2e00U1VvTR8B3d9ABlgNT8J2ZOEySIG5Momd/exec';
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbzlJ-0h4z96CmQx2Ii3yN3RYdO-V8uh2PpLc9VEnfPfYHZN__oV-Rzy7uWseLT52Whw/exec';
             
             fetch(scriptUrl, {
                 method: 'POST',
@@ -2447,7 +2452,7 @@
 
   <div id="ai-chat-window" class="chat-window hidden">
     <div class="chat-header">
-      <span>ผู้ช่วย AI (Gemini)</span>
+      <span>🤖 GPF Robo-Advisor</span>
       <button id="ai-close-btn" class="close-btn">✖</button>
     </div>
     <div id="ai-chat-messages" class="chat-messages">

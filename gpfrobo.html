@@ -2561,6 +2561,8 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+        window.aiChatHistory = [];
+
     function handleSend() {
         const text = chatInput.value.trim();
         if (!text) return;
@@ -2569,32 +2571,37 @@
         chatInput.value = '';
         appendMessage('ai', '⏳ กำลังประมวลผล...');
         
+        // Prepare history payload (last 6 messages = 3 turns)
+        const historyPayload = window.aiChatHistory.slice(-6);
+        window.aiChatHistory.push({ role: 'user', text: text });
+        
         if (typeof google !== 'undefined' && google.script) {
             google.script.run
               .withSuccessHandler(function(response) {
                   chatMessages.lastChild.remove();
                   appendMessage('ai', response);
+                  window.aiChatHistory.push({ role: 'model', text: response });
               })
               .withFailureHandler(function(error) {
                   chatMessages.lastChild.remove();
                   appendMessage('ai', '❌ เกิดข้อผิดพลาด: ' + error.message);
               })
-              .fetchAiResponse(text);
+              .fetchAiResponse(text, historyPayload);
         } else {
             // === Cloudflare / External Hosting Mode ===
-            // Use GAS_URL from config.js
             const scriptUrl = typeof GAS_URL !== 'undefined' ? GAS_URL : 'https://script.google.com/macros/s/AKfycbzlJ-0h4z96CmQx2Ii3yN3RYdO-V8uh2PpLc9VEnfPfYHZN__oV-Rzy7uWseLT52Whw/exec';
             
             fetch(scriptUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'ai_chat', message: text, deviceId: getDeviceId() })
+                body: JSON.stringify({ action: 'ai_chat', message: text, history: historyPayload, deviceId: getDeviceId() })
             })
             .then(res => res.json())
             .then(data => {
                 chatMessages.lastChild.remove();
                 if (data.response) {
                     appendMessage('ai', data.response);
+                    window.aiChatHistory.push({ role: 'model', text: data.response });
                 } else if (data.error) {
                     appendMessage('ai', '❌ ' + data.error);
                 }
@@ -2770,3 +2777,4 @@
   </style>
 </body>
 </html>
+

@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0d1117">
   <title>GPF Robo</title>
-  <meta name="description" content="à¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢à¸­à¸±à¸ˆà¸‰à¸£à¸´à¸¢à¸°à¸§à¸²à¸‡à¹à¸œà¸™à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™ à¸à¸šà¸‚. à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸žà¸­à¸£à¹Œà¸• à¸„à¸²à¸”à¸à¸²à¸£à¸“à¹Œà¹€à¸‡à¸´à¸™à¹€à¸à¸©à¸µà¸¢à¸“à¸”à¹‰à¸§à¸¢ AI">
+  <meta name="description" content="ระบบผู้ช่วยอัจฉริยะวางแผนการลงทุน กบข. วิเคราะห์พอร์ต คาดการณ์เงินเกษียณด้วย AI">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="favicon.png">
   <meta name="apple-mobile-web-app-title" content="GPF Robo">
@@ -246,72 +246,72 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
-  <div id="demoBanner"><i class="fa-solid fa-triangle-exclamation"></i> à¸à¸³à¸¥à¸±à¸‡à¹ƒà¸Šà¹‰à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ˆà¸³à¸¥à¸­à¸‡ (Demo) à¹€à¸™à¸·à¹ˆà¸­à¸‡à¸ˆà¸²à¸à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¹€à¸‹à¸´à¸£à¹Œà¸Ÿà¹€à¸§à¸­à¸£à¹Œà¹„à¸¡à¹ˆà¹„à¸”à¹‰ â€” à¸•à¸±à¸§à¹€à¸¥à¸‚à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¹€à¸›à¹‡à¸™à¸„à¹ˆà¸²à¸ªà¸¸à¹ˆà¸¡ à¹„à¸¡à¹ˆà¹ƒà¸Šà¹ˆà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ˆà¸£à¸´à¸‡</div>
+  <div id="demoBanner"><i class="fa-solid fa-triangle-exclamation"></i> กำลังใช้ข้อมูลจำลอง (Demo) เนื่องจากเชื่อมต่อเซิร์ฟเวอร์ไม่ได้ — ตัวเลขทั้งหมดเป็นค่าสุ่ม ไม่ใช่ข้อมูลจริง</div>
   <div class="container">
-    <a href="index.html" class="nav-btn" title="à¸à¸¥à¸±à¸šà¸ªà¸¹à¹ˆ Dashboard à¸«à¸¥à¸±à¸"><i class="fa-solid fa-arrow-left"></i></a>
+    <a href="index.html" class="nav-btn" title="กลับสู่ Dashboard หลัก"><i class="fa-solid fa-arrow-left"></i></a>
     
     <header>
       <h1><i class="fa-solid fa-robot"></i> GPF Robo-Wealth</h1>
-      <p class="subtitle">à¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢à¸­à¸±à¸ˆà¸‰à¸£à¸´à¸¢à¸° à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸žà¸­à¸£à¹Œà¸• à¸§à¸²à¸‡à¹à¸œà¸™à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™ à¹à¸¥à¸°à¸„à¸²à¸”à¸à¸²à¸£à¸“à¹Œà¹€à¸‡à¸´à¸™à¹€à¸à¸©à¸µà¸¢à¸“ à¸à¸šà¸‚.</p>
+      <p class="subtitle">ระบบผู้ช่วยอัจฉริยะ วิเคราะห์พอร์ต วางแผนการลงทุน และคาดการณ์เงินเกษียณ กบข.</p>
     </header>
 
     <!-- === TAB NAVIGATION === -->
     <div class="tabs" id="mainTabs">
-      <button class="tab active" data-tab="input" onclick="switchMainTab('input')"><i class="fa-solid fa-sliders"></i> à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸œà¸¹à¹‰à¹ƒà¸Šà¹‰</button>
-      <button class="tab" data-tab="metrics" onclick="switchMainTab('metrics')"><i class="fa-solid fa-chart-bar"></i> Risk Metrics à¸—à¸¸à¸à¹à¸œà¸™</button>
-      <button class="tab" data-tab="recommend" onclick="switchMainTab('recommend')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI à¹à¸™à¸°à¸™à¸³</button>
-      <button class="tab" data-tab="tactical" onclick="switchMainTab('tactical')"><i class="fa-solid fa-bolt"></i> à¸ªà¸±à¸à¸à¸²à¸“à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™</button>
+      <button class="tab active" data-tab="input" onclick="switchMainTab('input')"><i class="fa-solid fa-sliders"></i> ข้อมูลผู้ใช้</button>
+      <button class="tab" data-tab="metrics" onclick="switchMainTab('metrics')"><i class="fa-solid fa-chart-bar"></i> Risk Metrics ทุกแผน</button>
+      <button class="tab" data-tab="recommend" onclick="switchMainTab('recommend')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI แนะนำ</button>
+      <button class="tab" data-tab="tactical" onclick="switchMainTab('tactical')"><i class="fa-solid fa-bolt"></i> สัญญาณระยะสั้น</button>
       <button class="tab" data-tab="montecarlo" onclick="switchMainTab('montecarlo')"><i class="fa-solid fa-chart-area"></i> Monte Carlo</button>
       <button class="tab" data-tab="correlation" onclick="switchMainTab('correlation')"><i class="fa-solid fa-table-cells"></i> Correlation</button>
     </div>
 
-    <!-- â•â•â•â•â•â•â• TAB 1: USER INPUT â•â•â•â•â•â•â• -->
+    <!-- ═══════ TAB 1: USER INPUT ═══════ -->
     <div class="tab-content active" id="tab-input">
       <div class="grid-2">
         <div class="glass animate-in" style="z-index: 10; position: relative;">
-          <div class="section-title"><i class="fa-solid fa-user-gear" style="color:var(--primary)"></i> à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§</div>
+          <div class="section-title"><i class="fa-solid fa-user-gear" style="color:var(--primary)"></i> ข้อมูลส่วนตัว</div>
           <form id="roboForm" onsubmit="event.preventDefault(); runFullAnalysis();">
             <div class="grid-2-mobile" style="margin-bottom:1.5rem">
               <div class="form-group" style="margin-bottom:0">
-                <label><i class="fa-regular fa-user"></i> à¸­à¸²à¸¢à¸¸ (à¸›à¸µ)</label>
-                <input type="number" id="currentAge" required min="20" max="59" value="38" placeholder="à¹€à¸Šà¹ˆà¸™ 35">
+                <label><i class="fa-regular fa-user"></i> อายุ (ปี)</label>
+                <input type="number" id="currentAge" required min="20" max="59" value="38" placeholder="เช่น 35">
               </div>
               <div class="form-group" style="margin-bottom:0">
-                <label><i class="fa-solid fa-user-clock"></i> à¸­à¸²à¸¢à¸¸à¹€à¸£à¸´à¹ˆà¸¡à¸£à¸±à¸šà¸£à¸²à¸Šà¸à¸²à¸£ (à¸›à¸µ)</label>
-                <input type="number" id="startServiceAge" required min="18" max="55" step="1" value="29" title="à¸­à¸²à¸¢à¸¸à¸•à¸­à¸™à¸—à¸µà¹ˆà¸šà¸£à¸£à¸ˆà¸¸à¹€à¸‚à¹‰à¸²à¸£à¸±à¸šà¸£à¸²à¸Šà¸à¸²à¸£">
+                <label><i class="fa-solid fa-user-clock"></i> อายุเริ่มรับราชการ (ปี)</label>
+                <input type="number" id="startServiceAge" required min="18" max="55" step="1" value="29" title="อายุตอนที่บรรจุเข้ารับราชการ">
               </div>
             </div>
             
             <div class="grid-2-mobile" style="margin-bottom:1.5rem">
               <div class="form-group" style="margin-bottom:0">
-                <label><i class="fa-solid fa-coins"></i> à¸¢à¸­à¸” à¸à¸šà¸‚. (à¸šà¸²à¸—)</label>
-                <input type="number" id="currentBalance" required min="0" placeholder="à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”..." readonly>
+                <label><i class="fa-solid fa-coins"></i> ยอด กบข. (บาท)</label>
+                <input type="number" id="currentBalance" required min="0" placeholder="กำลังโหลด..." readonly>
               </div>
               <div class="form-group" style="margin-bottom:0">
-                <label><i class="fa-solid fa-piggy-bank"></i> à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ (à¸šà¸²à¸—)</label>
-                <input type="number" id="currentSalary" required min="1000" placeholder="à¹€à¸Šà¹ˆà¸™ 30000" value="32000">
+                <label><i class="fa-solid fa-piggy-bank"></i> เงินเดือนปัจจุบัน (บาท)</label>
+                <input type="number" id="currentSalary" required min="1000" placeholder="เช่น 30000" value="32000">
               </div>
             </div>
 
             <div class="grid-2-mobile" style="margin-bottom:1.5rem">
               <div class="form-group" style="margin-bottom:0">
-                <label><i class="fa-solid fa-percent"></i> à¸ªà¸°à¸ªà¸¡ (%) <i class="fa-solid fa-wand-magic-sparkles" onclick="showToast('ðŸ’¡ AI Info: à¸«à¸±à¸à¸ªà¸°à¸ªà¸¡ 3% à¸šà¸±à¸‡à¸„à¸±à¸š + à¸­à¸­à¸¡à¹€à¸žà¸´à¹ˆà¸¡à¹„à¸”à¹‰à¸–à¸¶à¸‡ 27% (à¸£à¸§à¸¡à¹€à¸žà¸”à¸²à¸™à¸ªà¸¹à¸‡à¸ªà¸¸à¸” 30%)', 'info')" style="cursor:pointer; color:var(--primary); margin-left:4px;" title="à¸„à¸¥à¸´à¸à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥"></i></label>
-                <input type="number" id="memberContribution" required min="3" max="30" step="1" value="12" title="à¸«à¸±à¸à¸ªà¸°à¸ªà¸¡ 3% à¸šà¸±à¸‡à¸„à¸±à¸š + à¸­à¸­à¸¡à¹€à¸žà¸´à¹ˆà¸¡à¸ªà¸¡à¸±à¸„à¸£à¹ƒà¸ˆà¸ªà¸¹à¸‡à¸ªà¸¸à¸” 27% = à¸£à¸§à¸¡à¹€à¸žà¸”à¸²à¸™ 30%">
+                <label><i class="fa-solid fa-percent"></i> สะสม (%) <i class="fa-solid fa-wand-magic-sparkles" onclick="showToast('💡 AI Info: หักสะสม 3% บังคับ + ออมเพิ่มได้ถึง 27% (รวมเพดานสูงสุด 30%)', 'info')" style="cursor:pointer; color:var(--primary); margin-left:4px;" title="คลิกดูข้อมูล"></i></label>
+                <input type="number" id="memberContribution" required min="3" max="30" step="1" value="12" title="หักสะสม 3% บังคับ + ออมเพิ่มสมัครใจสูงสุด 27% = รวมเพดาน 30%">
               </div>
               <div class="form-group" style="margin-bottom:0">
-                <label><i class="fa-solid fa-arrow-trend-up"></i> à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¸‚à¸¶à¹‰à¸™ (%)</label>
+                <label><i class="fa-solid fa-arrow-trend-up"></i> เงินเดือนขึ้น (%)</label>
                 <input type="number" id="salaryGrowth" required min="0" max="15" step="0.1" value="6.0">
               </div>
             </div>
 
             <div class="form-group" style="margin-bottom:1rem">
-              <label><i class="fa-solid fa-calendar-check"></i> à¸šà¸£à¸£à¸ˆà¸¸à¸£à¸±à¸šà¸£à¸²à¸Šà¸à¸²à¸£</label>
+              <label><i class="fa-solid fa-calendar-check"></i> บรรจุรับราชการ</label>
               <div class="custom-select-wrapper">
                 <div class="custom-select">
-                  <div class="custom-select-trigger"><span style="color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; width:100%; font-size:0.9rem;">à¸«à¸¥à¸±à¸‡ 27 à¸¡à¸µ.à¸„. 40 (à¸ªà¸¡à¸—à¸š 3%)</span> <i class="fa-solid fa-chevron-down" style="flex-shrink:0; margin-left:8px;"></i></div>
+                  <div class="custom-select-trigger"><span style="color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; width:100%; font-size:0.9rem;">หลัง 27 มี.ค. 40 (สมทบ 3%)</span> <i class="fa-solid fa-chevron-down" style="flex-shrink:0; margin-left:8px;"></i></div>
                   <div class="custom-options">
-                    <div class="custom-option selected" data-value="no" style="font-size:0.9rem;">à¸«à¸¥à¸±à¸‡ 27 à¸¡à¸µ.à¸„. 40 (à¸ªà¸¡à¸—à¸š 3%)</div>
-                    <div class="custom-option" data-value="yes" style="font-size:0.9rem;">à¸à¹ˆà¸­à¸™ 27 à¸¡à¸µ.à¸„. 40 (à¸ªà¸¡à¸—à¸š 3% + à¸Šà¸”à¹€à¸Šà¸¢ 2%)</div>
+                    <div class="custom-option selected" data-value="no" style="font-size:0.9rem;">หลัง 27 มี.ค. 40 (สมทบ 3%)</div>
+                    <div class="custom-option" data-value="yes" style="font-size:0.9rem;">ก่อน 27 มี.ค. 40 (สมทบ 3% + ชดเชย 2%)</div>
                   </div>
                 </div>
                 <input type="hidden" id="isPre1997" required value="no">
@@ -321,188 +321,188 @@
             <div class="form-group" style="margin-bottom:1.5rem">
               <label style="cursor:pointer;user-select:none; display:flex; align-items:center;">
                 <input type="checkbox" id="adjustInflation" style="width:auto;margin-right:.5rem;accent-color:var(--primary); flex-shrink:0;">
-                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.9rem;"><i class="fa-solid fa-chart-line"></i> à¸›à¸£à¸±à¸šà¸¥à¸”à¸”à¹‰à¸§à¸¢à¹€à¸‡à¸´à¸™à¹€à¸Ÿà¹‰à¸­ (Real Terms 3%/à¸›à¸µ)</span>
+                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.9rem;"><i class="fa-solid fa-chart-line"></i> ปรับลดด้วยเงินเฟ้อ (Real Terms 3%/ปี)</span>
               </label>
             </div>
             <div class="form-group">
-              <label><i class="fa-solid fa-compass"></i> à¸ªà¹„à¸•à¸¥à¹Œà¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™ (Investment Style)</label>
+              <label><i class="fa-solid fa-compass"></i> สไตล์การลงทุน (Investment Style)</label>
               <div class="custom-select-wrapper">
                 <div class="custom-select">
-                  <div class="custom-select-trigger"><span style="color:#fff"><div style="font-weight:600">ðŸš€ à¸ˆà¸±à¸šà¸ˆà¸±à¸‡à¸«à¸§à¸°à¸•à¸¥à¸²à¸” (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">à¹€à¸¥à¹ˆà¸™à¸£à¸­à¸š à¸«à¸²à¹€à¸—à¸£à¸™à¸”à¹Œà¸‚à¸²à¸‚à¸¶à¹‰à¸™ 2 à¹€à¸”à¸·à¸­à¸™à¸¥à¹ˆà¸²à¸ªà¸¸à¸”</div></span> <i class="fa-solid fa-chevron-down"></i></div>
+                  <div class="custom-select-trigger"><span style="color:#fff"><div style="font-weight:600">🚀 จับจังหวะตลาด (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div></span> <i class="fa-solid fa-chevron-down"></i></div>
                   <div class="custom-options">
-                    <div class="custom-option" data-value="strategic"><div style="font-weight:600">ðŸ›¡ï¸ à¸–à¸·à¸­à¸¢à¸²à¸§ (Buy & Hold)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">à¹€à¸™à¹‰à¸™à¸„à¸§à¸²à¸¡à¹€à¸ªà¸–à¸µà¸¢à¸£ à¹„à¸¡à¹ˆà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸šà¹ˆà¸­à¸¢</div></div>
-                    <div class="custom-option selected" data-value="tactical"><div style="font-weight:600">ðŸš€ à¸ˆà¸±à¸šà¸ˆà¸±à¸‡à¸«à¸§à¸°à¸•à¸¥à¸²à¸” (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">à¹€à¸¥à¹ˆà¸™à¸£à¸­à¸š à¸«à¸²à¹€à¸—à¸£à¸™à¸”à¹Œà¸‚à¸²à¸‚à¸¶à¹‰à¸™ 2 à¹€à¸”à¸·à¸­à¸™à¸¥à¹ˆà¸²à¸ªà¸¸à¸”</div></div>
-                    <div class="custom-option" data-value="sniper"><div style="font-weight:600">ðŸŽ¯ à¹€à¸¥à¹ˆà¸™à¸ªà¸±à¹‰à¸™à¸ªà¸²à¸¢à¸‹à¸´à¹ˆà¸‡ (Sniper)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">à¸ªà¸§à¸´à¸‡à¹€à¸—à¸£à¸” à¸‹à¸·à¹‰à¸­à¸ªà¸§à¸™à¸•à¸­à¸™à¸žà¸±à¸à¸à¸²à¸™ (21 à¸§à¸±à¸™ + Z-score)</div></div>
+                    <div class="custom-option" data-value="strategic"><div style="font-weight:600">🛡️ ถือยาว (Buy & Hold)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เน้นความเสถียร ไม่เปลี่ยนบ่อย</div></div>
+                    <div class="custom-option selected" data-value="tactical"><div style="font-weight:600">🚀 จับจังหวะตลาด (Tactical)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">เล่นรอบ หาเทรนด์ขาขึ้น 2 เดือนล่าสุด</div></div>
+                    <div class="custom-option" data-value="sniper"><div style="font-weight:600">🎯 เล่นสั้นสายซิ่ง (Sniper)</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-weight:400">สวิงเทรด ซื้อสวนตอนพักฐาน (21 วัน + Z-score)</div></div>
                   </div>
                 </div>
                 <input type="hidden" id="investmentStyle" required value="tactical"></div></div><div class="form-group" style="margin-top:1.5rem" id="swapsUsedContainer"><label><i class="fa-solid fa-right-left"></i> ???????????????????????????????????</label><input type="number" id="swapsUsed" min="0" max="12" value="0" placeholder="0-12 ?????">
               </div>
             </div>
             <div class="form-group">
-              <label style="white-space:nowrap"><i class="fa-solid fa-temperature-half"></i> à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸—à¸µà¹ˆà¸£à¸±à¸šà¹„à¸”à¹‰ (Max Drawdown)</label>
+              <label style="white-space:nowrap"><i class="fa-solid fa-temperature-half"></i> ระดับความเสี่ยงที่รับได้ (Max Drawdown)</label>
               <div class="custom-select-wrapper">
                 <div class="custom-select">
-                  <div class="custom-select-trigger"><span style="color:var(--muted)">à¹€à¸¥à¸·à¸­à¸à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡</span> <i class="fa-solid fa-chevron-down"></i></div>
+                  <div class="custom-select-trigger"><span style="color:var(--muted)">เลือกระดับความเสี่ยง</span> <i class="fa-solid fa-chevron-down"></i></div>
                   <div class="custom-options">
-                    <div class="custom-option" data-value="5">ðŸŸ¢ à¸•à¹ˆà¸³à¸¡à¸²à¸ (à¸£à¸±à¸šà¸‚à¸²à¸”à¸—à¸¸à¸™à¹„à¸”à¹‰ â‰¤ 5%)</div>
-                    <div class="custom-option" data-value="10">ðŸ”µ à¸•à¹ˆà¸³ (à¸£à¸±à¸šà¸‚à¸²à¸”à¸—à¸¸à¸™à¹„à¸”à¹‰ â‰¤ 10%)</div>
-                    <div class="custom-option" data-value="20">ðŸŸ¡ à¸›à¸²à¸™à¸à¸¥à¸²à¸‡ (à¸£à¸±à¸šà¸‚à¸²à¸”à¸—à¸¸à¸™à¹„à¸”à¹‰ â‰¤ 20%)</div>
-                    <div class="custom-option" data-value="35">ðŸŸ  à¸ªà¸¹à¸‡ (à¸£à¸±à¸šà¸‚à¸²à¸”à¸—à¸¸à¸™à¹„à¸”à¹‰ â‰¤ 35%)</div>
-                    <div class="custom-option" data-value="50">ðŸ”´ à¸ªà¸¹à¸‡à¸¡à¸²à¸ (à¸£à¸±à¸šà¸‚à¸²à¸”à¸—à¸¸à¸™à¹„à¸”à¹‰ > 35% à¹€à¸™à¹‰à¸™à¹€à¸•à¸´à¸šà¹‚à¸•)</div>
+                    <div class="custom-option" data-value="5">🟢 ต่ำมาก (รับขาดทุนได้ ≤ 5%)</div>
+                    <div class="custom-option" data-value="10">🔵 ต่ำ (รับขาดทุนได้ ≤ 10%)</div>
+                    <div class="custom-option" data-value="20">🟡 ปานกลาง (รับขาดทุนได้ ≤ 20%)</div>
+                    <div class="custom-option" data-value="35">🟠 สูง (รับขาดทุนได้ ≤ 35%)</div>
+                    <div class="custom-option" data-value="50">🔴 สูงมาก (รับขาดทุนได้ > 35% เน้นเติบโต)</div>
                   </div>
                 </div>
                 <input type="hidden" id="riskTolerance" required value="">
               </div>
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top:.5rem">
-              <i class="fa-solid fa-microchip"></i> à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸”à¹‰à¸§à¸¢ AI (à¸„à¸£à¸š 4 Phase)
+              <i class="fa-solid fa-microchip"></i> วิเคราะห์ด้วย AI (ครบ 4 Phase)
             </button>
           </form>
         </div>
 
         <div class="glass animate-in delay-1">
-          <div class="section-title"><i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> à¸à¸Žà¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™ à¸à¸šà¸‚.</div>
+          <div class="section-title"><i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> กฎสัดส่วน กบข.</div>
           <div style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">
-            <p style="margin-bottom:.8rem">à¸à¸šà¸‚. à¸à¸³à¸«à¸™à¸”à¹ƒà¸«à¹‰à¸ªà¸¡à¸²à¸Šà¸´à¸à¹€à¸¥à¸·à¸­à¸à¹à¸œà¸™à¸¥à¸‡à¸—à¸¸à¸™à¹„à¸”à¹‰ 2 à¹à¸šà¸š:</p>
+            <p style="margin-bottom:.8rem">กบข. กำหนดให้สมาชิกเลือกแผนลงทุนได้ 2 แบบ:</p>
             <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:.8rem;margin-bottom:.8rem">
-              <div style="font-weight:600;color:var(--red);margin-bottom:.3rem"><i class="fa-solid fa-lock"></i> à¹à¸œà¸™à¸šà¸±à¸‡à¸„à¸±à¸šà¸¥à¸‡ 100%</div>
-              <div style="font-size:.8rem">à¹€à¸à¸©à¸µà¸¢à¸“à¸ªà¸šà¸²à¸¢à¹ƒà¸ˆ, à¸§à¸²à¸¢à¸¸à¸ à¸±à¸à¸©à¹Œ, à¸žà¸·à¹‰à¸™à¸à¸²à¸™à¸—à¸±à¹ˆà¸§à¹„à¸›, à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 20/35/65/75, à¸Šà¸°à¸£à¸µà¸­à¸°à¸®à¹Œ</div>
+              <div style="font-weight:600;color:var(--red);margin-bottom:.3rem"><i class="fa-solid fa-lock"></i> แผนบังคับลง 100%</div>
+              <div style="font-size:.8rem">เกษียณสบายใจ, วายุภักษ์, พื้นฐานทั่วไป, เชิงรุก 20/35/65/75, ชะรีอะฮ์</div>
             </div>
             <div style="background:var(--green-g);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:.8rem">
-              <div style="font-weight:600;color:var(--green);margin-bottom:.3rem"><i class="fa-solid fa-shuffle"></i> à¹à¸œà¸™à¸œà¸ªà¸¡à¸à¸±à¸™à¹„à¸”à¹‰ (à¸£à¸§à¸¡ = 100%)</div>
-              <div style="font-size:.8rem">à¸­à¸ªà¸±à¸‡à¸«à¸²à¸¯, à¹€à¸‡à¸´à¸™à¸à¸²à¸, à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰, à¸«à¸¸à¹‰à¸™à¹„à¸—à¸¢, à¸—à¸­à¸‡à¸„à¸³, à¸«à¸¸à¹‰à¸™à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨, à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨</div>
+              <div style="font-weight:600;color:var(--green);margin-bottom:.3rem"><i class="fa-solid fa-shuffle"></i> แผนผสมกันได้ (รวม = 100%)</div>
+              <div style="font-size:.8rem">อสังหาฯ, เงินฝาก, ตราสารหนี้, หุ้นไทย, ทองคำ, หุ้นต่างประเทศ, ตราสารหนี้ต่างประเทศ</div>
             </div>
           </div>
-          <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-robot" style="color:var(--cyan)"></i> à¸ªà¸¡à¸à¸²à¸£à¸—à¸µà¹ˆà¸£à¸°à¸šà¸šà¹ƒà¸Šà¹‰</div>
+          <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-robot" style="color:var(--cyan)"></i> สมการที่ระบบใช้</div>
           <div style="font-size:.8rem;color:var(--muted);line-height:1.8">
-            <div>ðŸ“ <b style="color:var(--text)">Markowitz MPT</b> â€” Efficient Frontier</div>
-            <div>ðŸ¦ <b style="color:var(--text)">Momentum-Tilted Risk Parity</b> â€” AI Engine</div>
-            <div>âš–ï¸ <b style="color:var(--text)">Risk Parity</b> â€” Bridgewater / Ray Dalio</div>
-            <div>ðŸŽ² <b style="color:var(--text)">Monte Carlo</b> â€” 10,000 Simulations (GBM)</div>
-            <div>ðŸ“‰ <b style="color:var(--text)">CVaR / MDD</b> â€” Tail Risk Analysis</div>
-            <div>ðŸ“ˆ <b style="color:var(--text)">Glide Path</b> â€” Vanguard / Fidelity</div>
+            <div>📐 <b style="color:var(--text)">Markowitz MPT</b> — Efficient Frontier</div>
+            <div>🏦 <b style="color:var(--text)">Momentum-Tilted Risk Parity</b> — AI Engine</div>
+            <div>⚖️ <b style="color:var(--text)">Risk Parity</b> — Bridgewater / Ray Dalio</div>
+            <div>🎲 <b style="color:var(--text)">Monte Carlo</b> — 10,000 Simulations (GBM)</div>
+            <div>📉 <b style="color:var(--text)">CVaR / MDD</b> — Tail Risk Analysis</div>
+            <div>📈 <b style="color:var(--text)">Glide Path</b> — Vanguard / Fidelity</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- â•â•â•â•â•â•â• TAB 2: RISK METRICS â•â•â•â•â•â•â• -->
+    <!-- ═══════ TAB 2: RISK METRICS ═══════ -->
     <div class="tab-content" id="tab-metrics">
       <div class="glass animate-in">
-        <div class="section-title" style="white-space:normal; line-height:1.4; font-size:clamp(0.85rem, 3.5vw, 1.3rem)"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics à¸—à¸¸à¸à¹à¸œà¸™ (à¸„à¸³à¸™à¸§à¸“à¸ˆà¸²à¸ NAV à¸ˆà¸£à¸´à¸‡) <span class="badge" style="display:inline-block">LIVE DATA</span></div>
+        <div class="section-title" style="white-space:normal; line-height:1.4; font-size:clamp(0.85rem, 3.5vw, 1.3rem)"><i class="fa-solid fa-chart-bar" style="color:var(--yellow)"></i> Risk Metrics ทุกแผน (คำนวณจาก NAV จริง) <span class="badge" style="display:inline-block">LIVE DATA</span></div>
 
         <div class="table-wrap">
           <table class="data-table" id="metricsTable">
             <thead>
               <tr>
-                <th onclick="sortTable('name')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¸Šà¸·à¹ˆà¸­à¹à¸œà¸™">à¹à¸œà¸™à¸¥à¸‡à¸—à¸¸à¸™ <i class="fa-solid fa-sort" id="sort-name"></i></th>
-                <th>à¸›à¸£à¸°à¹€à¸ à¸—</th>
-                <th onclick="sortTable('cagr')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¸œà¸¥à¸•à¸­à¸šà¹à¸—à¸™">CAGR (%/à¸›à¸µ) <i class="fa-solid fa-sort" id="sort-cagr"></i></th>
-                <th onclick="sortTable('vol')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¸„à¸§à¸²à¸¡à¸œà¸±à¸™à¸œà¸§à¸™">Volatility (Ïƒ) <i class="fa-solid fa-sort" id="sort-vol"></i></th>
-                <th onclick="sortTable('sharpe')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¸„à¸§à¸²à¸¡à¸„à¸¸à¹‰à¸¡à¸„à¹ˆà¸²à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡">Sharpe Ratio <i class="fa-solid fa-sort" id="sort-sharpe"></i></th>
-                <th onclick="sortTable('sortino')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¸œà¸¥à¸•à¸­à¸šà¹à¸—à¸™à¸•à¹ˆà¸­à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸‚à¸²à¸¥à¸‡">Sortino Ratio <i class="fa-solid fa-sort" id="sort-sortino"></i></th>
-                <th onclick="sortTable('mdd')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¹‚à¸­à¸à¸²à¸ªà¸‚à¸²à¸”à¸—à¸¸à¸™à¸ªà¸¹à¸‡à¸ªà¸¸à¸”">Max Drawdown <i class="fa-solid fa-sort" id="sort-mdd"></i></th>
-                <th onclick="sortTable('cvar')" style="cursor:pointer" title="à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸«à¸²à¸‡">Daily CVaR 95% <i class="fa-solid fa-sort" id="sort-cvar"></i></th>
-                <th onclick="sortTable('score')" style="cursor:pointer" title="à¸„à¸°à¹à¸™à¸™à¹€à¸›à¸£à¸µà¸¢à¸šà¹€à¸—à¸µà¸¢à¸šà¹€à¸šà¸·à¹‰à¸­à¸‡à¸•à¹‰à¸™ (à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¹ƒà¸Šà¹‰à¸ˆà¸±à¸”à¸žà¸­à¸£à¹Œà¸• AI)">Score <i class="fa-solid fa-sort-down" id="sort-score" style="opacity:1"></i></th>
+                <th onclick="sortTable('name')" style="cursor:pointer" title="เรียงตามชื่อแผน">แผนลงทุน <i class="fa-solid fa-sort" id="sort-name"></i></th>
+                <th>ประเภท</th>
+                <th onclick="sortTable('cagr')" style="cursor:pointer" title="เรียงตามผลตอบแทน">CAGR (%/ปี) <i class="fa-solid fa-sort" id="sort-cagr"></i></th>
+                <th onclick="sortTable('vol')" style="cursor:pointer" title="เรียงตามความผันผวน">Volatility (σ) <i class="fa-solid fa-sort" id="sort-vol"></i></th>
+                <th onclick="sortTable('sharpe')" style="cursor:pointer" title="เรียงตามความคุ้มค่าความเสี่ยง">Sharpe Ratio <i class="fa-solid fa-sort" id="sort-sharpe"></i></th>
+                <th onclick="sortTable('sortino')" style="cursor:pointer" title="เรียงตามผลตอบแทนต่อความเสี่ยงขาลง">Sortino Ratio <i class="fa-solid fa-sort" id="sort-sortino"></i></th>
+                <th onclick="sortTable('mdd')" style="cursor:pointer" title="เรียงตามโอกาสขาดทุนสูงสุด">Max Drawdown <i class="fa-solid fa-sort" id="sort-mdd"></i></th>
+                <th onclick="sortTable('cvar')" style="cursor:pointer" title="เรียงตามความเสี่ยงหาง">Daily CVaR 95% <i class="fa-solid fa-sort" id="sort-cvar"></i></th>
+                <th onclick="sortTable('score')" style="cursor:pointer" title="คะแนนเปรียบเทียบเบื้องต้น (ไม่ได้ใช้จัดพอร์ต AI)">Score <i class="fa-solid fa-sort-down" id="sort-score" style="opacity:1"></i></th>
               </tr>
             </thead>
             <tbody id="metricsBody">
-              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem">à¸à¸£à¸¸à¸“à¸²à¸à¸”à¸›à¸¸à¹ˆà¸¡ "à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸”à¹‰à¸§à¸¢ AI" à¹€à¸žà¸·à¹ˆà¸­à¸„à¸³à¸™à¸§à¸“</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem">กรุณากดปุ่ม "วิเคราะห์ด้วย AI" เพื่อคำนวณ</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- â•â•â•â•â•â•â• TAB 3: AI RECOMMENDATION â•â•â•â•â•â•â• -->
+    <!-- ═══════ TAB 3: AI RECOMMENDATION ═══════ -->
     <div class="tab-content" id="tab-recommend">
       <div class="grid-2">
         <div class="glass animate-in">
-          <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i> AI à¹à¸™à¸°à¸™à¸³à¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™à¸—à¸µà¹ˆà¹€à¸«à¸¡à¸²à¸°à¸ªà¸¡</div>
+          <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i> AI แนะนำสัดส่วนที่เหมาะสม</div>
           
           <details style="margin-bottom:1rem;background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);">
-            <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> à¸„à¸¹à¹ˆà¸¡à¸·à¸­à¸à¸²à¸£à¹ƒà¸Šà¹‰à¸‡à¸²à¸™: à¸§à¸´à¸˜à¸µà¸­à¹ˆà¸²à¸™à¹ƒà¸ˆ AI (à¸„à¸£à¸­à¸šà¸„à¸¥à¸¸à¸¡à¸—à¸±à¹‰à¸‡ 3 à¹‚à¸«à¸¡à¸”)</summary>
+            <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> คู่มือการใช้งาน: วิธีอ่านใจ AI (ครอบคลุมทั้ง 3 โหมด)</summary>
             <div style="font-size:.85rem;color:var(--muted);margin-top:0.8rem;line-height:1.6;">
               <!-- Buy & Hold -->
-              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-shield-halved"></i> 1. à¹‚à¸«à¸¡à¸”à¸–à¸·à¸­à¸¢à¸²à¸§ (Buy & Hold)</div>
+              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-shield-halved"></i> 1. โหมดถือยาว (Buy & Hold)</div>
               <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
-                <li><b>à¸§à¸´à¸˜à¸µà¸›à¸à¸´à¸šà¸±à¸•à¸´:</b> à¹€à¸¥à¸·à¸­à¸à¹à¸œà¸™à¸—à¸µà¹ˆ AI à¹à¸™à¸°à¸™à¸³ à¹à¸¥à¹‰à¸§ <b>"à¸–à¸·à¸­à¸¢à¸²à¸§à¹† à¹„à¸¡à¹ˆà¸•à¹‰à¸­à¸‡à¸—à¸³à¸­à¸°à¹„à¸£à¹€à¸¥à¸¢"</b> à¸ˆà¸™à¸à¸§à¹ˆà¸²à¸­à¸²à¸¢à¸¸à¸ˆà¸°à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸Šà¹ˆà¸§à¸‡ à¸«à¸£à¸·à¸­à¸£à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹„à¸”à¹‰à¸™à¹‰à¸­à¸¢à¸¥à¸‡</li>
-                <li><b>à¹€à¸«à¸¡à¸²à¸°à¸à¸±à¸š:</b> à¸ªà¸²à¸¢à¸¥à¸‡à¸—à¸¸à¸™à¹€à¸™à¹‰à¸™à¸„à¸§à¸²à¸¡à¸ªà¸‡à¸š à¹„à¸¡à¹ˆà¸­à¸¢à¸²à¸à¸›à¸§à¸”à¸«à¸±à¸§à¸•à¸²à¸¡à¸‚à¹ˆà¸²à¸§à¸•à¸¥à¸²à¸”</li>
+                <li><b>วิธีปฏิบัติ:</b> เลือกแผนที่ AI แนะนำ แล้ว <b>"ถือยาวๆ ไม่ต้องทำอะไรเลย"</b> จนกว่าอายุจะเปลี่ยนช่วง หรือรับความเสี่ยงได้น้อยลง</li>
+                <li><b>เหมาะกับ:</b> สายลงทุนเน้นความสงบ ไม่อยากปวดหัวตามข่าวตลาด</li>
               </ul>
               
               <!-- Tactical -->
-              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-bolt" style="color:var(--accent)"></i> 2. à¹‚à¸«à¸¡à¸”à¸ˆà¸±à¸šà¸ˆà¸±à¸‡à¸«à¸§à¸°à¸•à¸¥à¸²à¸” (Tactical)</div>
+              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-bolt" style="color:var(--accent)"></i> 2. โหมดจับจังหวะตลาด (Tactical)</div>
               <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
-                <li><b>à¹€à¸›à¹‰à¸²à¸«à¸¡à¸²à¸¢:</b> à¹€à¸à¸²à¸°à¹€à¸—à¸£à¸™à¸”à¹Œà¸‚à¸²à¸‚à¸¶à¹‰à¸™à¸£à¸­à¸š 2-3 à¹€à¸”à¸·à¸­à¸™ (Let Profit Run)</li>
-                <li><b>à¸§à¸´à¸˜à¸µà¹€à¸‚à¹‰à¸²à¸‹à¸·à¹‰à¸­ (Entry):</b> à¸‹à¸·à¹‰à¸­à¸•à¸²à¸¡à¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™à¹€à¸¡à¸·à¹ˆà¸­ AI à¸›à¸£à¸°à¸à¸²à¸¨ <span style="color:var(--green)">RISK-ON</span> à¹à¸¥à¸°à¸¡à¸µà¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸™à¸±à¹‰à¸™à¸•à¸´à¸”à¹‚à¸œ Top 3</li>
-                <li><b>à¸§à¸´à¸˜à¸µà¸‚à¸²à¸¢ (Exit):</b> à¸–à¸·à¸­à¹„à¸›à¹€à¸£à¸·à¹ˆà¸­à¸¢à¹† à¸ˆà¸™à¸à¸§à¹ˆà¸² AI à¸ˆà¸°à¸ªà¸±à¹ˆà¸‡ <span style="color:var(--red)">RISK-OFF</span> (à¸«à¸™à¸µà¹€à¸‚à¹‰à¸²à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰) à¸«à¸£à¸·à¸­à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸™à¸±à¹‰à¸™à¸«à¸¥à¸¸à¸”à¹‚à¸œà¸ˆà¸²à¸à¸«à¸™à¹‰à¸²à¸ˆà¸­</li>
+                <li><b>เป้าหมาย:</b> เกาะเทรนด์ขาขึ้นรอบ 2-3 เดือน (Let Profit Run)</li>
+                <li><b>วิธีเข้าซื้อ (Entry):</b> ซื้อตามสัดส่วนเมื่อ AI ประกาศ <span style="color:var(--green)">RISK-ON</span> และมีสินทรัพย์นั้นติดโผ Top 3</li>
+                <li><b>วิธีขาย (Exit):</b> ถือไปเรื่อยๆ จนกว่า AI จะสั่ง <span style="color:var(--red)">RISK-OFF</span> (หนีเข้าตราสารหนี้) หรือสินทรัพย์นั้นหลุดโผจากหน้าจอ</li>
               </ul>
               
               <!-- Sniper -->
-              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-crosshairs" style="color:var(--green)"></i> 3. à¹‚à¸«à¸¡à¸”à¸ªà¹„à¸™à¹€à¸›à¸­à¸£à¹Œ (Sniper)</div>
+              <div style="font-weight:600;color:#fff;margin-bottom:0.3rem;"><i class="fa-solid fa-crosshairs" style="color:var(--green)"></i> 3. โหมดสไนเปอร์ (Sniper)</div>
               <ul style="padding-left:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.4rem;">
-                <li><b>à¹€à¸›à¹‰à¸²à¸«à¸¡à¸²à¸¢:</b> à¸ªà¸§à¸´à¸‡à¹€à¸—à¸£à¸”à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™ (21 à¸§à¸±à¸™) à¸«à¸²à¸ˆà¸±à¸‡à¸«à¸§à¸°à¹€à¸”à¹‰à¸‡à¸‚à¸­à¸‡à¸‚à¸­à¸‡à¸–à¸¹à¸ (Oversold Bounce) à¸œà¹ˆà¸²à¸™à¹€à¸à¸“à¸‘à¹Œ Z-score à¸à¸£à¸­à¸‡à¸ªà¸±à¸à¸à¸²à¸“à¸£à¸šà¸à¸§à¸™</li>
-                <li><b>à¸§à¸´à¸˜à¸µà¸›à¸à¸´à¸šà¸±à¸•à¸´ (Action):</b> à¹€à¸‚à¹‰à¸²à¸—à¸³à¸à¸³à¹„à¸£à¹€à¸¡à¸·à¹ˆà¸­ AI à¸‚à¸¶à¹‰à¸™à¸›à¹‰à¸²à¸¢ "à¸ˆà¸¸à¸”à¸žà¸¥à¸¸ Oversold Bounce" à¸«à¸£à¸·à¸­ "à¸ˆà¸±à¸šà¸ˆà¸¸à¸”à¸žà¸¥à¸´à¸à¸à¸¥à¸±à¸š (5-Day Inflection)" à¹à¸¥à¹‰à¸§à¸–à¸·à¸­à¸£à¸­ 2-3 à¸ªà¸±à¸›à¸”à¸²à¸«à¹Œ</li>
-                <li><b>à¸‚à¹‰à¸­à¸„à¸§à¸£à¸£à¸°à¸§à¸±à¸‡:</b> à¹‚à¸«à¸¡à¸”à¸™à¸µà¹‰ <b style="color:var(--red)">à¸•à¹‰à¸­à¸‡à¹„à¸§!</b> à¸–à¹‰à¸²à¸£à¸°à¸šà¸šà¹à¸™à¸°à¸™à¸³à¹ƒà¸«à¹‰à¸‹à¸·à¹‰à¸­ à¸«à¹‰à¸²à¸¡à¸¥à¸±à¸‡à¹€à¸¥ à¹à¸¥à¸°à¸–à¹‰à¸²à¸à¸³à¹„à¸£à¸žà¸­à¹ƒà¸ˆà¸«à¸£à¸·à¸­à¸£à¸°à¸šà¸šà¸ªà¸±à¹ˆà¸‡à¹€à¸¥à¸´à¸ à¸•à¹‰à¸­à¸‡à¸£à¸µà¸šà¸«à¸™à¸µà¸à¸¥à¸±à¸šà¹€à¸‚à¹‰à¸²à¹€à¸‡à¸´à¸™à¸à¸²à¸à¸—à¸±à¸™à¸—à¸µ à¸«à¹‰à¸²à¸¡à¹à¸Šà¹ˆà¸¢à¸²à¸§à¹€à¸”à¹‡à¸”à¸‚à¸²à¸”! (à¹€à¸œà¸·à¹ˆà¸­ T+1~T+3 à¸‚à¸­à¸‡ à¸à¸šà¸‚.)</li>
-                <li><i>* à¸—à¸£à¸´à¸„à¸¥à¸±à¸šà¸ªà¸²à¸¢à¸‹à¸´à¹ˆà¸‡: à¸«à¸²à¸à¹€à¸¥à¸·à¸­à¸à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡ "à¸ªà¸¹à¸‡à¸¡à¸²à¸" AI à¸ˆà¸°à¸›à¸¥à¸”à¸¥à¹‡à¸­à¸„à¸¥à¸´à¸¡à¸´à¸•à¹ƒà¸«à¹‰à¸¥à¸¸à¸¢à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹„à¸”à¹‰ 100% à¹€à¸•à¹‡à¸¡ (à¹„à¸¡à¹ˆà¸¡à¸µà¹€à¸‡à¸´à¸™à¸à¸²à¸à¹€à¸›à¹‡à¸™à¹€à¸šà¸²à¸°à¸£à¸­à¸‡à¸£à¸±à¸š)</i></li>
+                <li><b>เป้าหมาย:</b> สวิงเทรดระยะสั้น (21 วัน) หาจังหวะเด้งของของถูก (Oversold Bounce) ผ่านเกณฑ์ Z-score กรองสัญญาณรบกวน</li>
+                <li><b>วิธีปฏิบัติ (Action):</b> เข้าทำกำไรเมื่อ AI ขึ้นป้าย "จุดพลุ Oversold Bounce" หรือ "จับจุดพลิกกลับ (5-Day Inflection)" แล้วถือรอ 2-3 สัปดาห์</li>
+                <li><b>ข้อควรระวัง:</b> โหมดนี้ <b style="color:var(--red)">ต้องไว!</b> ถ้าระบบแนะนำให้ซื้อ ห้ามลังเล และถ้ากำไรพอใจหรือระบบสั่งเลิก ต้องรีบหนีกลับเข้าเงินฝากทันที ห้ามแช่ยาวเด็ดขาด! (เผื่อ T+1~T+3 ของ กบข.)</li>
+                <li><i>* ทริคลับสายซิ่ง: หากเลือกระดับความเสี่ยง "สูงมาก" AI จะปลดล็อคลิมิตให้ลุยสินทรัพย์เสี่ยงได้ 100% เต็ม (ไม่มีเงินฝากเป็นเบาะรองรับ)</i></li>
               </ul>
             </div>
           </details>
           <div class="result-card" id="recCard">
-            <div id="recTitle" style="font-size:.9rem;color:var(--muted)">à¹à¸œà¸™à¸—à¸µà¹ˆ AI à¹à¸™à¸°à¸™à¸³ (à¸•à¸²à¸¡à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹à¸¥à¸°à¸­à¸²à¸¢à¸¸)</div>
-            <div class="plan-name" id="recPlanName" style="margin:.5rem 0">â€”</div>
+            <div id="recTitle" style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>
+            <div class="plan-name" id="recPlanName" style="margin:.5rem 0">—</div>
             <div style="font-size:.9rem;margin-top:.5rem">
-              <span style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i> <span id="cagrLabel">CAGR à¸„à¸²à¸”à¸«à¸§à¸±à¸‡</span>: <b id="recCagr">â€”</b>%/à¸›à¸µ</span>
+              <span style="color:var(--green)"><i class="fa-solid fa-arrow-trend-up"></i> <span id="cagrLabel">CAGR คาดหวัง</span>: <b id="recCagr">—</b>%/ปี</span>
               &nbsp;&nbsp;
-              <span style="color:var(--yellow)"><i class="fa-solid fa-triangle-exclamation"></i> MDD: <b id="recMdd">â€”</b>%</span>
+              <span style="color:var(--yellow)"><i class="fa-solid fa-triangle-exclamation"></i> MDD: <b id="recMdd">—</b>%</span>
             </div>
             <div style="font-size:.85rem;color:var(--muted);margin-top:.3rem">
-              Sharpe: <b id="recSharpe">â€”</b> &nbsp;|&nbsp; CVaRâ‚‰â‚…: <b id="recCvar">â€”</b>%
+              Sharpe: <b id="recSharpe">—</b> &nbsp;|&nbsp; CVaR₉₅: <b id="recCvar">—</b>%
             </div>
           </div>
           
           <!-- Allocation Breakdown -->
           <div id="allocSection" style="margin-top:1.5rem">
-            <div style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.8rem"><i class="fa-solid fa-chart-pie" style="color:var(--pink)"></i> à¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™à¸—à¸µà¹ˆà¹à¸™à¸°à¸™à¸³</div>
+            <div style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.8rem"><i class="fa-solid fa-chart-pie" style="color:var(--pink)"></i> สัดส่วนที่แนะนำ</div>
             <div class="alloc-bar" id="allocBar"></div>
             <div id="allocBreakdown"></div>
           </div>
         </div>
 
         <div class="glass animate-in delay-1">
-          <div class="section-title"><i class="fa-solid fa-scale-balanced" style="color:var(--green)"></i> à¹€à¸›à¸£à¸µà¸¢à¸šà¹€à¸—à¸µà¸¢à¸š 3 à¹‚à¸¡à¹€à¸”à¸¥</div>
+          <div class="section-title"><i class="fa-solid fa-scale-balanced" style="color:var(--green)"></i> เปรียบเทียบ 3 โมเดล</div>
           <div class="grid-3" id="modelComparison" style="margin-bottom:1.5rem">
             <!-- Filled by JS -->
           </div>
           
-          <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-calculator" style="color:var(--cyan)"></i> à¸„à¸²à¸”à¸à¸²à¸£à¸“à¹Œà¹€à¸‡à¸´à¸™à¹€à¸à¸©à¸µà¸¢à¸“</div>
+          <div class="section-title" style="margin-top:1.5rem"><i class="fa-solid fa-calculator" style="color:var(--cyan)"></i> คาดการณ์เงินเกษียณ</div>
           <div class="grid-2" style="gap:.8rem" id="retirementStats">
             <div class="stat-box">
-              <div class="stat-label">à¸¢à¸­à¸”à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™</div>
-              <div class="stat-value" id="statCurrent" style="color:var(--text)">â€”</div>
+              <div class="stat-label">ยอดปัจจุบัน</div>
+              <div class="stat-value" id="statCurrent" style="color:var(--text)">—</div>
             </div>
             <div class="stat-box" style="border-color:rgba(139,92,246,0.3)">
-              <div class="stat-label">à¸„à¸²à¸”à¸à¸²à¸£à¸“à¹Œ à¸“ à¸­à¸²à¸¢à¸¸ 60 (Median)</div>
-              <div class="stat-value" id="statFuture" style="color:var(--accent)">â€”</div>
+              <div class="stat-label">คาดการณ์ ณ อายุ 60 (Median)</div>
+              <div class="stat-value" id="statFuture" style="color:var(--accent)">—</div>
             </div>
             <div class="stat-box" style="border-color:rgba(239,68,68,0.3)">
-              <div class="stat-label">à¸à¸£à¸“à¸µà¹à¸¢à¹ˆà¸—à¸µà¹ˆà¸ªà¸¸à¸” (P10)</div>
-              <div class="stat-value" id="statWorst" style="color:var(--red)">â€”</div>
+              <div class="stat-label">กรณีแย่ที่สุด (P10)</div>
+              <div class="stat-value" id="statWorst" style="color:var(--red)">—</div>
             </div>
             <div class="stat-box" style="border-color:rgba(16,185,129,0.3)">
-              <div class="stat-label">Income Replacement Ratio <span style="font-size:.65rem;color:var(--muted)">(à¸à¸šà¸‚.+à¸šà¸³à¸™à¸²à¸ vs 70% à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™)</span></div>
-              <div class="stat-value" id="statIRR" style="color:var(--green);font-size:1.1rem">â€”</div>
+              <div class="stat-label">Income Replacement Ratio <span style="font-size:.65rem;color:var(--muted)">(กบข.+บำนาญ vs 70% เงินเดือน)</span></div>
+              <div class="stat-value" id="statIRR" style="color:var(--green);font-size:1.1rem">—</div>
               <div id="irrBreakdown" style="font-size:.65rem;color:var(--muted);margin-top:.3rem"></div>
             </div>
           </div>
           <div id="irrDisclaimer" style="display:none;margin-top:.8rem;padding:.6rem .8rem;border-radius:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);font-size:.75rem;color:var(--yellow);line-height:1.5">
-            <i class="fa-solid fa-triangle-exclamation"></i> <b>à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸:</b> à¸•à¸±à¸§à¹€à¸¥à¸‚ Income Replacement Ratio = (à¸–à¸­à¸™ 4% à¸ˆà¸²à¸à¹€à¸‡à¸´à¸™à¸à¹‰à¸­à¸™ à¸à¸šà¸‚. + à¸šà¸³à¸™à¸²à¸à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™) Ã· 70% à¸‚à¸­à¸‡à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢ à¸ªà¸¹à¸•à¸£à¸šà¸³à¸™à¸²à¸: (à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢ Ã— à¸­à¸²à¸¢à¸¸à¸£à¸²à¸Šà¸à¸²à¸£) / 50 à¹„à¸¡à¹ˆà¹€à¸à¸´à¸™ 70% à¸‚à¸­à¸‡à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢
+            <i class="fa-solid fa-triangle-exclamation"></i> <b>หมายเหตุ:</b> ตัวเลข Income Replacement Ratio = (ถอน 4% จากเงินก้อน กบข. + บำนาญรายเดือน) ÷ 70% ของเงินเดือนสุดท้าย สูตรบำนาญ: (เงินเดือนสุดท้าย × อายุราชการ) / 50 ไม่เกิน 70% ของเงินเดือนสุดท้าย
           </div>
         </div>
       </div>
     </div>
 
-    <!-- â•â•â•â•â•â•â• TAB 4: MONTE CARLO â•â•â•â•â•â•â• -->
+    <!-- ═══════ TAB 4: MONTE CARLO ═══════ -->
     <div class="tab-content" id="tab-montecarlo">
       <div class="glass animate-in">
         <div class="section-title"><i class="fa-solid fa-chart-area" style="color:var(--pink)"></i> Monte Carlo <span class="badge">10,000 PATHS</span></div>
@@ -510,50 +510,50 @@
           <canvas id="fanChart"></canvas>
         </div>
         <div class="mc-stats" id="mcStats">
-          <div class="mc-stat"><div class="label">à¸ªà¸–à¸²à¸™à¸à¸²à¸£à¸“à¹Œà¸£à¹‰à¸²à¸¢à¸ªà¸¸à¸” (P10)</div><div class="value" id="mcP10" style="color:var(--red)">â€”</div></div>
-          <div class="mc-stat"><div class="label">à¸à¸£à¸“à¸µà¸£à¸°à¸§à¸±à¸‡ (P25)</div><div class="value" id="mcP25" style="color:var(--yellow)">â€”</div></div>
-          <div class="mc-stat"><div class="label">à¸à¸£à¸“à¸µà¸à¸¥à¸²à¸‡ (P50)</div><div class="value" id="mcP50" style="color:var(--green)">â€”</div></div>
-          <div class="mc-stat"><div class="label">à¸à¸£à¸“à¸µà¸”à¸µ (P75)</div><div class="value" id="mcP75" style="color:var(--cyan)">â€”</div></div>
-          <div class="mc-stat"><div class="label">à¸à¸£à¸“à¸µà¸”à¸µà¸¡à¸²à¸ (P90)</div><div class="value" id="mcP90" style="color:var(--accent)">â€”</div></div>
-          <div class="mc-stat" style="border:1px solid rgba(16,185,129,0.3)"><div class="label" title="à¹‚à¸­à¸à¸²à¸ªà¸—à¸µà¹ˆà¹€à¸‡à¸´à¸™à¸£à¸§à¸¡à¸ˆà¸°à¹‚à¸•à¸Šà¸™à¸°à¹€à¸‡à¸´à¸™à¹€à¸Ÿà¹‰à¸­à¸ªà¸°à¸ªà¸¡">à¹‚à¸­à¸à¸²à¸ªà¸Šà¸™à¸°à¹€à¸‡à¸´à¸™à¹€à¸Ÿà¹‰à¸­</div><div class="value" id="mcSuccess" style="color:var(--green)">â€”</div></div>
+          <div class="mc-stat"><div class="label">สถานการณ์ร้ายสุด (P10)</div><div class="value" id="mcP10" style="color:var(--red)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีระวัง (P25)</div><div class="value" id="mcP25" style="color:var(--yellow)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีกลาง (P50)</div><div class="value" id="mcP50" style="color:var(--green)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีดี (P75)</div><div class="value" id="mcP75" style="color:var(--cyan)">—</div></div>
+          <div class="mc-stat"><div class="label">กรณีดีมาก (P90)</div><div class="value" id="mcP90" style="color:var(--accent)">—</div></div>
+          <div class="mc-stat" style="border:1px solid rgba(16,185,129,0.3)"><div class="label" title="โอกาสที่เงินรวมจะโตชนะเงินเฟ้อสะสม">โอกาสชนะเงินเฟ้อ</div><div class="value" id="mcSuccess" style="color:var(--green)">—</div></div>
         </div>
       </div>
     </div>
 
-    <!-- â•â•â•â•â•â•â• TAB 5: CORRELATION â•â•â•â•â•â•â• -->
+    <!-- ═══════ TAB 5: CORRELATION ═══════ -->
     <div class="tab-content" id="tab-correlation">
       <div class="glass animate-in">
-        <div class="section-title"><i class="fa-solid fa-table-cells" style="color:var(--cyan)"></i> Correlation Heatmap (à¸„à¸§à¸²à¸¡à¸ªà¸±à¸¡à¸žà¸±à¸™à¸˜à¹Œà¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡à¹à¸œà¸™)</div>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem">à¸„à¹ˆà¸²à¹ƒà¸à¸¥à¹‰ <span style="color:#ef4444">+1.0</span> = à¹€à¸„à¸¥à¸·à¹ˆà¸­à¸™à¹„à¸«à¸§à¹ƒà¸™à¸—à¸´à¸¨à¸—à¸²à¸‡à¹€à¸”à¸µà¸¢à¸§à¸à¸±à¸™ | à¸„à¹ˆà¸²à¹ƒà¸à¸¥à¹‰ <span style="color:#3b82f6">-1.0</span> = à¸ªà¸§à¸™à¸—à¸²à¸‡à¸à¸±à¸™ (à¸à¸£à¸°à¸ˆà¸²à¸¢à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹„à¸”à¹‰à¸”à¸µ)</p>
+        <div class="section-title"><i class="fa-solid fa-table-cells" style="color:var(--cyan)"></i> Correlation Heatmap (ความสัมพันธ์ระหว่างแผน)</div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem">ค่าใกล้ <span style="color:#ef4444">+1.0</span> = เคลื่อนไหวในทิศทางเดียวกัน | ค่าใกล้ <span style="color:#3b82f6">-1.0</span> = สวนทางกัน (กระจายความเสี่ยงได้ดี)</p>
         <div id="heatmapContainer" style="overflow-x:auto"></div>
       </div>
     </div>
 
-    <!-- â•â•â•â•â•â•â• TAB 6: TACTICAL SIGNALS â•â•â•â•â•â•â• -->
+    <!-- ═══════ TAB 6: TACTICAL SIGNALS ═══════ -->
     <div class="tab-content" id="tab-tactical">
       <div class="glass animate-in">
-        <div class="section-title"><i class="fa-solid fa-bolt" style="color:var(--yellow)"></i> AI à¸ªà¸±à¸à¸à¸²à¸“à¸‹à¸·à¹‰à¸­à¸‚à¸²à¸¢à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™ (Tactical)</div>
+        <div class="section-title"><i class="fa-solid fa-bolt" style="color:var(--yellow)"></i> AI สัญญาณซื้อขายระยะสั้น (Tactical)</div>
         <details style="margin-bottom:1rem;background:rgba(255,255,255,0.03);padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);">
-          <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> à¸„à¸¹à¹ˆà¸¡à¸·à¸­à¸à¸²à¸£à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¹à¸¥à¸°à¸§à¸´à¸˜à¸µà¸”à¸¹à¸ªà¸±à¸à¸à¸²à¸“</summary>
+          <summary style="font-size:0.85rem;color:var(--muted);cursor:pointer;user-select:none;"><i class="fa-solid fa-book-open"></i> คู่มือการใช้งานและวิธีดูสัญญาณ</summary>
           <div style="font-size:.85rem;color:var(--muted);margin-top:0.8rem;line-height:1.6;">
-            à¹ƒà¸Šà¹‰à¸­à¸´à¸™à¸”à¸´à¹€à¸„à¹€à¸•à¸­à¸£à¹Œ RSI (14 à¸§à¸±à¸™), MACD (12,26,9) à¹à¸¥à¸° Momentum (1M/3M) à¹€à¸žà¸·à¹ˆà¸­à¸«à¸²à¸ˆà¸±à¸‡à¸«à¸§à¸°à¹€à¸‚à¹‰à¸²à¸—à¸³à¸à¸³à¹„à¸£ à¹€à¸«à¸¡à¸²à¸°à¸ªà¸³à¸«à¸£à¸±à¸šà¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹à¸œà¸™ 1-3 à¹€à¸”à¸·à¸­à¸™ <br>
-            <span style="color:var(--red)">*à¹‚à¸›à¸£à¸”à¸£à¸°à¸§à¸±à¸‡ Time Lag 1-3 à¸§à¸±à¸™à¸—à¸³à¸à¸²à¸£à¸‚à¸­à¸‡à¸£à¸°à¸šà¸š à¸à¸šà¸‚. à¹€à¸¡à¸·à¹ˆà¸­à¸—à¸³à¸à¸²à¸£à¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™</span>
+            ใช้อินดิเคเตอร์ RSI (14 วัน), MACD (12,26,9) และ Momentum (1M/3M) เพื่อหาจังหวะเข้าทำกำไร เหมาะสำหรับสับเปลี่ยนแผน 1-3 เดือน <br>
+            <span style="color:var(--red)">*โปรดระวัง Time Lag 1-3 วันทำการของระบบ กบข. เมื่อทำการสับเปลี่ยน</span>
             
             <div style="margin-top:1rem;padding-top:1rem;border-top:1px dashed rgba(255,255,255,0.1);">
-              <div style="font-weight:600;color:#fff;margin-bottom:0.5rem;"><i class="fa-solid fa-lightbulb" style="color:var(--yellow)"></i> à¸§à¸´à¸˜à¸µà¹€à¸à¹‰à¸²à¸”à¸¹à¹à¸¥à¸°à¹à¸­à¸„à¸Šà¸±à¹ˆà¸™ (Action Plan):</div>
+              <div style="font-weight:600;color:#fff;margin-bottom:0.5rem;"><i class="fa-solid fa-lightbulb" style="color:var(--yellow)"></i> วิธีเฝ้าดูและแอคชั่น (Action Plan):</div>
               <ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.8rem;margin:0;">
                 <li>
-                  <b>à¸à¸£à¸“à¸µà¸•à¸´à¸”à¸ªà¸–à¸²à¸™à¸° <span style="color:var(--red)">ðŸ”¥ à¹à¸žà¸‡à¸¡à¸²à¸</span> (RSI > 70) à¹à¸•à¹ˆ MACD à¸¢à¸±à¸‡ <span style="color:var(--green)">â†‘ à¸‚à¸²à¸‚à¸¶à¹‰à¸™</span></b><br>
-                  - <u style="text-underline-offset:3px;">à¸–à¹‰à¸²à¸–à¸·à¸­à¹à¸œà¸™à¸™à¸µà¹‰à¸­à¸¢à¸¹à¹ˆ:</u> <b>"à¸—à¸™à¸£à¸§à¸¢à¹„à¸›à¸à¹ˆà¸­à¸™ (Let Profit Run)"</b> à¹€à¸žà¸£à¸²à¸°à¹à¸™à¸§à¹‚à¸™à¹‰à¸¡à¸¢à¸±à¸‡à¸‚à¸¶à¹‰à¸™à¸•à¹ˆà¸­à¹„à¸”à¹‰ à¹à¸•à¹ˆà¸•à¹‰à¸­à¸‡à¹€à¸à¹‰à¸²à¸£à¸°à¸§à¸±à¸‡à¸­à¸¢à¹ˆà¸²à¸‡à¹ƒà¸à¸¥à¹‰à¸Šà¸´à¸”<br>
-                  - <u style="text-underline-offset:3px;">à¸–à¹‰à¸²à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¹à¸œà¸™à¸™à¸µà¹‰:</u> <b>"à¸«à¹‰à¸²à¸¡à¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹€à¸‚à¹‰à¸²à¹€à¸”à¹‡à¸”à¸‚à¸²à¸”"</b> à¸£à¸²à¸„à¸²à¸‚à¸¶à¹‰à¸™à¸¡à¸²à¹à¸žà¸‡à¸¡à¸²à¸à¹à¸¥à¹‰à¸§ à¸¡à¸µà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸ªà¸¹à¸‡à¸—à¸µà¹ˆà¸ˆà¸°à¸•à¸´à¸”à¸”à¸­à¸¢à¸Šà¸±à¹ˆà¸§à¸„à¸£à¸²à¸§
+                  <b>กรณีติดสถานะ <span style="color:var(--red)">🔥 แพงมาก</span> (RSI > 70) แต่ MACD ยัง <span style="color:var(--green)">↑ ขาขึ้น</span></b><br>
+                  - <u style="text-underline-offset:3px;">ถ้าถือแผนนี้อยู่:</u> <b>"ทนรวยไปก่อน (Let Profit Run)"</b> เพราะแนวโน้มยังขึ้นต่อได้ แต่ต้องเฝ้าระวังอย่างใกล้ชิด<br>
+                  - <u style="text-underline-offset:3px;">ถ้ายังไม่มีแผนนี้:</u> <b>"ห้ามสับเปลี่ยนเข้าเด็ดขาด"</b> ราคาขึ้นมาแพงมากแล้ว มีความเสี่ยงสูงที่จะติดดอยชั่วคราว
                 </li>
                 <li>
-                  <b>à¸à¸£à¸“à¸µà¸•à¸´à¸”à¸ªà¸–à¸²à¸™à¸° <span style="color:var(--red)">ðŸ”¥ à¹à¸žà¸‡à¸¡à¸²à¸</span> (RSI > 70) à¹à¸¥à¸° MACD à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹€à¸›à¹‡à¸™ <span style="color:var(--red)">â†“ à¸‚à¸²à¸¥à¸‡</span></b><br>
-                  - à¸™à¸µà¹ˆà¸„à¸·à¸­ <b>"à¸ªà¸±à¸à¸à¸²à¸“à¸«à¸™à¸µ (à¸¥à¹‡à¸­à¸„à¸à¸³à¹„à¸£)"</b> à¸„à¸§à¸£à¸žà¸´à¸ˆà¸²à¸£à¸“à¸²à¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹„à¸›à¸žà¸±à¸à¹€à¸‡à¸´à¸™à¹ƒà¸™à¹à¸œà¸™à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸•à¹ˆà¸³ (à¹€à¸Šà¹ˆà¸™ à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰) à¸—à¸±à¸™à¸—à¸µ
+                  <b>กรณีติดสถานะ <span style="color:var(--red)">🔥 แพงมาก</span> (RSI > 70) และ MACD เปลี่ยนเป็น <span style="color:var(--red)">↓ ขาลง</span></b><br>
+                  - นี่คือ <b>"สัญญาณหนี (ล็อคกำไร)"</b> ควรพิจารณาสับเปลี่ยนไปพักเงินในแผนความเสี่ยงต่ำ (เช่น ตราสารหนี้) ทันที
                 </li>
                 <li>
-                  <b>à¸à¸£à¸“à¸µà¸•à¸´à¸”à¸ªà¸–à¸²à¸™à¸° <span style="color:var(--green)">ðŸ“‰ à¸–à¸¹à¸à¸¡à¸²à¸</span> (RSI < 30) à¹à¸¥à¸° MACD à¹€à¸£à¸´à¹ˆà¸¡ <span style="color:var(--green)">â†‘ à¸‚à¸²à¸‚à¸¶à¹‰à¸™</span></b><br>
-                  - à¸™à¸µà¹ˆà¸„à¸·à¸­ <b>"à¸ªà¸±à¸à¸à¸²à¸“à¸‹à¸·à¹‰à¸­ (Golden Cross)"</b> à¹€à¸›à¹‡à¸™à¸ˆà¸±à¸‡à¸«à¸§à¸°à¸—à¸µà¹ˆà¸”à¸µà¸—à¸µà¹ˆà¸ªà¸¸à¸”à¹ƒà¸™à¸à¸²à¸£à¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹€à¸‚à¹‰à¸² à¸£à¸²à¸„à¸²à¸–à¸¹à¸à¹à¸¥à¸°à¹‚à¸¡à¹€à¸¡à¸™à¸•à¸±à¸¡à¸à¸³à¸¥à¸±à¸‡à¸à¸¥à¸±à¸šà¸•à¸±à¸§
+                  <b>กรณีติดสถานะ <span style="color:var(--green)">📉 ถูกมาก</span> (RSI < 30) และ MACD เริ่ม <span style="color:var(--green)">↑ ขาขึ้น</span></b><br>
+                  - นี่คือ <b>"สัญญาณซื้อ (Golden Cross)"</b> เป็นจังหวะที่ดีที่สุดในการสับเปลี่ยนเข้า ราคาถูกและโมเมนตัมกำลังกลับตัว
                 </li>
               </ul>
             </div>
@@ -561,7 +561,7 @@
         </details>
         <div id="tacticalSummary" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.2rem;font-size:.85rem;line-height:1.6;display:none"></div>
         <div class="tactical-grid" id="tacticalGrid">
-          <div style="text-align:center;color:var(--muted);padding:2rem;">à¸à¸³à¸¥à¸±à¸‡à¸›à¸£à¸°à¸¡à¸§à¸¥à¸œà¸¥à¸ªà¸±à¸à¸à¸²à¸“...</div>
+          <div style="text-align:center;color:var(--muted);padding:2rem;">กำลังประมวลผลสัญญาณ...</div>
         </div>
       </div>
     </div>
@@ -636,14 +636,14 @@
   // Backend (GAS) endpoint moved to config.js
   
   const LOCK_100_PLANS = [
-    'à¹à¸œà¸™à¹€à¸à¸©à¸µà¸¢à¸“à¸ªà¸šà¸²à¸¢à¹ƒà¸ˆ 2569', 'à¹à¸œà¸™à¸à¸­à¸‡à¸—à¸¸à¸™à¸£à¸§à¸¡à¸§à¸²à¸¢à¸¸à¸ à¸±à¸à¸©à¹Œ', 'à¹à¸œà¸™à¸¥à¸‡à¸—à¸¸à¸™à¸žà¸·à¹‰à¸™à¸à¸²à¸™à¸—à¸±à¹ˆà¸§à¹„à¸›',
-    'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 20', 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 35', 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 65', 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 75',
-    'à¹à¸œà¸™à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™à¸•à¸²à¸¡à¸«à¸¥à¸±à¸à¸Šà¸°à¸£à¸µà¸­à¸°à¸®à¹Œ'
+    'แผนเกษียณสบายใจ 2569', 'แผนกองทุนรวมวายุภักษ์', 'แผนลงทุนพื้นฐานทั่วไป',
+    'แผนเชิงรุก 20', 'แผนเชิงรุก 35', 'แผนเชิงรุก 65', 'แผนเชิงรุก 75',
+    'แผนการลงทุนตามหลักชะรีอะฮ์'
   ];
   const MIXABLE_PLANS = [
-    'à¹à¸œà¸™à¸à¸­à¸‡à¸—à¸¸à¸™à¸­à¸ªà¸±à¸‡à¸«à¸²à¸£à¸´à¸¡à¸—à¸£à¸±à¸žà¸¢à¹Œà¹„à¸—à¸¢', 'à¹à¸œà¸™à¹€à¸‡à¸´à¸™à¸à¸²à¸à¹à¸¥à¸°à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™',
-    'à¹à¸œà¸™à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰', 'à¹à¸œà¸™à¸«à¸¸à¹‰à¸™à¹„à¸—à¸¢', 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³',
-    'à¹à¸œà¸™à¸«à¸¸à¹‰à¸™à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', 'à¹à¸œà¸™à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨'
+    'แผนกองทุนอสังหาริมทรัพย์ไทย', 'แผนเงินฝากและตราสารหนี้ระยะสั้น',
+    'แผนตราสารหนี้', 'แผนหุ้นไทย', 'แผนทองคำ',
+    'แผนหุ้นต่างประเทศ', 'แผนตราสารหนี้ต่างประเทศ'
   ];
   let RF = 0.025; // Default, dynamically updated in computeAllMetrics
   
@@ -696,7 +696,7 @@
   }
   function fmt(n) { return Number(n).toLocaleString('th-TH', {maximumFractionDigits:0}); }
   function fmtM(n) {
-    if (n >= 1e6) return (n/1e6).toFixed(2) + ' à¸¥à¹‰à¸²à¸™';
+    if (n >= 1e6) return (n/1e6).toFixed(2) + ' ล้าน';
     if (n >= 1e3) return fmt(n);
     return n.toFixed(0);
   }
@@ -837,7 +837,7 @@
     const n = allReturns.length;
     const T_total = allReturns[0].length;
     
-    // 1. à¸«à¸² "à¸§à¸±à¸™à¸—à¸µà¹ˆà¸—à¸¸à¸à¹à¸œà¸™à¸—à¸µà¹ˆà¹ƒà¸Šà¹‰à¸¡à¸µà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸žà¸£à¹‰à¸­à¸¡à¸à¸±à¸™" (List-wise deletion)
+    // 1. หา "วันที่ทุกแผนที่ใช้มีข้อมูลพร้อมกัน" (List-wise deletion)
     const rows = [];
     for (let t = 0; t < T_total; t++) {
       let allValid = true;
@@ -853,14 +853,14 @@
     const matrix = Array.from({length: n}, () => Array(n).fill(0));
     if (count < 2) return matrix;
 
-    // 2. à¸„à¸³à¸™à¸§à¸“ Mean à¸‚à¸­à¸‡à¹à¸•à¹ˆà¸¥à¸°à¹à¸œà¸™ (à¸šà¸™à¸§à¸±à¸™à¸Šà¸¸à¸”à¹€à¸”à¸µà¸¢à¸§à¸à¸±à¸™)
+    // 2. คำนวณ Mean ของแต่ละแผน (บนวันชุดเดียวกัน)
     const means = Array(n).fill(0);
     for (let i = 0; i < n; i++) {
       for (let t = 0; t < count; t++) means[i] += rows[t][i];
       means[i] /= count;
     }
 
-    // 3. à¸„à¸³à¸™à¸§à¸“ Covariance Matrix (Sample Covariance)
+    // 3. คำนวณ Covariance Matrix (Sample Covariance)
     for (let i = 0; i < n; i++) {
       for (let j = 0; j <= i; j++) {
         let cov = 0;
@@ -874,7 +874,7 @@
       }
     }
 
-    // 4. Ledoit-Wolf Shrinkage (Î£' = 0.8Î£ + 0.2Â·diag(Î£))
+    // 4. Ledoit-Wolf Shrinkage (Σ' = 0.8Σ + 0.2·diag(Σ))
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
         if (i !== j) {
@@ -909,7 +909,7 @@
     // === FIX #12: Dynamic Risk-Free Rate from Safe Asset ===
     const safePlanData = data.plans.find(p => {
         const name = p.label || p.key || "";
-        return name.includes("à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™") || name.includes("à¹€à¸‡à¸´à¸™à¸à¸²à¸");
+        return name.includes("ระยะสั้น") || name.includes("เงินฝาก");
     });
     if (safePlanData) {
         const nav = safePlanData.fullData || safePlanData.data;
@@ -940,10 +940,10 @@
       if (validNavs < 252 * 2) {
         isEstimatedCAGR = true;
         const pName = plan.label || plan.key;
-        if (pName.includes("à¸«à¸¸à¹‰à¸™") || pName.includes("à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸")) cagr = 0.065;
-        else if (pName.includes("à¸­à¸ªà¸±à¸‡à¸«à¸²")) cagr = 0.05;
-        else if (pName.includes("à¸—à¸­à¸‡à¸„à¸³")) cagr = 0.04;
-        else if (pName.includes("à¸œà¸ªà¸¡") || pName.includes("à¸ªà¸¡à¸”à¸¸à¸¥") || pName.includes("à¸«à¸¥à¸±à¸")) cagr = 0.04;
+        if (pName.includes("หุ้น") || pName.includes("เชิงรุก")) cagr = 0.065;
+        else if (pName.includes("อสังหา")) cagr = 0.05;
+        else if (pName.includes("ทองคำ")) cagr = 0.04;
+        else if (pName.includes("ผสม") || pName.includes("สมดุล") || pName.includes("หลัก")) cagr = 0.04;
         else cagr = 0.02;
       }
       
@@ -963,7 +963,7 @@
       
       // === FIX #10: Warn about unmatched plans ===
       if (!isMixable && !isLock100) {
-        console.warn(`âš ï¸ à¹à¸œà¸™ "${pName}" à¹„à¸¡à¹ˆà¸•à¸£à¸‡à¸à¸±à¸š LOCK_100_PLANS à¸«à¸£à¸·à¸­ MIXABLE_PLANS â€” à¸ˆà¸°à¹„à¸¡à¹ˆà¸–à¸¹à¸à¸žà¸´à¸ˆà¸²à¸£à¸“à¸²à¹ƒà¸™à¸„à¸³à¹à¸™à¸°à¸™à¸³ AI`);
+        console.warn(`⚠️ แผน "${pName}" ไม่ตรงกับ LOCK_100_PLANS หรือ MIXABLE_PLANS — จะไม่ถูกพิจารณาในคำแนะนำ AI`);
       }
       
       metrics.push({
@@ -1005,7 +1005,7 @@
       for (let i = 0; i < n; i++) {
         let oldW = w[i];
         if (rc[i] > 1e-12) {
-          // === FIX ðŸ”µ: Clamp per-iteration change to Â±50% for stability ===
+          // === FIX 🔵: Clamp per-iteration change to ±50% for stability ===
           const newW = w[i] * target / rc[i];
           w[i] = Math.max(w[i] * 0.5, Math.min(newW, w[i] * 1.5));
         }
@@ -1143,7 +1143,7 @@
       const tiltSum = tiltedWeights.reduce((a,b) => a+b, 0);
       tiltedWeights = tiltedWeights.map(w => w / tiltSum);
       
-      const equityLike = ['à¹à¸œà¸™à¸«à¸¸à¹‰à¸™à¹„à¸—à¸¢', 'à¹à¸œà¸™à¸«à¸¸à¹‰à¸™à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', 'à¹à¸œà¸™à¸à¸­à¸‡à¸—à¸¸à¸™à¸­à¸ªà¸±à¸‡à¸«à¸²à¸£à¸´à¸¡à¸—à¸£à¸±à¸žà¸¢à¹Œà¹„à¸—à¸¢', 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³'];
+      const equityLike = ['แผนหุ้นไทย', 'แผนหุ้นต่างประเทศ', 'แผนกองทุนอสังหาริมทรัพย์ไทย', 'แผนทองคำ'];
       let equityW = 0, bondW = 0;
       tiltedWeights.forEach((w, i) => { if (equityLike.includes(eligibleMix[i].name)) equityW += w; else bondW += w; });
       if (equityW > 0 && bondW > 0) {
@@ -1159,7 +1159,7 @@
       
       // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
       const maxGold = 0.25;
-      const goldIdx = eligibleMix.findIndex(m => m.name === 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³');
+      const goldIdx = eligibleMix.findIndex(m => m.name === 'แผนทองคำ');
       if (goldIdx !== -1 && tiltedWeights[goldIdx] > maxGold) {
         const excess = tiltedWeights[goldIdx] - maxGold;
         tiltedWeights[goldIdx] = maxGold;
@@ -1168,7 +1168,7 @@
         let bestTargetIdx = -1;
         let highestMom = -Infinity;
         eligibleMix.forEach((m, i) => {
-          if (m.name !== 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³' && equityLike.includes(m.name) && momScores[i] > highestMom) {
+          if (m.name !== 'แผนทองคำ' && equityLike.includes(m.name) && momScores[i] > highestMom) {
             highestMom = momScores[i];
             bestTargetIdx = i;
           }
@@ -1177,7 +1177,7 @@
         if (bestTargetIdx !== -1) {
           tiltedWeights[bestTargetIdx] += excess;
         } else {
-          const safeIdx = eligibleMix.findIndex(m => m.name.includes('à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™')) !== -1 ? eligibleMix.findIndex(m => m.name.includes('à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™')) : eligibleMix.findIndex(m => m.name.includes('à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰'));
+          const safeIdx = eligibleMix.findIndex(m => m.name.includes('ระยะสั้น')) !== -1 ? eligibleMix.findIndex(m => m.name.includes('ระยะสั้น')) : eligibleMix.findIndex(m => m.name.includes('ตราสารหนี้'));
           if (safeIdx !== -1) tiltedWeights[safeIdx] += excess;
         }
       }
@@ -1244,14 +1244,14 @@
     }
     
     const bestLock = eligibleLock.length > 0 ? eligibleLock[0] : null;
-    const safePlanFallback = planMetrics.find(p => p.name.includes("à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™"))
-      || planMetrics.find(p => p.name.includes("à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰"))
+    const safePlanFallback = planMetrics.find(p => p.name.includes("ระยะสั้น"))
+      || planMetrics.find(p => p.name.includes("ตราสารหนี้"))
       || [...planMetrics].sort((a,b) => a.vol - b.vol)[0];
     let recommendation;
     if (mixMetrics && bestLock) {
-      if (mixMetrics.sharpe > bestLock.sharpe * 1.05) recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'à¹à¸œà¸™à¸œà¸ªà¸¡ AI Optimized' };
+      if (mixMetrics.sharpe > bestLock.sharpe * 1.05) recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'แผนผสม AI Optimized' };
       else recommendation = { type: 'single', plan: bestLock, label: bestLock.name };
-    } else if (mixMetrics) { recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'à¹à¸œà¸™à¸œà¸ªà¸¡ AI Optimized' };
+    } else if (mixMetrics) { recommendation = { type: 'mix', allocation: mixAllocation, metrics: mixMetrics, label: 'แผนผสม AI Optimized' };
     } else if (bestLock) { recommendation = { type: 'single', plan: bestLock, label: bestLock.name };
     } else { recommendation = { type: 'single', plan: safePlanFallback, label: safePlanFallback.name + ' (Default Safe)' }; }
     
@@ -1267,12 +1267,12 @@
     const matchedCls = riskToModel[riskTolerance] || 'balanced';
     
     const models = [
-      { name: 'à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸', emoji: 'ðŸ”¥', eqTarget: 0.80, maxMDD: 0.40, cls: 'aggressive' },
-      { name: 'à¸ªà¸¡à¸”à¸¸à¸¥', emoji: 'âš–ï¸', eqTarget: 0.50, maxMDD: 0.22, cls: 'balanced' },
-      { name: 'à¸¡à¸±à¹ˆà¸™à¸„à¸‡', emoji: 'ðŸ›¡ï¸', eqTarget: 0.20, maxMDD: 0.08, cls: 'conservative' }
+      { name: 'เชิงรุก', emoji: '🔥', eqTarget: 0.80, maxMDD: 0.40, cls: 'aggressive' },
+      { name: 'สมดุล', emoji: '⚖️', eqTarget: 0.50, maxMDD: 0.22, cls: 'balanced' },
+      { name: 'มั่นคง', emoji: '🛡️', eqTarget: 0.20, maxMDD: 0.08, cls: 'conservative' }
     ].map(m => ({ ...m, isRecommended: m.cls === matchedCls }));
 
-    const equityKeywords = ['à¸«à¸¸à¹‰à¸™à¹„à¸—à¸¢', 'à¸«à¸¸à¹‰à¸™à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', 'à¸­à¸ªà¸±à¸‡à¸«à¸²à¸£à¸´à¸¡à¸—à¸£à¸±à¸žà¸¢à¹Œ', 'à¸—à¸­à¸‡à¸„à¸³'];
+    const equityKeywords = ['หุ้นไทย', 'หุ้นต่างประเทศ', 'อสังหาริมทรัพย์', 'ทองคำ'];
 
     return models.map(mod => {
       const eligible = planMetrics.filter(m => m.isMixable && m.nav.length > 30);
@@ -1305,7 +1305,7 @@
 
       // === FIX: Enforce GPF constraints (Gold <= 25% only) and Smart Spillover ===
       const maxGold = 0.25;
-      const goldIdx = eligible.findIndex(m => m.name === 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³');
+      const goldIdx = eligible.findIndex(m => m.name === 'แผนทองคำ');
       if (goldIdx !== -1 && weights[goldIdx] > maxGold) {
         const excess = weights[goldIdx] - maxGold;
         weights[goldIdx] = maxGold;
@@ -1313,7 +1313,7 @@
         let bestTargetIdx = -1;
         let highestCAGR = -Infinity;
         eligible.forEach((m, i) => {
-          if (m.name !== 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³' && equityKeywords.some(k => m.name.includes(k)) && m.cagr > highestCAGR) {
+          if (m.name !== 'แผนทองคำ' && equityKeywords.some(k => m.name.includes(k)) && m.cagr > highestCAGR) {
             highestCAGR = m.cagr;
             bestTargetIdx = i;
           }
@@ -1322,7 +1322,7 @@
         if (bestTargetIdx !== -1) {
           weights[bestTargetIdx] += excess;
         } else {
-          const safeIdx = eligible.findIndex(m => m.name.includes('à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™')) !== -1 ? eligible.findIndex(m => m.name.includes('à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™')) : eligible.findIndex(m => m.name.includes('à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰'));
+          const safeIdx = eligible.findIndex(m => m.name.includes('ระยะสั้น')) !== -1 ? eligible.findIndex(m => m.name.includes('ระยะสั้น')) : eligible.findIndex(m => m.name.includes('ตราสารหนี้'));
           if (safeIdx !== -1) weights[safeIdx] += excess;
         }
       }
@@ -1359,7 +1359,7 @@
   function generateSniperRecommendation(age, riskTolerance) {
     const yearsToRetire = Math.max(1, 60 - age);
     const LOOKBACK = 21; // V2: ~1 month to compensate T+1~T+3 switching lag
-    const SHORT_LOOKBACK = 5; // V2: Dual-timeframe â€” detect inflection point in last 5 days
+    const SHORT_LOOKBACK = 5; // V2: Dual-timeframe — detect inflection point in last 5 days
     
     // 1. Calculate Risk-Adjusted Equity Target
     const baseEquityTarget = getEquityTarget(age);
@@ -1377,7 +1377,7 @@
         if (mom !== null && shortMom !== null) {
           const rsi = calcRSI(m.nav, 14);
           
-          // V2 FIX #1: Z-score noise filter â€” momentum must beat its own volatility
+          // V2 FIX #1: Z-score noise filter — momentum must beat its own volatility
           // volThreshold = annualVol * sqrt(LOOKBACK/252) * 0.5 (half a std dev)
           const volThreshold = m.vol * Math.sqrt(LOOKBACK / 252) * 0.5;
           
@@ -1412,7 +1412,7 @@
     });
     
     const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b.sortMetric - a.sortMetric);
-    const safePlanObj = planMetrics.find(p => p.name.includes("à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™") && p.isMixable) || planMetrics.find(p => p.name.includes("à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
+    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น") && p.isMixable) || planMetrics.find(p => p.name.includes("ตราสารหนี้") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
     
     const riskyMixable = mixable.filter(m => m.plan.name !== safePlanObj.name);
     
@@ -1422,7 +1422,7 @@
     const bestRisky = validCandidates[0];
     
     if (!bestRisky || bestRisky.sortMetric <= 0) {
-      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isSniper: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>âš ï¸ WAIT (Wait & See):</span> à¸•à¸¥à¸²à¸”à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸ˆà¸±à¸‡à¸«à¸§à¸°à¹€à¸”à¹‰à¸‡à¸—à¸µà¹ˆà¸Šà¸±à¸”à¹€à¸ˆà¸™ (à¹„à¸¡à¹ˆà¸œà¹ˆà¸²à¸™à¹€à¸à¸“à¸‘à¹Œ Z-score) à¹à¸™à¸°à¸™à¸³à¸–à¸·à¸­à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸›à¸¥à¸­à¸”à¸ à¸±à¸¢ 100% à¹€à¸žà¸·à¹ˆà¸­à¸£à¸­à¸à¸£à¸°à¸ªà¸¸à¸™à¸™à¸±à¸”à¸•à¹ˆà¸­à¹„à¸›" };
+      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isSniper: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ WAIT (Wait & See):</span> ตลาดยังไม่มีจังหวะเด้งที่ชัดเจน (ไม่ผ่านเกณฑ์ Z-score) แนะนำถือสินทรัพย์ปลอดภัย 100% เพื่อรอกระสุนนัดต่อไป" };
     } else {
       const topPositive = validCandidates.slice(0, 3);
       let allocMap = new Map();
@@ -1449,7 +1449,7 @@
       const maxGold = 0.25;
       let finalAllocArray = Array.from(allocMap.values());
       let weights = finalAllocArray.map(a => Math.round(a.weight * 20) / 20);
-      let goldIdx = finalAllocArray.findIndex(a => a.plan.name === 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³');
+      let goldIdx = finalAllocArray.findIndex(a => a.plan.name === 'แผนทองคำ');
       if (goldIdx !== -1 && weights[goldIdx] > maxGold) weights[goldIdx] = maxGold;
       
       let sumWeight = weights.reduce((a,b)=>a+b, 0);
@@ -1505,14 +1505,14 @@
           finalAlloc.forEach(a => { portMDD += a.weight * a.mdd; portCVaR += a.weight * (a.cvar||0); });
       }
 
-      let msg = `<span style='color:var(--accent);font-weight:bold;'>ðŸŽ¯ SNIPER-ON (Swing Trade):</span> à¸žà¸šà¸ªà¸±à¸à¸à¸²à¸“à¸Ÿà¸·à¹‰à¸™à¸•à¸±à¸§à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™ (21 à¸§à¸±à¸™) à¸œà¹ˆà¸²à¸™à¹€à¸à¸“à¸‘à¹Œ Z-score`;
-      if (inflectionMsg.length > 0) msg += `<br><span style="color:var(--yellow);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-bolt"></i> <b>à¸ˆà¸±à¸šà¸ˆà¸¸à¸”à¸žà¸¥à¸´à¸à¸à¸¥à¸±à¸š (5-Day Inflection):</b> ${inflectionMsg.join(', ')}</span>`;
-      if (rsiMsg.length > 0) msg += `<br><span style="color:var(--green);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-arrow-trend-up"></i> <b>à¸ˆà¸¸à¸”à¸žà¸¥à¸¸ Oversold Bounce:</b> ${rsiMsg.join(', ')}</span>`;
-      else msg += `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> à¹€à¸à¸²à¸°à¸à¸£à¸°à¹à¸ªà¸„à¸§à¸²à¸¡à¹à¸£à¸‡ ${isHighRisk ? '(Pure Momentum)' : '(Risk-Adjusted Momentum)'}</span>`;
+      let msg = `<span style='color:var(--accent);font-weight:bold;'>🎯 SNIPER-ON (Swing Trade):</span> พบสัญญาณฟื้นตัวระยะสั้น (21 วัน) ผ่านเกณฑ์ Z-score`;
+      if (inflectionMsg.length > 0) msg += `<br><span style="color:var(--yellow);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-bolt"></i> <b>จับจุดพลิกกลับ (5-Day Inflection):</b> ${inflectionMsg.join(', ')}</span>`;
+      if (rsiMsg.length > 0) msg += `<br><span style="color:var(--green);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-arrow-trend-up"></i> <b>จุดพลุ Oversold Bounce:</b> ${rsiMsg.join(', ')}</span>`;
+      else msg += `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> เกาะกระแสความแรง ${isHighRisk ? '(Pure Momentum)' : '(Risk-Adjusted Momentum)'}</span>`;
       
       recommendation = {
         type: 'mix', allocation: finalAlloc, metrics: { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: calcSharpe(portCAGR, portVol), cvar: portCVaR },
-        label: "à¹à¸œà¸™à¸œà¸ªà¸¡ Sniper (Fast Swing)", isSniper: true, tacticalMsg: msg
+        label: "แผนผสม Sniper (Fast Swing)", isSniper: true, tacticalMsg: msg
       };
     }
     recommendation.models = generateThreeModels(riskTolerance);
@@ -1563,7 +1563,7 @@
     // === FIX #15: High Risk uses pure momentum to avoid punishing high-volatility assets like Gold/Foreign Equity ===
     const sortMetric = isHighRisk ? 'momentum' : 'trendSharpe';
     const mixable = momentumScores.filter(m => m.plan.isMixable).sort((a,b) => b[sortMetric] - a[sortMetric]);
-    const safePlanObj = planMetrics.find(p => p.name.includes("à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™") && p.isMixable) || planMetrics.find(p => p.name.includes("à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
+    const safePlanObj = planMetrics.find(p => p.name.includes("ระยะสั้น") && p.isMixable) || planMetrics.find(p => p.name.includes("ตราสารหนี้") && p.isMixable) || [...planMetrics].filter(p => p.isMixable).sort((a,b) => a.vol - b.vol)[0];
     
     // Filter out the safe asset from satellite selection
     const riskyMixable = mixable.filter(m => m.plan.name !== safePlanObj.name);
@@ -1574,7 +1574,7 @@
     // === FIX #10: Use dynamic threshold (momentum > 0.005 for high risk, trendSharpe > 0.05 for low risk) ===
     const riskOnThreshold = isHighRisk ? 0.005 : 0.05;
     if (!bestRisky || bestRisky[sortMetric] <= riskOnThreshold) {
-      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>âš ï¸ RISK-OFF:</span> à¸•à¸¥à¸²à¸”à¸Šà¹ˆà¸§à¸‡ 2-3 à¹€à¸”à¸·à¸­à¸™à¸‹à¸šà¹€à¸‹à¸²/à¸œà¸±à¸™à¸œà¸§à¸™à¸ªà¸¹à¸‡ à¹à¸™à¸°à¸™à¸³à¸žà¸±à¸à¹€à¸‡à¸´à¸™à¹ƒà¸™à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸›à¸¥à¸­à¸”à¸ à¸±à¸¢ 100%" };
+      recommendation = { type: 'single', plan: safePlanObj, label: safePlanObj.name, isTactical: true, tacticalMsg: "<span style='color:var(--red);font-weight:bold;'>⚠️ RISK-OFF:</span> ตลาดช่วง 2-3 เดือนซบเซา/ผันผวนสูง แนะนำพักเงินในสินทรัพย์ปลอดภัย 100%" };
     } else {
       const topPositive = riskyMixable.filter(m => m[sortMetric] > 0).slice(0, 3);
       let allocMap = new Map();
@@ -1597,7 +1597,7 @@
       const maxGold = 0.25;
       let finalAllocArray = Array.from(allocMap.values());
       let weights = finalAllocArray.map(a => Math.round(a.weight * 20) / 20);
-      let goldIdx = finalAllocArray.findIndex(a => a.plan.name === 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³');
+      let goldIdx = finalAllocArray.findIndex(a => a.plan.name === 'แผนทองคำ');
       if (goldIdx !== -1 && weights[goldIdx] > maxGold) weights[goldIdx] = maxGold;
       
       let sumWeight = weights.reduce((a,b)=>a+b, 0);
@@ -1667,15 +1667,15 @@
       
       const hasOB = topPositive.some(m => m.isOB);
       const bestMixedRsi = topPositive[0].rsi.toFixed(1);
-      const obText = hasOB ? `<br><span style="color:var(--red);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-fire"></i> <b>à¸£à¸°à¸§à¸±à¸‡ (RSI=${bestMixedRsi}):</b> à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸šà¸²à¸‡à¸•à¸±à¸§à¸žà¸¸à¹ˆà¸‡à¸•à¸¶à¸‡à¸•à¸±à¸§ (Overbought) à¹à¸™à¸°à¸™à¸³à¹ƒà¸«à¹‰à¸—à¸¢à¸­à¸¢à¹à¸šà¹ˆà¸‡à¹„à¸¡à¹‰à¹€à¸‚à¹‰à¸²</span>` : `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> à¸„à¸§à¸²à¸¡à¸£à¹‰à¸­à¸™à¹à¸£à¸‡ (RSI) à¸ªà¸¹à¸‡à¸ªà¸¸à¸”: ${bestMixedRsi}/100</span>`;
-      const msg = `<span style='color:var(--green);font-weight:bold;'>ðŸš€ RISK-ON (Core-Satellite):</span> à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰ ${(safeTarget*100).toFixed(0)}% + à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¹€à¸à¹‡à¸‡à¸à¸³à¹„à¸£ ${(equityTarget*100).toFixed(0)}% à¸•à¸²à¸¡à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡${obText}`;
+      const obText = hasOB ? `<br><span style="color:var(--red);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-fire"></i> <b>ระวัง (RSI=${bestMixedRsi}):</b> สินทรัพย์บางตัวพุ่งตึงตัว (Overbought) แนะนำให้ทยอยแบ่งไม้เข้า</span>` : `<br><span style="color:var(--muted);font-size:0.8rem;margin-top:4px;display:inline-block;"><i class="fa-solid fa-chart-line"></i> ความร้อนแรง (RSI) สูงสุด: ${bestMixedRsi}/100</span>`;
+      const msg = `<span style='color:var(--green);font-weight:bold;'>🚀 RISK-ON (Core-Satellite):</span> ตราสารหนี้ ${(safeTarget*100).toFixed(0)}% + สินทรัพย์เก็งกำไร ${(equityTarget*100).toFixed(0)}% ตามระดับความเสี่ยง${obText}`;
       
       if (finalAlloc.length === 1) {
          recommendation = { type: 'single', plan: finalAlloc[0].plan, label: finalAlloc[0].name, isTactical: true, tacticalMsg: msg };
       } else {
          recommendation = {
            type: 'mix', allocation: finalAlloc, metrics: { cagr: portCAGR, vol: portVol, mdd: portMDD, sharpe: calcSharpe(portCAGR, portVol), cvar: portCVaR },
-           label: "à¹à¸œà¸™à¸œà¸ªà¸¡ Tactical (Core-Satellite)", isTactical: true, tacticalMsg: msg
+           label: "แผนผสม Tactical (Core-Satellite)", isTactical: true, tacticalMsg: msg
          };
       }
     }
@@ -1688,7 +1688,7 @@
     const paths = [];
     const govRate = document.getElementById('isPre1997').value === 'yes' ? 0.05 : 0.03;
     
-    // === FIX: Glide Path â€” adjust mu/sigma each year based on equity target ===
+    // === FIX: Glide Path — adjust mu/sigma each year based on equity target ===
     // At startAge the user has equityRatio0; at age 60 it should drop to ~10%
     // mu and sigma scale linearly with the equity ratio relative to the initial ratio
     const eqRatio0 = initialEqTarget !== null ? initialEqTarget : Math.min(maxEq, getEquityTarget(startAge) * riskMult);
@@ -1788,12 +1788,12 @@
     });
     tbody.innerHTML = sorted.map(m => {
       const tagClass = m.isMixable ? 'tag-mix' : 'tag-lock';
-      const tagText = m.isMixable ? 'à¸œà¸ªà¸¡à¹„à¸”à¹‰' : '100%';
+      const tagText = m.isMixable ? 'ผสมได้' : '100%';
       const cagrClass = m.cagr >= 0 ? 'positive' : 'negative';
       const mddClass = 'negative';
       const scoreColor = m.score >= 70 ? 'var(--green)' : m.score >= 40 ? 'var(--yellow)' : 'var(--red)';
-      // === FIX #12: Show "à¸›à¸£à¸°à¸¡à¸²à¸“à¸à¸²à¸£" badge if CAGR was estimated ===
-      const cagrBadge = m.isEstimatedCAGR ? ' <span style="font-size:.6rem;background:rgba(245,158,11,0.2);color:var(--yellow);padding:1px 5px;border-radius:4px;vertical-align:middle">à¸›à¸£à¸°à¸¡à¸²à¸“à¸à¸²à¸£</span>' : '';
+      // === FIX #12: Show "ประมาณการ" badge if CAGR was estimated ===
+      const cagrBadge = m.isEstimatedCAGR ? ' <span style="font-size:.6rem;background:rgba(245,158,11,0.2);color:var(--yellow);padding:1px 5px;border-radius:4px;vertical-align:middle">ประมาณการ</span>' : '';
       return `<tr>
         <td><span class="plan-dot" style="background:${m.color}"></span>${m.name}</td>
         <td><span class="tag ${tagClass}">${tagText}</span></td>
@@ -1816,31 +1816,31 @@
     if ((rec.isSniper || rec.isTactical) && swapsUsed !== undefined) {
       const remaining = Math.max(0, 12 - swapsUsed);
       if (remaining === 0) {
-        swapMsg = `<div style="font-size:0.85rem; color:var(--red); margin-top:0.3rem;">âš ï¸ à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹à¸œà¸™à¸‚à¸­à¸‡à¸›à¸µà¸™à¸µà¹‰à¸«à¸¡à¸”à¹à¸¥à¹‰à¸§ (à¸„à¸£à¸š 12 à¸„à¸£à¸±à¹‰à¸‡) à¸„à¸¸à¸“à¸ˆà¸°à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹à¸œà¸™à¹„à¸”à¹‰à¸ˆà¸™à¸à¸§à¹ˆà¸²à¸ˆà¸°à¸–à¸¶à¸‡à¸›à¸µà¸«à¸™à¹‰à¸²</div>`;
+        swapMsg = `<div style="font-size:0.85rem; color:var(--red); margin-top:0.3rem;">⚠️ สิทธิ์สับเปลี่ยนแผนของปีนี้หมดแล้ว (ครบ 12 ครั้ง) คุณจะไม่สามารถเปลี่ยนแผนได้จนกว่าจะถึงปีหน้า</div>`;
       } else if (remaining <= 3) {
-        swapMsg = `<div style="font-size:0.85rem; color:var(--yellow); margin-top:0.3rem;">âš ï¸ à¹€à¸«à¸¥à¸·à¸­à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹à¸œà¸™à¸­à¸µà¸à¹à¸„à¹ˆ ${remaining} à¸„à¸£à¸±à¹‰à¸‡à¹ƒà¸™à¸›à¸µà¸™à¸µà¹‰ (à¸„à¸§à¸£à¹ƒà¸Šà¹‰à¹€à¸¡à¸·à¹ˆà¸­à¸ˆà¸³à¹€à¸›à¹‡à¸™à¸ˆà¸£à¸´à¸‡à¹†)</div>`;
+        swapMsg = `<div style="font-size:0.85rem; color:var(--yellow); margin-top:0.3rem;">⚠️ เหลือสิทธิ์สับเปลี่ยนแผนอีกแค่ ${remaining} ครั้งในปีนี้ (ควรใช้เมื่อจำเป็นจริงๆ)</div>`;
       } else {
-        swapMsg = `<div style="font-size:0.85rem; color:var(--cyan); margin-top:0.3rem;">â„¹ï¸ à¹€à¸«à¸¥à¸·à¸­à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¹à¸œà¸™ ${remaining} à¸„à¸£à¸±à¹‰à¸‡à¹ƒà¸™à¸›à¸µà¸™à¸µà¹‰</div>`;
+        swapMsg = `<div style="font-size:0.85rem; color:var(--cyan); margin-top:0.3rem;">ℹ️ เหลือสิทธิ์สับเปลี่ยนแผน ${remaining} ครั้งในปีนี้</div>`;
       }
     }
 
     if (rec.isSniper) {
-      titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-crosshairs"></i> à¹‚à¸«à¸¡à¸”à¸ªà¹„à¸™à¹€à¸›à¸­à¸£à¹Œ (Sniper)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>${swapMsg}`;
+      titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-crosshairs"></i> โหมดสไนเปอร์ (Sniper)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>${swapMsg}`;
     } else if (rec.isTactical) {
-      titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-bolt"></i> à¹‚à¸«à¸¡à¸”à¸ˆà¸±à¸šà¸ˆà¸±à¸‡à¸«à¸§à¸°à¸•à¸¥à¸²à¸” (Tactical)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>${swapMsg}`;
+      titleEl.innerHTML = `<div style="font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.3rem"><i class="fa-solid fa-bolt"></i> โหมดจับจังหวะตลาด (Tactical)</div><div style="font-size:.85rem;color:var(--muted)">${rec.tacticalMsg}</div>${swapMsg}`;
     } else {
-      titleEl.innerHTML = `<div style="font-size:.9rem;color:var(--muted)">à¹à¸œà¸™à¸—à¸µà¹ˆ AI à¹à¸™à¸°à¸™à¸³ (à¸•à¸²à¸¡à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹à¸¥à¸°à¸­à¸²à¸¢à¸¸)</div>`;
+      titleEl.innerHTML = `<div style="font-size:.9rem;color:var(--muted)">แผนที่ AI แนะนำ (ตามระดับความเสี่ยงและอายุ)</div>`;
     }
     
     document.getElementById('recPlanName').innerText = rec.label;
     document.getElementById('recCagr').innerText = (m.cagr * 100).toFixed(2);
     // FIX: Calculate actual years of data available instead of hardcoding "10 years"
     const dataYears = Math.max(1, Math.round((planMetrics[0]?.nav?.filter(n => n !== null).length || 1260) / 252));
-    document.getElementById('cagrLabel').innerText = (rec.isTactical || rec.isSniper) ? `à¸ªà¸–à¸´à¸•à¸´à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡ (~${dataYears}à¸›à¸µ)` : 'CAGR à¸„à¸²à¸”à¸«à¸§à¸±à¸‡';
+    document.getElementById('cagrLabel').innerText = (rec.isTactical || rec.isSniper) ? `สถิติย้อนหลัง (~${dataYears}ปี)` : 'CAGR คาดหวัง';
     document.getElementById('recMdd').innerText = (m.mdd * 100).toFixed(2);
     document.getElementById('recSharpe').innerText = m.sharpe.toFixed(3);
     document.getElementById('recCvar').innerText = (m.cvar * 100).toFixed(2);
-    document.getElementById('statCurrent').innerText = fmt(balance) + ' à¸¿';
+    document.getElementById('statCurrent').innerText = fmt(balance) + ' ฿';
     
     const bar = document.getElementById('allocBar');
     const breakdown = document.getElementById('allocBreakdown');
@@ -1855,10 +1855,10 @@
     const mc = document.getElementById('modelComparison');
     if (rec.models) {
       mc.innerHTML = rec.models.map(mod => {
-        let glowColor = mod.name.includes('à¸£à¸¸à¸') ? 'rgba(239,68,68,0.1)' : mod.name.includes('à¸ªà¸¡à¸”à¸¸à¸¥') ? 'rgba(245,158,11,0.1)' : 'rgba(59,130,246,0.1)';
-        let borderColor = mod.name.includes('à¸£à¸¸à¸') ? 'rgba(239,68,68,0.3)' : mod.name.includes('à¸ªà¸¡à¸”à¸¸à¸¥') ? 'rgba(245,158,11,0.3)' : 'rgba(59,130,246,0.3)';
+        let glowColor = mod.name.includes('รุก') ? 'rgba(239,68,68,0.1)' : mod.name.includes('สมดุล') ? 'rgba(245,158,11,0.1)' : 'rgba(59,130,246,0.1)';
+        let borderColor = mod.name.includes('รุก') ? 'rgba(239,68,68,0.3)' : mod.name.includes('สมดุล') ? 'rgba(245,158,11,0.3)' : 'rgba(59,130,246,0.3)';
         // === FIX #7: Highlight recommended model with pulse glow ===
-        const recBadge = mod.isRecommended ? '<div style="font-size:.6rem;color:var(--green);background:rgba(16,185,129,0.15);padding:2px 8px;border-radius:10px;margin-top:.3rem;font-weight:600">âœ… à¹à¸™à¸°à¸™à¸³à¸ªà¸³à¸«à¸£à¸±à¸šà¸„à¸¸à¸“</div>' : '';
+        const recBadge = mod.isRecommended ? '<div style="font-size:.6rem;color:var(--green);background:rgba(16,185,129,0.15);padding:2px 8px;border-radius:10px;margin-top:.3rem;font-weight:600">✅ แนะนำสำหรับคุณ</div>' : '';
         const pulseClass = mod.isRecommended ? ' pulse-box' : '';
         let allocHtml = '';
         if (mod.allocation) {
@@ -1876,7 +1876,7 @@
               <div style="font-size:1.8rem;filter:drop-shadow(0 4px 6px ${glowColor});line-height:1;">${mod.emoji}</div>
               <div style="font-weight:700;font-size:0.9rem;letter-spacing:0.5px;margin-top:0.4rem;">${mod.name}</div>
               ${recBadge}
-              ${mod.isHighRisk ? '<div style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,0.15);padding:2px 8px;border-radius:10px;margin-top:.3rem;font-weight:600">âš ï¸ à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹€à¸à¸´à¸™à¹€à¸à¸“à¸‘à¹Œ</div>' : ''}
+              ${mod.isHighRisk ? '<div style="font-size:.6rem;color:var(--red);background:rgba(239,68,68,0.15);padding:2px 8px;border-radius:10px;margin-top:.3rem;font-weight:600">⚠️ เสี่ยงเกินเกณฑ์</div>' : ''}
             </div>
             <div style="flex:1;font-size:.7rem;color:var(--muted);line-height:1.5;background:rgba(0,0,0,0.2);padding:0.5rem 0.6rem;border-radius:6px;">
               <div style="display:flex;justify-content:space-between"><span>CAGR(10y):</span> <span class="${mod.cagr>=0?'positive':'negative'}">${(mod.cagr*100).toFixed(1)}%</span></div>
@@ -1900,8 +1900,8 @@
     medianFinal = medianFinal / inflationFactor;
     p10Final = p10Final / inflationFactor;
 
-    document.getElementById('statFuture').innerText = fmtM(medianFinal) + ' à¸¿' + inflationLabel;
-    document.getElementById('statWorst').innerText = fmtM(p10Final) + ' à¸¿' + inflationLabel;
+    document.getElementById('statFuture').innerText = fmtM(medianFinal) + ' ฿' + inflationLabel;
+    document.getElementById('statWorst').innerText = fmtM(p10Final) + ' ฿' + inflationLabel;
 
     const finalSalary = salary * Math.pow(1 + salaryGrowth, rec.yearsToRetire);
     const annualWithdrawalGPF = medianFinal * 0.04;
@@ -1911,7 +1911,7 @@
     const serviceYears = Math.min(40, 60 - startServiceAge); // Cap at 40 years max
     const finalMonthlySalary = finalSalary; // Already monthly
     
-    // à¸ªà¸¹à¸•à¸£à¸šà¸³à¸™à¸²à¸: (à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¹€à¸‰à¸¥à¸µà¹ˆà¸¢ 60 à¹€à¸”à¸·à¸­à¸™à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢ x à¸­à¸²à¸¢à¸¸à¸£à¸²à¸Šà¸à¸²à¸£) / 50 à¹„à¸¡à¹ˆà¹€à¸à¸´à¸™ 70%
+    // สูตรบำนาญ: (เงินเดือนเฉลี่ย 60 เดือนสุดท้าย x อายุราชการ) / 50 ไม่เกิน 70%
     let sum5Years = 0;
     for (let i = 0; i < 5; i++) {
         const y = Math.max(0, rec.yearsToRetire - i);
@@ -1920,11 +1920,11 @@
     const avg60MonthlySalary = sum5Years / 5;
     const pensionMonthly = Math.min(avg60MonthlySalary * serviceYears / 50, avg60MonthlySalary * 0.70);
     const pensionAnnual = pensionMonthly * 12;
-    // à¸›à¸£à¸±à¸šà¹€à¸‡à¸´à¸™à¹€à¸Ÿà¹‰à¸­à¹€à¸Šà¹ˆà¸™à¸à¸±à¸™ (à¸šà¸³à¸™à¸²à¸à¸ˆà¸£à¸´à¸‡à¹† à¹„à¸¡à¹ˆà¸›à¸£à¸±à¸šà¸•à¸²à¸¡à¹€à¸‡à¸´à¸™à¹€à¸Ÿà¹‰à¸­ à¹à¸•à¹ˆà¹€à¸žà¸·à¹ˆà¸­à¹€à¸—à¸µà¸¢à¸šà¸„à¹ˆà¸²à¹à¸—à¹‰à¸ˆà¸£à¸´à¸‡)
+    // ปรับเงินเฟ้อเช่นกัน (บำนาญจริงๆ ไม่ปรับตามเงินเฟ้อ แต่เพื่อเทียบค่าแท้จริง)
     const adjustedPensionAnnual = adjustInflation ? pensionAnnual / inflationFactor : pensionAnnual;
     
     const totalRetirementIncome = annualWithdrawalGPF + adjustedPensionAnnual;
-    // à¹ƒà¸Šà¹‰ 70% à¸‚à¸­à¸‡à¹€à¸‡à¸´à¸™à¹€à¸”à¸·à¸­à¸™à¸›à¸µà¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢à¹€à¸›à¹‡à¸™à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¸«à¸¥à¸±à¸‡à¹€à¸à¸©à¸µà¸¢à¸“ (Replacement Rate Standard)
+    // ใช้ 70% ของเงินเดือนปีสุดท้ายเป็นค่าใช้จ่ายหลังเกษียณ (Replacement Rate Standard)
     const annualExpense = finalMonthlySalary * 12 * 0.70;
     const adjustedAnnualExpense = adjustInflation ? annualExpense / inflationFactor : annualExpense;
     
@@ -1942,13 +1942,13 @@
     // Show breakdown
     const gpfPortion = adjustedAnnualExpense > 0 ? (annualWithdrawalGPF / adjustedAnnualExpense * 100).toFixed(1) : '0';
     const pensionPortion = adjustedAnnualExpense > 0 ? (adjustedPensionAnnual / adjustedAnnualExpense * 100).toFixed(1) : '0';
-    document.getElementById('irrBreakdown').innerHTML = `à¸à¸šà¸‚. ${gpfPortion}% + à¸šà¸³à¸™à¸²à¸ ${pensionPortion}% (à¸­à¸²à¸¢à¸¸à¸£à¸²à¸Šà¸à¸²à¸£ ${serviceYears} à¸›à¸µ)`;
+    document.getElementById('irrBreakdown').innerHTML = `กบข. ${gpfPortion}% + บำนาญ ${pensionPortion}% (อายุราชการ ${serviceYears} ปี)`;
     document.getElementById('irrDisclaimer').style.display = 'block';
   }
   
   function renderMonteCarlo(mcResult, age, adjustInflation, inflationRate) {
     if (mcResult.shrunkCagr !== undefined) {
-      document.getElementById('mcAssumption').innerHTML = `ðŸ’¡ <b>à¸ªà¸¡à¸¡à¸•à¸´à¸à¸²à¸™à¸œà¸¥à¸•à¸­à¸šà¹à¸—à¸™:</b> à¸„à¸³à¸™à¸§à¸“à¸ˆà¸²à¸à¸„à¹ˆà¸²à¹€à¸‰à¸¥à¸µà¹ˆà¸¢à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡à¸œà¸¥à¸•à¸­à¸šà¹à¸—à¸™à¹ƒà¸™à¸­à¸”à¸µà¸• (<b>${fmtPct(mcResult.historicalCagr)}</b>) à¹à¸¥à¸°à¸ªà¸¡à¸¡à¸•à¸´à¸à¸²à¸™à¸£à¸°à¸¢à¸°à¸¢à¸²à¸§ (<b>${fmtPct(mcResult.longTermMu)}</b>) = <b>${fmtPct(mcResult.shrunkCagr)}</b> à¸•à¹ˆà¸­à¸›à¸µ`;
+      document.getElementById('mcAssumption').innerHTML = `💡 <b>สมมติฐานผลตอบแทน:</b> คำนวณจากค่าเฉลี่ยระหว่างผลตอบแทนในอดีต (<b>${fmtPct(mcResult.historicalCagr)}</b>) และสมมติฐานระยะยาว (<b>${fmtPct(mcResult.longTermMu)}</b>) = <b>${fmtPct(mcResult.shrunkCagr)}</b> ต่อปี`;
     }
     const canvas = document.getElementById('fanChart');
     const ctx = canvas.getContext('2d');
@@ -2034,16 +2034,16 @@
     ctx.fillStyle = '#64748b';
     const step = Math.max(1, Math.floor(years / 8));
     for (let i = 0; i < years; i += step) {
-      ctx.fillText('à¸­à¸²à¸¢à¸¸ ' + (age + i), xScale(i), H - 8);
+      ctx.fillText('อายุ ' + (age + i), xScale(i), H - 8);
     }
-    ctx.fillText('à¸­à¸²à¸¢à¸¸ 60', xScale(years - 1), H - 8);
+    ctx.fillText('อายุ 60', xScale(years - 1), H - 8);
     
     const last = years - 1;
-    document.getElementById('mcP10').innerText = fmtM(renderBands.p10[last]) + ' à¸¿';
-    document.getElementById('mcP25').innerText = fmtM(renderBands.p25[last]) + ' à¸¿';
-    document.getElementById('mcP50').innerText = fmtM(renderBands.p50[last]) + ' à¸¿';
-    document.getElementById('mcP75').innerText = fmtM(renderBands.p75[last]) + ' à¸¿';
-    document.getElementById('mcP90').innerText = fmtM(renderBands.p90[last]) + ' à¸¿';
+    document.getElementById('mcP10').innerText = fmtM(renderBands.p10[last]) + ' ฿';
+    document.getElementById('mcP25').innerText = fmtM(renderBands.p25[last]) + ' ฿';
+    document.getElementById('mcP50').innerText = fmtM(renderBands.p50[last]) + ' ฿';
+    document.getElementById('mcP75').innerText = fmtM(renderBands.p75[last]) + ' ฿';
+    document.getElementById('mcP90').innerText = fmtM(renderBands.p90[last]) + ' ฿';
     document.getElementById('mcSuccess').innerText = (mcResult.successRate * 100).toFixed(1) + '%';
   }
   
@@ -2068,8 +2068,8 @@
     if (n === 0) return;
     
     const shortNames = planMetrics.map(m => {
-      let s = m.name.replace('à¹à¸œà¸™', '').replace('à¸à¸­à¸‡à¸—à¸¸à¸™', '').replace('à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™', '').trim();
-      if (s.length > 12) s = s.substring(0, 12) + 'â€¦';
+      let s = m.name.replace('แผน', '').replace('กองทุน', '').replace('การลงทุน', '').trim();
+      if (s.length > 12) s = s.substring(0, 12) + '…';
       return s;
     });
     
@@ -2085,7 +2085,7 @@
         const val = correlationMatrix[i][j];
         const bg = corrColor(val);
         const textColor = Math.abs(val) > 0.5 ? '#fff' : '#94a3b8';
-        html += `<div class="heatmap-cell" style="background:${bg};color:${textColor}" title="${planMetrics[i].name} â†” ${planMetrics[j].name}: ${val.toFixed(3)}">${val.toFixed(2)}</div>`;
+        html += `<div class="heatmap-cell" style="background:${bg};color:${textColor}" title="${planMetrics[i].name} ↔ ${planMetrics[j].name}: ${val.toFixed(3)}">${val.toFixed(2)}</div>`;
       }
     }
     
@@ -2124,21 +2124,21 @@
       '#a855f7', '#d946ef', '#ec4899', '#f43f5e'
     ];
     const planConfigs = [
-      { key: 'retirement', label: 'à¹à¸œà¸™à¹€à¸à¸©à¸µà¸¢à¸“à¸ªà¸šà¸²à¸¢à¹ƒà¸ˆ 2569', mu: 0.045, sigma: 0.04 },
-      { key: 'wayupak', label: 'à¹à¸œà¸™à¸à¸­à¸‡à¸—à¸¸à¸™à¸£à¸§à¸¡à¸§à¸²à¸¢à¸¸à¸ à¸±à¸à¸©à¹Œ', mu: 0.035, sigma: 0.035 },
-      { key: 'base', label: 'à¹à¸œà¸™à¸¥à¸‡à¸—à¸¸à¸™à¸žà¸·à¹‰à¸™à¸à¸²à¸™à¸—à¸±à¹ˆà¸§à¹„à¸›', mu: 0.03, sigma: 0.025 },
-      { key: 'agg20', label: 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 20', mu: 0.038, sigma: 0.035 },
-      { key: 'agg35', label: 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 35', mu: 0.048, sigma: 0.05 },
-      { key: 'agg65', label: 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 65', mu: 0.065, sigma: 0.09 },
-      { key: 'agg75', label: 'à¹à¸œà¸™à¹€à¸Šà¸´à¸‡à¸£à¸¸à¸ 75', mu: 0.072, sigma: 0.11 },
-      { key: 'shariah', label: 'à¹à¸œà¸™à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™à¸•à¸²à¸¡à¸«à¸¥à¸±à¸à¸Šà¸°à¸£à¸µà¸­à¸°à¸®à¹Œ', mu: 0.04, sigma: 0.045 },
-      { key: 'reit', label: 'à¹à¸œà¸™à¸à¸­à¸‡à¸—à¸¸à¸™à¸­à¸ªà¸±à¸‡à¸«à¸²à¸£à¸´à¸¡à¸—à¸£à¸±à¸žà¸¢à¹Œà¹„à¸—à¸¢', mu: 0.05, sigma: 0.08 },
-      { key: 'deposit', label: 'à¹à¸œà¸™à¹€à¸‡à¸´à¸™à¸à¸²à¸à¹à¸¥à¸°à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰à¸£à¸°à¸¢à¸°à¸ªà¸±à¹‰à¸™', mu: 0.018, sigma: 0.008 },
-      { key: 'bond', label: 'à¹à¸œà¸™à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰', mu: 0.025, sigma: 0.02 },
-      { key: 'thaiEq', label: 'à¹à¸œà¸™à¸«à¸¸à¹‰à¸™à¹„à¸—à¸¢', mu: 0.06, sigma: 0.16 },
-      { key: 'gold', label: 'à¹à¸œà¸™à¸—à¸­à¸‡à¸„à¸³', mu: 0.04, sigma: 0.14 },
-      { key: 'foreignEq', label: 'à¹à¸œà¸™à¸«à¸¸à¹‰à¸™à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', mu: 0.07, sigma: 0.13 },
-      { key: 'foreignBond', label: 'à¹à¸œà¸™à¸•à¸£à¸²à¸ªà¸²à¸£à¸«à¸™à¸µà¹‰à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', mu: 0.028, sigma: 0.04 },
+      { key: 'retirement', label: 'แผนเกษียณสบายใจ 2569', mu: 0.045, sigma: 0.04 },
+      { key: 'wayupak', label: 'แผนกองทุนรวมวายุภักษ์', mu: 0.035, sigma: 0.035 },
+      { key: 'base', label: 'แผนลงทุนพื้นฐานทั่วไป', mu: 0.03, sigma: 0.025 },
+      { key: 'agg20', label: 'แผนเชิงรุก 20', mu: 0.038, sigma: 0.035 },
+      { key: 'agg35', label: 'แผนเชิงรุก 35', mu: 0.048, sigma: 0.05 },
+      { key: 'agg65', label: 'แผนเชิงรุก 65', mu: 0.065, sigma: 0.09 },
+      { key: 'agg75', label: 'แผนเชิงรุก 75', mu: 0.072, sigma: 0.11 },
+      { key: 'shariah', label: 'แผนการลงทุนตามหลักชะรีอะฮ์', mu: 0.04, sigma: 0.045 },
+      { key: 'reit', label: 'แผนกองทุนอสังหาริมทรัพย์ไทย', mu: 0.05, sigma: 0.08 },
+      { key: 'deposit', label: 'แผนเงินฝากและตราสารหนี้ระยะสั้น', mu: 0.018, sigma: 0.008 },
+      { key: 'bond', label: 'แผนตราสารหนี้', mu: 0.025, sigma: 0.02 },
+      { key: 'thaiEq', label: 'แผนหุ้นไทย', mu: 0.06, sigma: 0.16 },
+      { key: 'gold', label: 'แผนทองคำ', mu: 0.04, sigma: 0.14 },
+      { key: 'foreignEq', label: 'แผนหุ้นต่างประเทศ', mu: 0.07, sigma: 0.13 },
+      { key: 'foreignBond', label: 'แผนตราสารหนี้ต่างประเทศ', mu: 0.028, sigma: 0.04 },
     ];
 
     const days = 1260; // ~5 years
@@ -2190,14 +2190,14 @@
           if (pin) {
             const regRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'register_device', deviceId: getDeviceId(), pin: pin }) });
             const regData = await regRes.json();
-            if (regData.success) { showToast("à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸ªà¸³à¹€à¸£à¹‡à¸ˆ! à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥..."); return loadGPFData(); } 
-            else { showToast(regData.error || "à¸£à¸«à¸±à¸ª PIN à¹„à¸¡à¹ˆà¸–à¸¹à¸à¸•à¹‰à¸­à¸‡", 'error'); }
+            if (regData.success) { showToast("เชื่อมต่อสำเร็จ! กำลังโหลดข้อมูล..."); return loadGPFData(); } 
+            else { showToast(regData.error || "รหัส PIN ไม่ถูกต้อง", 'error'); }
           }
           document.getElementById('currentBalance').removeAttribute('readonly');
-          document.getElementById('currentBalance').placeholder = "à¸à¸£à¸­à¸à¸¢à¸­à¸”à¹€à¸‡à¸´à¸™ à¸à¸šà¸‚. à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™";
+          document.getElementById('currentBalance').placeholder = "กรอกยอดเงิน กบข. ปัจจุบัน";
           return;
         } else {
-          alert("à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”à¸ˆà¸²à¸à¹€à¸‹à¸´à¸£à¹Œà¸Ÿà¹€à¸§à¸­à¸£à¹Œ: " + allData.error);
+          alert("เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: " + allData.error);
           allData = null;
           return;
         }
@@ -2222,15 +2222,15 @@
         if (bal > 0) {
           document.getElementById('currentBalance').value = Math.floor(bal);
         } else {
-          document.getElementById('currentBalance').placeholder = "à¸à¸£à¸­à¸à¸¢à¸­à¸”à¹€à¸‡à¸´à¸™ à¸à¸šà¸‚. à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™à¹€à¸­à¸‡ (à¸£à¸°à¸šà¸šà¸”à¸¶à¸‡à¸­à¸±à¸•à¹‚à¸™à¸¡à¸±à¸•à¸´à¹„à¸¡à¹ˆà¸ªà¸³à¹€à¸£à¹‡à¸ˆ)";
+          document.getElementById('currentBalance').placeholder = "กรอกยอดเงิน กบข. ปัจจุบันเอง (ระบบดึงอัตโนมัติไม่สำเร็จ)";
         }
       }
     } catch (e) {
       console.warn("API Fetch failed, using Demo Data.", e);
       allData = generateFallbackData();
       document.getElementById('currentBalance').removeAttribute('readonly');
-      document.getElementById('currentBalance').placeholder = "à¸à¸£à¸­à¸à¸¢à¸­à¸”à¹€à¸‡à¸´à¸™ à¸à¸šà¸‚. à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ (à¹‚à¸«à¸¡à¸”à¸ˆà¸³à¸¥à¸­à¸‡)";
-      // === FIX ðŸ”µ: Show red demo banner ===
+      document.getElementById('currentBalance').placeholder = "กรอกยอดเงิน กบข. ปัจจุบัน (โหมดจำลอง)";
+      // === FIX 🔵: Show red demo banner ===
       document.getElementById('demoBanner').classList.add('show');
       document.body.classList.add('has-demo-banner');
     }
@@ -2249,30 +2249,30 @@
       const best = sorted[0];
       const worst = sorted[sorted.length - 1];
       const dates = allData.fullDates || allData.dates;
-      const lastDate = dates && dates.length > 0 ? dates[dates.length - 1] : 'à¹„à¸¡à¹ˆà¸—à¸£à¸²à¸š';
+      const lastDate = dates && dates.length > 0 ? dates[dates.length - 1] : 'ไม่ทราบ';
       const buySignals = sorted.filter(p => p.rsi < 30).length;
       const sellSignals = sorted.filter(p => p.rsi > 70).length;
       summaryEl.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.8rem">
-          <span style="font-weight:600;color:#fff"><i class="fa-solid fa-robot" style="color:var(--accent)"></i> AI à¸ªà¸£à¸¸à¸›à¸ à¸²à¸žà¸£à¸§à¸¡</span>
-          <span style="font-size:.75rem;color:var(--muted);background:rgba(255,255,255,0.05);padding:0.2rem 0.5rem;border-radius:12px;"><i class="fa-regular fa-calendar"></i> NAV à¸¥à¹ˆà¸²à¸ªà¸¸à¸”: <b style="color:var(--cyan)">${lastDate}</b></span>
+          <span style="font-weight:600;color:#fff"><i class="fa-solid fa-robot" style="color:var(--accent)"></i> AI สรุปภาพรวม</span>
+          <span style="font-size:.75rem;color:var(--muted);background:rgba(255,255,255,0.05);padding:0.2rem 0.5rem;border-radius:12px;"><i class="fa-regular fa-calendar"></i> NAV ล่าสุด: <b style="color:var(--cyan)">${lastDate}</b></span>
         </div>
         <div style="margin-bottom:0.8rem">
-          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.2rem;">ðŸ”¥ à¹à¸œà¸™à¸—à¸µà¹ˆà¸£à¹‰à¸­à¸™à¹à¸£à¸‡à¸—à¸µà¹ˆà¸ªà¸¸à¸”à¹ƒà¸™à¸£à¸­à¸š 1 à¹€à¸”à¸·à¸­à¸™:</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.2rem;">🔥 แผนที่ร้อนแรงที่สุดในรอบ 1 เดือน:</div>
           <div style="font-weight:600;color:var(--green);font-size:1rem;padding-left:1rem;border-left:2px solid var(--green)">${best.name} <span style="font-size:0.85rem">(+${(best.ret1M*100).toFixed(2)}%)</span></div>
         </div>
         <div style="margin-bottom:1rem">
-          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.2rem;">â„ï¸ à¹à¸œà¸™à¸—à¸µà¹ˆà¸­à¹ˆà¸­à¸™à¸•à¸±à¸§à¸—à¸µà¹ˆà¸ªà¸¸à¸”:</div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.2rem;">❄️ แผนที่อ่อนตัวที่สุด:</div>
           <div style="font-weight:600;color:var(--red);font-size:1rem;padding-left:1rem;border-left:2px solid var(--red)">${worst.name} <span style="font-size:0.85rem">(${(worst.ret1M*100).toFixed(2)}%)</span></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--muted);border-top:1px dashed rgba(255,255,255,0.1);padding-top:0.8rem;gap:0.5rem;">
           <div style="flex:1;background:rgba(16,185,129,0.05);padding:0.5rem;border-radius:6px;text-align:center;">
-            à¸ªà¸±à¸à¸à¸²à¸“à¸‹à¸·à¹‰à¸­ (Oversold)<br>
-            <b style="color:var(--green);font-size:1.1rem">${buySignals}</b> <span style="font-size:0.7rem">à¹à¸œà¸™</span>
+            สัญญาณซื้อ (Oversold)<br>
+            <b style="color:var(--green);font-size:1.1rem">${buySignals}</b> <span style="font-size:0.7rem">แผน</span>
           </div>
           <div style="flex:1;background:rgba(239,68,68,0.05);padding:0.5rem;border-radius:6px;text-align:center;">
-            à¸ªà¸±à¸à¸à¸²à¸“à¸‚à¸²à¸¢ (Overbought)<br>
-            <b style="color:var(--red);font-size:1.1rem">${sellSignals}</b> <span style="font-size:0.7rem">à¹à¸œà¸™</span>
+            สัญญาณขาย (Overbought)<br>
+            <b style="color:var(--red);font-size:1.1rem">${sellSignals}</b> <span style="font-size:0.7rem">แผน</span>
           </div>
         </div>
       `;
@@ -2300,28 +2300,28 @@
 
       if (p.macd.isUnreliable) {
         rsiColor = 'var(--muted)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--muted);background:rgba(255,255,255,0.1)">â³ à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹„à¸¡à¹ˆà¸žà¸­</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--muted);background:rgba(255,255,255,0.1)">⏳ ข้อมูลไม่พอ</span>';
       } else if (isLowVol) {
         rsiColor = 'var(--muted)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--muted);background:rgba(255,255,255,0.1)">ðŸ›¡ï¸ à¸„à¸§à¸²à¸¡à¸œà¸±à¸™à¸œà¸§à¸™à¸•à¹ˆà¸³</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--muted);background:rgba(255,255,255,0.1)">🛡️ ความผันผวนต่ำ</span>';
       } else if (p.rsi > 70 && isDeadCross) {
         rsiColor = 'var(--red)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">âš ï¸ à¸•à¸¶à¸‡à¸•à¸±à¸§ / à¸ªà¸±à¸à¸à¸²à¸“à¸‚à¸²à¸¢</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">⚠️ ตึงตัว / สัญญาณขาย</span>';
       } else if (p.rsi < 30 && isGoldenCross) {
         rsiColor = 'var(--green)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">ðŸ’° à¸™à¹ˆà¸²à¸‹à¸·à¹‰à¸­ / Golden Cross</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">💰 น่าซื้อ / Golden Cross</span>';
       } else if (p.rsi > 70) {
         rsiColor = 'var(--red)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">ðŸ”¥ à¹à¸žà¸‡à¸¡à¸²à¸ / à¸£à¸°à¸§à¸±à¸‡à¸¢à¹ˆà¸­à¸•à¸±à¸§</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--red);background:rgba(239,68,68,0.15)">🔥 แพงมาก / ระวังย่อตัว</span>';
       } else if (p.rsi < 30) {
         rsiColor = 'var(--green)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">ðŸ“‰ à¸–à¸¹à¸à¸¡à¸²à¸ / à¸£à¸­à¸ªà¸±à¸à¸à¸²à¸“</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--green);background:rgba(16,185,129,0.15)">📉 ถูกมาก / รอสัญญาณ</span>';
       } else if (p.ret1M > 0 && p.macd.hist > 0) {
         rsiColor = 'var(--yellow)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--yellow);background:rgba(245,158,11,0.15)">ðŸš€ à¸‚à¸²à¸‚à¸¶à¹‰à¸™ / à¸–à¸·à¸­à¸•à¹ˆà¸­</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--yellow);background:rgba(245,158,11,0.15)">🚀 ขาขึ้น / ถือต่อ</span>';
       } else {
         rsiColor = 'var(--cyan)';
-        badgeHtml = '<span class="tac-badge" style="color:var(--cyan);background:rgba(6,182,212,0.15)">â„ï¸ à¸žà¸±à¸à¸•à¸±à¸§ / à¹€à¸à¹‰à¸²à¸£à¸°à¸§à¸±à¸‡</span>';
+        badgeHtml = '<span class="tac-badge" style="color:var(--cyan);background:rgba(6,182,212,0.15)">❄️ พักตัว / เฝ้าระวัง</span>';
       }
       
       const rsiPct = Math.min(100, Math.max(0, p.rsi));
@@ -2332,17 +2332,17 @@
       
       let macdHtml = '';
       if (p.macd.isUnreliable) {
-        macdHtml = `<span style="font-family:'Outfit'; font-weight:600; color:var(--muted)">à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹„à¸¡à¹ˆà¸žà¸­</span>`;
+        macdHtml = `<span style="font-family:'Outfit'; font-weight:600; color:var(--muted)">ข้อมูลไม่พอ</span>`;
       } else {
         macdHtml = `<span style="font-family:'Outfit'; font-weight:600; color:${p.macd.hist > 0 ? 'var(--green)' : 'var(--red)'}">
-                      ${p.macd.hist > 0 ? '<i class="fa-solid fa-arrow-up"></i> à¸‚à¸²à¸‚à¸¶à¹‰à¸™ (à¸•à¸±à¸”à¸‚à¸¶à¹‰à¸™)' : '<i class="fa-solid fa-arrow-down"></i> à¸‚à¸²à¸¥à¸‡ (à¸•à¸±à¸”à¸¥à¸‡)'}
+                      ${p.macd.hist > 0 ? '<i class="fa-solid fa-arrow-up"></i> ขาขึ้น (ตัดขึ้น)' : '<i class="fa-solid fa-arrow-down"></i> ขาลง (ตัดลง)'}
                     </span>`;
       }
 
       let rsiHtml = '';
       if (isLowVol || p.macd.isUnreliable) {
         rsiHtml = `<div style="text-align:center; font-family:'Outfit'; font-weight:700; font-size:1rem; color:var(--muted); margin-top:1.5rem">
-                     RSI à¹„à¸¡à¹ˆà¹€à¸«à¸¡à¸²à¸°à¸ªà¸¡à¸à¸±à¸šà¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸›à¸£à¸°à¹€à¸ à¸—à¸™à¸µà¹‰
+                     RSI ไม่เหมาะสมกับสินทรัพย์ประเภทนี้
                    </div>`;
       } else {
         rsiHtml = `
@@ -2406,9 +2406,9 @@
     const swapsUsed = parseInt(document.getElementById('swapsUsed').value) || 0;
     const startServiceAge = parseInt(document.getElementById('startServiceAge').value) || 25;
     
-    if (isNaN(age) || isNaN(balance) || isNaN(salary) || isNaN(memberRate) || isNaN(salaryGrowth) || isNaN(risk)) { alert("à¸à¸£à¸¸à¸“à¸²à¸à¸£à¸­à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸«à¹‰à¸„à¸£à¸šà¸–à¹‰à¸§à¸™"); return; }
-    if (startServiceAge > age) { alert("à¸­à¸²à¸¢à¸¸à¸—à¸µà¹ˆà¹€à¸£à¸´à¹ˆà¸¡à¸£à¸±à¸šà¸£à¸²à¸Šà¸à¸²à¸£à¸•à¹‰à¸­à¸‡à¸™à¹‰à¸­à¸¢à¸à¸§à¹ˆà¸²à¸«à¸£à¸·à¸­à¹€à¸—à¹ˆà¸²à¸à¸±à¸šà¸­à¸²à¸¢à¸¸à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™"); return; }
-    if (!allData || !allData.plans) { alert('à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ à¸à¸£à¸¸à¸“à¸²à¸£à¸­à¸ªà¸±à¸à¸„à¸£à¸¹à¹ˆ...'); return; }
+    if (isNaN(age) || isNaN(balance) || isNaN(salary) || isNaN(memberRate) || isNaN(salaryGrowth) || isNaN(risk)) { alert("กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+    if (startServiceAge > age) { alert("อายุที่เริ่มรับราชการต้องน้อยกว่าหรือเท่ากับอายุปัจจุบัน"); return; }
+    if (!allData || !allData.plans) { alert('กำลังโหลดข้อมูล กรุณารอสักครู่...'); return; }
 
     const loading = document.getElementById('loading');
     const progress = document.getElementById('progressFill');
@@ -2418,7 +2418,7 @@
     loading.style.display = 'flex';
     
     await delay(100);
-    loadText.innerText = 'PHASE 1: à¸„à¸³à¸™à¸§à¸“ Risk Metrics à¸—à¸¸à¸à¹à¸œà¸™...';
+    loadText.innerText = 'PHASE 1: คำนวณ Risk Metrics ทุกแผน...';
     progress.style.width = '15%';
     await delay(300);
     
@@ -2460,7 +2460,7 @@
     mcResult.historicalCagr = m.cagr;
     
     progress.style.width = '80%';
-    loadText.innerText = 'PHASE 4: à¸ªà¸£à¹‰à¸²à¸‡à¸à¸£à¸²à¸Ÿà¹à¸¥à¸° Heatmap...';
+    loadText.innerText = 'PHASE 4: สร้างกราฟและ Heatmap...';
     await delay(300);
     
     renderMetricsTable();
@@ -2475,14 +2475,14 @@
     renderTactical();
     
     progress.style.width = '100%';
-    loadText.innerText = 'COMPLETE âœ“';
+    loadText.innerText = 'COMPLETE ✓';
     await delay(500);
     loading.style.display = 'none';
     
     switchMainTab('metrics');
     } catch (e) {
       console.error(e);
-      alert("à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”à¹ƒà¸™à¸à¸²à¸£à¸„à¸³à¸™à¸§à¸“: " + e.message);
+      alert("เกิดข้อผิดพลาดในการคำนวณ: " + e.message);
       loading.style.display = 'none';
     }
   }
@@ -2563,7 +2563,7 @@
 
         appendMessage('user', text);
         chatInput.value = '';
-        appendMessage('ai', 'â³ à¸à¸³à¸¥à¸±à¸‡à¸›à¸£à¸°à¸¡à¸§à¸¥à¸œà¸¥...');
+        appendMessage('ai', '⏳ กำลังประมวลผล...');
         
         if (typeof google !== 'undefined' && google.script) {
             google.script.run
@@ -2573,7 +2573,7 @@
               })
               .withFailureHandler(function(error) {
                   chatMessages.lastChild.remove();
-                  appendMessage('ai', 'âŒ à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”: ' + error.message);
+                  appendMessage('ai', '❌ เกิดข้อผิดพลาด: ' + error.message);
               })
               .fetchAiResponse(text);
         } else {
@@ -2592,12 +2592,12 @@
                 if (data.response) {
                     appendMessage('ai', data.response);
                 } else if (data.error) {
-                    appendMessage('ai', 'âŒ ' + data.error);
+                    appendMessage('ai', '❌ ' + data.error);
                 }
             })
             .catch(error => {
                 chatMessages.lastChild.remove();
-                appendMessage('ai', 'âŒ à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸±à¸šà¹€à¸‹à¸´à¸£à¹Œà¸Ÿà¹€à¸§à¸­à¸£à¹Œà¹„à¸”à¹‰: ' + error.message);
+                appendMessage('ai', '❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: ' + error.message);
             });
         }
     }
@@ -2614,19 +2614,19 @@
   </script>
 
   <!-- ==================== AI CHAT UI ==================== -->
-  <button id="ai-chat-fab" class="chat-fab">ðŸ¤–</button>
+  <button id="ai-chat-fab" class="chat-fab">🤖</button>
 
   <div id="ai-chat-window" class="chat-window hidden">
     <div class="chat-header">
-      <span>ðŸ¤– GPF Robo-Advisor</span>
-      <button id="ai-close-btn" class="close-btn">âœ–</button>
+      <span>🤖 GPF Robo-Advisor</span>
+      <button id="ai-close-btn" class="close-btn">✖</button>
     </div>
     <div id="ai-chat-messages" class="chat-messages">
-      <div class="message ai-message">à¸ªà¸§à¸±à¸ªà¸”à¸µà¸„à¸£à¸±à¸š à¸¡à¸µà¸­à¸°à¹„à¸£à¹ƒà¸«à¹‰à¸œà¸¡à¸Šà¹ˆà¸§à¸¢à¹à¸™à¸°à¸™à¸³à¹€à¸£à¸·à¹ˆà¸­à¸‡à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™ à¸à¸šà¸‚. à¹„à¸«à¸¡à¸„à¸£à¸±à¸š?</div>
+      <div class="message ai-message">สวัสดีครับ มีอะไรให้ผมช่วยแนะนำเรื่องการลงทุน กบข. ไหมครับ?</div>
     </div>
     <div class="chat-input-area">
-      <textarea id="ai-chat-input" placeholder="à¸žà¸´à¸¡à¸žà¹Œà¸‚à¹‰à¸­à¸„à¸§à¸²à¸¡à¸—à¸µà¹ˆà¸™à¸µà¹ˆ..." rows="1"></textarea>
-      <button id="ai-send-btn" class="send-btn">âž¤</button>
+      <textarea id="ai-chat-input" placeholder="พิมพ์ข้อความที่นี่..." rows="1"></textarea>
+      <button id="ai-send-btn" class="send-btn">➤</button>
     </div>
   </div>
 

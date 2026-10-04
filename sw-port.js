@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gpf-port-cache-v1';
+﻿const CACHE_NAME = 'gpf-port-cache-v2';
 const URLS_TO_CACHE = [
   './gpfnav69.html',
   './manifest-port.json',
@@ -36,6 +36,15 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Ignore non-GET requests
+  if (event.request.method !== 'GET') return;
+  
+  const url = new URL(event.request.url);
+  // Ignore API calls and Google Script URLs
+  if (url.hostname === 'script.google.com' || url.hostname === 'script.googleusercontent.com') {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then(response => {

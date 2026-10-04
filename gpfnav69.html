@@ -1894,7 +1894,7 @@
     }
 
     function saveContrib() {
-      const date = document.getElementById('inp-date').value.trim();
+      let date = document.getElementById('inp-date').value.trim();
       const amount = parseFloat(document.getElementById('inp-amount').value);
       const note = document.getElementById('inp-note').value.trim();
 
